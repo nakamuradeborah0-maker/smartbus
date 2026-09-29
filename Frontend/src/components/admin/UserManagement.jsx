@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Search, Edit2, Trash2, Shield, Building2, Truck, User, X, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const UserManagement = () => {
+  const { lang } = useLanguage();
   const [users, setUsers] = useState([]);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -119,7 +121,7 @@ export const UserManagement = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher par nom ou email..."
+              placeholder={lang === "fr" ? "Rechercher par nom ou email..." : "Search by name or email..."}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
             />
           </div>
@@ -129,7 +131,7 @@ export const UserManagement = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
           >
-            <option value="">Tous les rôles</option>
+            <option value="">{lang === "fr" ? "Tous les rôles" : "All Roles"}</option>
             <option value="ADMIN">ADMIN</option>
             <option value="PARCEL_AGENT">PARCEL_AGENT</option>
             <option value="DRIVER">DRIVER</option>
@@ -142,7 +144,7 @@ export const UserManagement = () => {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <UserPlus size={16} />
-          <span>Ajouter un Utilisateur</span>
+          <span>{lang === 'fr' ? 'Ajouter un Utilisateur' : 'Add User'}</span>
         </button>
       </div>
 
@@ -152,22 +154,22 @@ export const UserManagement = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-300">
               <tr>
-                <th className="py-3 px-4">Nom</th>
-                <th className="py-3 px-4">Adresse e-mail</th>
-                <th className="py-3 px-4">Rôle</th>
-                <th className="py-3 px-4">Gare Assignée</th>
-                <th className="py-3 px-4">Téléphone</th>
+                <th className="py-3 px-4">{lang === "fr" ? "Nom" : "Full Name"}</th>
+                <th className="py-3 px-4">{lang === "fr" ? "Adresse e-mail" : "Email Address"}</th>
+                <th className="py-3 px-4">{lang === "fr" ? "Rôle" : "Role"}</th>
+                <th className="py-3 px-4">{lang === "fr" ? "Gare Assignée" : "Assigned Station"}</th>
+                <th className="py-3 px-4">{lang === "fr" ? "Téléphone" : "Phone"}</th>
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-slate-400">Chargement de l'annuaire des utilisateurs...</td>
+                  <td colSpan="6" className="py-8 text-center text-slate-400">{lang === 'fr' ? 'Chargement de l\'annuaire des utilisateurs...' : 'Loading user directory...'}</td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-slate-400">Aucun utilisateur trouvé.</td>
+                  <td colSpan="6" className="py-8 text-center text-slate-400">{lang === 'fr' ? 'Aucun utilisateur trouvé.' : 'No users found.'}</td>
                 </tr>
               ) : (
                 filteredUsers.map((u) => (

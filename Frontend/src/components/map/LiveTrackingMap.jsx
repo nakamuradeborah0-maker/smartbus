@@ -30,134 +30,123 @@ import {
   Waves,
   Landmark
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Carto API Key provided by user
 const CARTO_API_KEY = 'cb1_43oe_1_75bd64c2f244c194ee1bc360';
 
-// Tile Layer configurations
-const TILE_LAYERS = {
-  osm: {
-    name: "Plan Routier (OSM)",
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 19,
-  },
-  voyager: {
-    name: "CartoDB Voyager HD",
-    url: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`,
-    attribution: "&copy; CartoDB &copy; OpenStreetMap",
-    maxZoom: 19,
-  },
-  satellite: {
-    name: "Satellite HD",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    attribution: "&copy; Esri, Maxar, Earthstar Geographics",
-    maxZoom: 18,
-  },
-  cartoDark: {
-    name: "CartoDB Sombre",
-    url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`,
-    attribution: "&copy; CartoDB &copy; OpenStreetMap",
-    maxZoom: 19,
-  },
-};
-
-// Comprehensive list of key milestones & places along the Douala - Yaoundé corridor (Axe N3)
-const DEFAULT_CAMEROON_WAYPOINTS = [
+// Waypoints data generator with full bilingual French & English support
+const getWaypointsData = (lang) => [
   {
     id: "wp-dla-central",
-    name: "Gare Centrale de Douala (Akwa)",
+    name: lang === 'fr' ? "Gare Centrale de Douala (Akwa)" : "Douala Central Station (Akwa)",
     city: "Douala",
     lat: 4.0511,
     lng: 9.7679,
     pk: "PK 0",
     type: "departure",
-    category: "Gare Routière VIP",
-    description: "Grand quai d'embarquement, guichets d'enregistrement et expédition colis VIP.",
+    category: lang === 'fr' ? "Gare Routière VIP" : "VIP Coach Terminal",
+    description: lang === 'fr'
+      ? "Grand quai d'embarquement, guichets d'enregistrement et expédition colis VIP."
+      : "Main boarding platforms, passenger check-in desks, and VIP parcel logistics.",
     iconType: "station",
   },
   {
     id: "wp-yassa",
-    name: "Poste de Contrôle & Péage de Yassa",
-    city: "Sortie Est Douala",
+    name: lang === 'fr' ? "Poste de Contrôle & Péage de Yassa" : "Yassa Highway Toll & Checkpoint",
+    city: lang === 'fr' ? "Sortie Est Douala" : "Douala East Exit",
     lat: 4.0153,
     lng: 9.8145,
     pk: "PK 18",
     type: "checkpoint",
-    category: "Péage Autoroutier",
-    description: "Sortie sud-est de la ville de Douala, début officiel de la route nationale N3.",
+    category: lang === 'fr' ? "Péage Autoroutier" : "Highway Toll Station",
+    description: lang === 'fr'
+      ? "Sortie sud-est de la ville de Douala, début officiel de la route nationale N3."
+      : "South-east exit of Douala city, official gateway to National Highway N3.",
     iconType: "shield",
   },
   {
     id: "wp-edea",
-    name: "Gare Relais & Pont sur la Sanaga",
+    name: lang === 'fr' ? "Gare Relais & Pont sur la Sanaga" : "Sanaga River Bridge & Relay",
     city: "Edéa",
     lat: 3.8007,
     lng: 10.1346,
     pk: "PK 88",
     type: "station",
-    category: "Escale Technique & Fleuve",
-    description: "Franchissement du fleuve Sanaga, arrêt rafraîchissements et inspection pneumatique.",
+    category: lang === 'fr' ? "Escale Technique & Fleuve" : "Technical Stop & River Crossing",
+    description: lang === 'fr'
+      ? "Franchissement du fleuve Sanaga, arrêt rafraîchissements et inspection pneumatique."
+      : "Crossing of the Sanaga river, passenger refreshment break and tire safety check.",
     iconType: "waves",
   },
   {
     id: "wp-pouma",
-    name: "Halte Gastronomique de Pouma",
+    name: lang === 'fr' ? "Halte Gastronomique de Pouma" : "Pouma Travelers Rest Stop",
     city: "Pouma",
     lat: 3.8507,
     lng: 10.5163,
     pk: "PK 132",
     type: "stop",
-    category: "Halte Voyageurs & Terroir",
-    description: "Halte réputée pour ses spécialités gastronomiques locales et sa pause détente.",
+    category: lang === 'fr' ? "Halte Voyageurs & Terroir" : "Rest Stop & Local Specialties",
+    description: lang === 'fr'
+      ? "Halte réputée pour ses spécialités gastronomiques locales et sa pause détente."
+      : "Renowned transit stop for fresh local gastronomy and passenger relaxation.",
     iconType: "coffee",
   },
   {
     id: "wp-boumnyebel",
-    name: "Carrefour Stratégique de Boumnyébel",
+    name: lang === 'fr' ? "Carrefour Stratégique de Boumnyébel" : "Boumnyébel Regional Junction",
     city: "Boumnyébel",
     lat: 3.8678,
     lng: 10.8657,
     pk: "PK 168",
     type: "junction",
-    category: "Carrefour Régional",
-    description: "Point de jonction stratégique vers la région du Centre et relais sécurité routière.",
+    category: lang === 'fr' ? "Carrefour Régional" : "Regional Highway Hub",
+    description: lang === 'fr'
+      ? "Point de jonction stratégique vers la région du Centre et relais sécurité routière."
+      : "Key junction connecting Littoral and Centre regions with highway patrol outpost.",
     iconType: "compass",
   },
   {
     id: "wp-matomb",
-    name: "Poste de Contrôle & Pesage de Matomb",
+    name: lang === 'fr' ? "Poste de Contrôle & Pesage de Matomb" : "Matomb Weigh Station & Security",
     city: "Matomb",
     lat: 3.8840,
     lng: 11.0498,
     pk: "PK 195",
     type: "checkpoint",
-    category: "Pesage & Sécurité Forestière",
-    description: "Point de contrôle routier officiel et surveillance de la vitesse.",
+    category: lang === 'fr' ? "Pesage & Sécurité Forestière" : "Safety Inspection & Radar",
+    description: lang === 'fr'
+      ? "Point de contrôle routier officiel et surveillance de la vitesse."
+      : "Official transport checkpoint, heavy vehicle weighing, and radar speed control.",
     iconType: "shield",
   },
   {
     id: "wp-mbankomo",
-    name: "Péage Urbain de Mbankomo",
+    name: lang === 'fr' ? "Péage Urbain de Mbankomo" : "Mbankomo Suburban Toll",
     city: "Mbankomo",
     lat: 3.7840,
     lng: 11.3837,
     pk: "PK 235",
     type: "toll",
-    category: "Entrée Sud-Ouest Yaoundé",
-    description: "Dernière étape autoroutière avant l'entrée dans l'agglomération de la capitale.",
+    category: lang === 'fr' ? "Entrée Sud-Ouest Yaoundé" : "Yaoundé South-West Gateway",
+    description: lang === 'fr'
+      ? "Dernière étape autoroutière avant l'entrée dans l'agglomération de la capitale."
+      : "Final highway toll before entering the capital city metropolitan area.",
     iconType: "landmark",
   },
   {
     id: "wp-yde-mvan",
-    name: "Gare Terminale de Yaoundé (Mvan)",
+    name: lang === 'fr' ? "Gare Terminale de Yaoundé (Mvan)" : "Yaoundé Mvan Terminal",
     city: "Yaoundé",
     lat: 3.8480,
     lng: 11.5021,
     pk: "PK 250",
     type: "arrival",
-    category: "Terminal d'Arrivée VIP",
-    description: "Débarquement des passagers, livraison des bagages et retrait express des colis.",
+    category: lang === 'fr' ? "Terminal d'Arrivée VIP" : "VIP Arrival Terminal",
+    description: lang === 'fr'
+      ? "Débarquement des passagers, livraison des bagages et retrait express des colis."
+      : "Passenger arrival concourse, baggage delivery carousel, and express parcel pickup.",
     iconType: "flag",
   },
 ];
@@ -167,11 +156,11 @@ export const LiveTrackingMap = ({
   destination,
   currentLocation,
   locationHistory = [],
-  height = "460px",
-  interactive = true,
-  busPlate = "LT-782-AA",
-  tripTitle = "Douala ➔ Yaoundé",
+  height = '500px',
+  busPlate = 'LT-782-AA',
+  tripTitle = 'Douala ➔ Yaoundé',
 }) => {
+  const { lang, t } = useLanguage();
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const tileLayerRef = useRef(null);
@@ -179,99 +168,146 @@ export const LiveTrackingMap = ({
   const polylinesRef = useRef([]);
   const waypointMarkersMapRef = useRef(new Map());
 
-  // UI state
-  const [activeTileKey, setActiveTileKey] = useState("osm"); // 'osm' | 'satellite' | 'voyager'
+  const [activeTileKey, setActiveTileKey] = useState('voyager'); // 'osm' | 'voyager' | 'satellite' | 'cartoDark'
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedWaypointId, setSelectedWaypointId] = useState(null);
   const [showPlacesDrawer, setShowPlacesDrawer] = useState(true);
 
-  // Fallback coords
+  // Dynamic Tile Layers Configuration
+  const TILE_LAYERS = useMemo(() => ({
+    osm: {
+      name: lang === 'fr' ? "Plan Routier (OSM)" : "Road Map (OSM)",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution: "&copy; OpenStreetMap contributors",
+      maxZoom: 19,
+    },
+    voyager: {
+      name: "CartoDB Voyager HD",
+      url: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`,
+      attribution: "&copy; CartoDB &copy; OpenStreetMap",
+      maxZoom: 19,
+    },
+    satellite: {
+      name: lang === 'fr' ? "Satellite HD" : "Satellite HD",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      attribution: "&copy; Esri, Maxar, Earthstar Geographics",
+      maxZoom: 18,
+    },
+    cartoDark: {
+      name: lang === 'fr' ? "CartoDB Sombre" : "CartoDB Dark",
+      url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`,
+      attribution: "&copy; CartoDB &copy; OpenStreetMap",
+      maxZoom: 19,
+    },
+  }), [lang]);
+
+  // Telemetry data
   const busLat = currentLocation?.latitude || 4.015338;
   const busLng = currentLocation?.longitude || 9.814519;
-  const speed = currentLocation?.speed ?? 73;
-  const battery = currentLocation?.batteryLevel ?? 94;
+  const speed = currentLocation?.speed || 73;
+  const battery = currentLocation?.batteryLevel || 94;
 
-  // Build enhanced waypoints list
+  // Waypoints loaded based on current language
+  const baseWaypoints = useMemo(() => getWaypointsData(lang), [lang]);
+
+  // Compute status for each waypoint along the corridor
   const waypoints = useMemo(() => {
-    return DEFAULT_CAMEROON_WAYPOINTS.map((wp) => {
+    return baseWaypoints.map((wp) => {
       let status = "UPCOMING";
-      if (wp.type === "departure") {
+      if (busLng > wp.lng + 0.05) {
         status = "PASSED";
-      } else if (wp.type === "arrival") {
-        status = "UPCOMING";
-      } else {
-        const diff = busLng - wp.lng;
-        if (diff > 0.08) {
-          status = "PASSED";
-        } else if (Math.abs(diff) <= 0.08) {
-          status = "CURRENT";
-        } else {
-          status = "UPCOMING";
-        }
+      } else if (Math.abs(busLng - wp.lng) <= 0.08 && Math.abs(busLat - wp.lat) <= 0.08) {
+        status = "CURRENT";
       }
       return { ...wp, status };
     });
-  }, [busLng]);
+  }, [baseWaypoints, busLat, busLng]);
 
-  // Current nearest place
+  // Current nearest milestone
   const currentNearestPlace = useMemo(() => {
-    return (
-      waypoints.find((w) => w.status === "CURRENT") ||
-      waypoints.find((w) => w.status === "UPCOMING") ||
-      waypoints[1]
-    );
-  }, [waypoints]);
+    let nearest = waypoints[0];
+    let minDistance = Infinity;
 
-  // 1. Initialize Map
+    waypoints.forEach((wp) => {
+      const d = Math.hypot(wp.lat - busLat, wp.lng - busLng);
+      if (d < minDistance) {
+        minDistance = d;
+        nearest = wp;
+      }
+    });
+
+    return nearest;
+  }, [waypoints, busLat, busLng]);
+
+  // Helper for DivIcon creation
+  const createDivIcon = (html, className = '', size = [36, 36], anchor = [18, 18]) =>
+    L.divIcon({
+      html,
+      className: `custom-div-icon ${className}`,
+      iconSize: size,
+      iconAnchor: anchor,
+    });
+
+  // 1. Initialize Map Instance
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
-      const initialCenter = [busLat, busLng];
-
+      const initialCoords = [3.95, 10.6]; // Center of Douala - Yaoundé corridor
       const map = L.map(mapContainerRef.current, {
-        center: initialCenter,
+        center: initialCoords,
         zoom: 9,
         zoomControl: false,
         attributionControl: false,
       });
 
-      tileLayerRef.current = L.tileLayer(TILE_LAYERS[activeTileKey].url, {
-        attribution: TILE_LAYERS[activeTileKey].attribution,
-        maxZoom: TILE_LAYERS[activeTileKey].maxZoom,
+      L.control.attribution({ position: 'bottomleft', prefix: false }).addTo(map);
+
+      // Add active tile layer with Carto API key
+      const initialTileCfg = TILE_LAYERS[activeTileKey] || TILE_LAYERS.voyager;
+      const initialLayer = L.tileLayer(initialTileCfg.url, {
+        attribution: initialTileCfg.attribution,
+        maxZoom: initialTileCfg.maxZoom,
       }).addTo(map);
 
+      tileLayerRef.current = initialLayer;
       mapInstanceRef.current = map;
     }
 
+    // Trigger invalidateSize to ensure no grey tiles
     const resizeTimer = setTimeout(() => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.invalidateSize();
       }
     }, 250);
 
-    return () => {
-      clearTimeout(resizeTimer);
-    };
+    return () => clearTimeout(resizeTimer);
   }, []);
 
-  // 2. Handle Tile Layer Switch
+  // 2. Switch Tile Layers dynamically
   useEffect(() => {
     if (!mapInstanceRef.current) return;
-    if (tileLayerRef.current) {
-      mapInstanceRef.current.removeLayer(tileLayerRef.current);
-    }
-    tileLayerRef.current = L.tileLayer(TILE_LAYERS[activeTileKey].url, {
-      attribution: TILE_LAYERS[activeTileKey].attribution,
-      maxZoom: TILE_LAYERS[activeTileKey].maxZoom,
-    }).addTo(mapInstanceRef.current);
-  }, [activeTileKey]);
-
-  // 3. Render Markers, Waypoints, Route Polylines
-  useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map) return;
+    const tileCfg = TILE_LAYERS[activeTileKey];
 
+    if (tileLayerRef.current) {
+      map.removeLayer(tileLayerRef.current);
+    }
+
+    const newLayer = L.tileLayer(tileCfg.url, {
+      attribution: tileCfg.attribution,
+      maxZoom: tileCfg.maxZoom,
+    }).addTo(map);
+
+    tileLayerRef.current = newLayer;
+  }, [activeTileKey, TILE_LAYERS]);
+
+  // 3. Render Route, Waypoints & Bus Marker
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+
+    // Clear previous markers & polylines
     markersRef.current.forEach((m) => map.removeLayer(m));
     markersRef.current = [];
     polylinesRef.current.forEach((p) => map.removeLayer(p));
@@ -280,16 +316,7 @@ export const LiveTrackingMap = ({
 
     const bounds = [];
 
-    const createDivIcon = (html, className = "custom-map-icon", size = [36, 36], anchor = [18, 18]) => {
-      return L.divIcon({
-        html,
-        className,
-        iconSize: size,
-        iconAnchor: anchor,
-      });
-    };
-
-    // A. Render All Places / Waypoints ("Les Endroits")
+    // A. Render 8 Milestones ("Les Endroits")
     waypoints.forEach((wp) => {
       const latLng = [wp.lat, wp.lng];
       bounds.push(latLng);
@@ -334,6 +361,12 @@ export const LiveTrackingMap = ({
         icon: createDivIcon(wpMarkerHtml, "custom-place-marker", [40, 52], [20, 26]),
       }).addTo(map);
 
+      const statusText = isPassed
+        ? (lang === 'fr' ? "✓ Étape franchie" : "✓ Milestone Passed")
+        : isCurrent
+        ? (lang === 'fr' ? "📍 En approche immédiate" : "📍 Approaching Now")
+        : (lang === 'fr' ? "⏱️ Étape à venir" : "⏱️ Upcoming Stop");
+
       marker.bindPopup(`
         <div class="p-4 font-sans max-w-xs text-slate-900 bg-white">
           <div class="flex items-center justify-between gap-2 mb-1.5">
@@ -349,9 +382,9 @@ export const LiveTrackingMap = ({
           <h4 class="font-black text-slate-900 text-sm mb-1">${wp.name}</h4>
           <p class="text-xs text-slate-600 mb-3 leading-relaxed">${wp.description}</p>
           <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-            <span class="text-slate-500 font-medium">Statut autocar :</span>
+            <span class="text-slate-500 font-medium">${lang === 'fr' ? 'Statut autocar :' : 'Coach Status:'}</span>
             <strong class="font-bold ${isPassed ? "text-emerald-700" : isCurrent ? "text-blue-700 animate-pulse" : "text-slate-700"}">
-              ${isPassed ? "✓ Étape franchie" : isCurrent ? "📍 En approche immédiate" : "⏱️ Étape à venir"}
+              ${statusText}
             </strong>
           </div>
         </div>
@@ -365,15 +398,16 @@ export const LiveTrackingMap = ({
       waypointMarkersMapRef.current.set(wp.id, marker);
     });
 
-    // B. Render Origin Station Pin (Douala)
+    // B. Render Origin Station Pin
     const originCoords = [origin?.latitude || 4.0511, origin?.longitude || 9.7679];
+    const originLabel = origin?.name || (lang === 'fr' ? "Gare Centrale Douala (Akwa)" : "Douala Central Station (Akwa)");
     const originIconHtml = `
       <div class="relative flex flex-col items-center cursor-pointer">
         <div class="w-10 h-10 rounded-2xl bg-blue-700 border-2 border-white shadow-xl flex items-center justify-center text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <div class="mt-1 px-2.5 py-1 rounded-md bg-blue-950 text-white text-[11px] font-black shadow-lg border border-blue-400/50 whitespace-nowrap">
-          🏁 Départ : ${origin?.name || "Douala Akwa"}
+          ${lang === 'fr' ? '🏁 Départ :' : '🏁 Origin:'} ${originLabel}
         </div>
       </div>
     `;
@@ -383,15 +417,16 @@ export const LiveTrackingMap = ({
     }).addTo(map);
     markersRef.current.push(originMarker);
 
-    // C. Render Destination Station Pin (Yaoundé)
+    // C. Render Destination Station Pin
     const destCoords = [destination?.latitude || 3.8480, destination?.longitude || 11.5021];
+    const destLabel = destination?.name || (lang === 'fr' ? "Gare Terminale Yaoundé (Mvan)" : "Yaoundé Mvan Terminal");
     const destIconHtml = `
       <div class="relative flex flex-col items-center cursor-pointer">
         <div class="w-10 h-10 rounded-2xl bg-emerald-700 border-2 border-white shadow-xl flex items-center justify-center text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
         </div>
         <div class="mt-1 px-2.5 py-1 rounded-md bg-emerald-950 text-white text-[11px] font-black shadow-lg border border-emerald-400/50 whitespace-nowrap">
-          🏁 Arrivée : ${destination?.name || "Yaoundé Mvan"}
+          ${lang === 'fr' ? '🏁 Arrivée :' : '🏁 Destination:'} ${destLabel}
         </div>
       </div>
     `;
@@ -401,7 +436,7 @@ export const LiveTrackingMap = ({
     }).addTo(map);
     markersRef.current.push(destMarker);
 
-    // D. Render Route Polylines (Traveled + Remaining)
+    // D. Render Route Polylines
     const allRoutePoints = [
       originCoords,
       ...waypoints.slice(1, -1).map((w) => [w.lat, w.lng]),
@@ -442,7 +477,11 @@ export const LiveTrackingMap = ({
     }).addTo(map);
     polylinesRef.current.push(remainingPoly);
 
-    // E. Render Live Bus Marker with Radar Rings
+    // E. Render Live Bus Marker
+    const busBadgeText = lang === 'fr'
+      ? `Autocar ${busPlate} • ${speed} km/h`
+      : `Coach ${busPlate} • ${speed} km/h`;
+
     const liveBusHtml = `
       <div class="relative flex flex-col items-center">
         <span class="absolute -top-1 w-14 h-14 rounded-full bg-blue-500 opacity-40 animate-ping"></span>
@@ -454,7 +493,7 @@ export const LiveTrackingMap = ({
 
         <div class="mt-1 px-2.5 py-0.5 rounded-full bg-blue-900 text-white text-[10px] font-black shadow-xl border border-blue-400 whitespace-nowrap flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Autocar ${busPlate} • ${speed} km/h</span>
+          <span>${busBadgeText}</span>
         </div>
       </div>
     `;
@@ -464,29 +503,35 @@ export const LiveTrackingMap = ({
       zIndexOffset: 1200,
     }).addTo(map);
 
+    const busPopupTitle = lang === 'fr' ? 'Position GPS Flotte en Direct' : 'Fleet Live GPS Telemetry';
+    const busPopupSubtitle = lang === 'fr' ? 'Axe National N3' : 'National Highway N3';
+    const busSpeedLabel = lang === 'fr' ? 'Vitesse Actuelle' : 'Current Speed';
+    const busBatteryLabel = lang === 'fr' ? 'Batterie IoT' : 'IoT Battery';
+    const busNearLabel = lang === 'fr' ? 'Proche de :' : 'Near:';
+
     busMarker.bindPopup(`
       <div class="p-4 font-sans max-w-xs text-slate-900 bg-white">
         <div class="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase tracking-wider mb-1.5">
           <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
-          <span>Position GPS Flotte en Direct</span>
+          <span>${busPopupTitle}</span>
         </div>
-        <h4 class="font-black text-slate-900 text-base">Autocar VIP #${busPlate}</h4>
-        <p class="text-xs text-slate-500 mb-3">${tripTitle} • Axe National N3</p>
+        <h4 class="font-black text-slate-900 text-base">${lang === 'fr' ? 'Autocar VIP' : 'VIP Coach'} #${busPlate}</h4>
+        <p class="text-xs text-slate-500 mb-3">${tripTitle} • ${busPopupSubtitle}</p>
 
         <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs mb-3">
           <div>
-            <span class="text-slate-400 block text-[10px] uppercase font-bold">Vitesse Actuelle</span>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">${busSpeedLabel}</span>
             <strong class="text-sm font-black text-blue-950 font-mono">${speed} km/h</strong>
           </div>
           <div>
-            <span class="text-slate-400 block text-[10px] uppercase font-bold">Batterie IoT</span>
+            <span class="text-slate-400 block text-[10px] uppercase font-bold">${busBatteryLabel}</span>
             <strong class="text-sm font-black text-emerald-700 font-mono">${battery}%</strong>
           </div>
         </div>
 
         <div class="text-[11px] text-slate-600 bg-blue-50 border border-blue-200 rounded-lg p-2 flex items-center gap-2">
           <span class="text-blue-600 text-sm">📍</span>
-          <span>Proche de : <strong>${currentNearestPlace.name}</strong> (${currentNearestPlace.pk})</span>
+          <span>${busNearLabel} <strong>${currentNearestPlace.name}</strong> (${currentNearestPlace.pk})</span>
         </div>
       </div>
     `);
@@ -496,7 +541,7 @@ export const LiveTrackingMap = ({
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
     }
-  }, [waypoints, busLat, busLng, speed, battery, busPlate, tripTitle]);
+  }, [waypoints, busLat, busLng, speed, battery, busPlate, tripTitle, lang, origin, destination]);
 
   // Handle Fullscreen resize
   useEffect(() => {
@@ -584,7 +629,9 @@ export const LiveTrackingMap = ({
         <div className="pointer-events-auto bg-[#0B1E36]/95 backdrop-blur-md text-white px-4 py-2 rounded-xl shadow-xl border border-blue-500/40 flex items-center gap-3.5 text-xs font-semibold">
           <div className="flex items-center gap-2 text-blue-300 font-bold">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span className="text-[11px] tracking-wider uppercase font-black">GPS ACTIF</span>
+            <span className="text-[11px] tracking-wider uppercase font-black">
+              {lang === 'fr' ? 'GPS ACTIF' : 'LIVE GPS'}
+            </span>
           </div>
           <div className="h-4 w-px bg-white/20"></div>
           <div className="flex items-center gap-1.5">
@@ -598,7 +645,9 @@ export const LiveTrackingMap = ({
           <div className="h-4 w-px bg-white/20 hidden sm:block"></div>
           <div className="hidden sm:flex items-center gap-1.5 text-slate-300 text-[11px]">
             <MapPin size={13} className="text-amber-400" />
-            <span>À prox. de : <strong className="text-white">{currentNearestPlace.city}</strong></span>
+            <span>
+              {lang === 'fr' ? 'À prox. de :' : 'Near:'} <strong className="text-white">{currentNearestPlace.city}</strong>
+            </span>
           </div>
         </div>
       </div>
@@ -616,7 +665,7 @@ export const LiveTrackingMap = ({
         <button
           type="button"
           onClick={() => setIsFullscreen((prev) => !prev)}
-          title={isFullscreen ? "Quitter Plein Écran" : "Plein Écran"}
+          title={isFullscreen ? (lang === 'fr' ? "Quitter Plein Écran" : "Exit Full Screen") : (lang === 'fr' ? "Plein Écran" : "Full Screen")}
           className="w-10 h-10 rounded-xl bg-white hover:bg-slate-50 text-slate-800 shadow-xl border border-slate-300 flex items-center justify-center transition cursor-pointer"
         >
           {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -626,7 +675,7 @@ export const LiveTrackingMap = ({
         <button
           type="button"
           onClick={handleFocusBus}
-          title="Centrer sur le Bus en direct"
+          title={lang === 'fr' ? "Centrer sur le Bus en direct" : "Recenter on live bus"}
           className="w-10 h-10 rounded-xl bg-blue-700 hover:bg-blue-800 text-white shadow-xl border border-blue-500 flex items-center justify-center transition cursor-pointer"
         >
           <Crosshair size={18} />
@@ -636,7 +685,7 @@ export const LiveTrackingMap = ({
         <button
           type="button"
           onClick={handleFitAll}
-          title="Vue globale du trajet (Douala - Yaoundé)"
+          title={lang === 'fr' ? "Vue globale du trajet (Douala - Yaoundé)" : "Full route view (Douala - Yaoundé)"}
           className="w-10 h-10 rounded-xl bg-white hover:bg-slate-50 text-slate-800 shadow-xl border border-slate-300 flex items-center justify-center transition cursor-pointer"
         >
           <MapIcon size={18} />
@@ -647,7 +696,7 @@ export const LiveTrackingMap = ({
           <button
             type="button"
             onClick={handleZoomIn}
-            title="Zoom Avant"
+            title={lang === 'fr' ? "Zoom Avant" : "Zoom In"}
             className="w-10 h-9 hover:bg-slate-100 text-slate-800 flex items-center justify-center transition border-b border-slate-200 cursor-pointer"
           >
             <ZoomIn size={16} />
@@ -655,7 +704,7 @@ export const LiveTrackingMap = ({
           <button
             type="button"
             onClick={handleZoomOut}
-            title="Zoom Arrière"
+            title={lang === 'fr' ? "Zoom Arrière" : "Zoom Out"}
             className="w-10 h-9 hover:bg-slate-100 text-slate-800 flex items-center justify-center transition cursor-pointer"
           >
             <ZoomOut size={16} />
@@ -671,10 +720,10 @@ export const LiveTrackingMap = ({
               <Compass size={14} />
             </div>
             <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
-              Guide des Endroits & Étapes de la Ligne ({waypoints.length} étapes)
+              {lang === 'fr' ? 'Guide des Endroits & Étapes de la Ligne' : 'Waypoints & Route Milestones Guide'} ({waypoints.length} {lang === 'fr' ? 'étapes' : 'milestones'})
             </h4>
             <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
-              • Cliquez sur une ville pour centrer la carte
+              {lang === 'fr' ? '• Cliquez sur une ville pour centrer la carte' : '• Click a milestone to center map'}
             </span>
           </div>
 
@@ -698,7 +747,7 @@ export const LiveTrackingMap = ({
               onClick={() => setShowPlacesDrawer((prev) => !prev)}
               className="px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[11px] transition cursor-pointer"
             >
-              {showPlacesDrawer ? "Masquer" : "Afficher"}
+              {showPlacesDrawer ? (lang === 'fr' ? "Masquer" : "Hide") : (lang === 'fr' ? "Afficher" : "Show")}
             </button>
           </div>
         </div>
@@ -710,6 +759,12 @@ export const LiveTrackingMap = ({
               const isSelected = selectedWaypointId === wp.id;
               const isPassed = wp.status === "PASSED";
               const isCurrent = wp.status === "CURRENT";
+
+              let statusLabel = isPassed
+                ? (lang === 'fr' ? '✓ Franchi' : '✓ Passed')
+                : isCurrent
+                ? (lang === 'fr' ? '📍 Position Bus' : '📍 Bus Location')
+                : (lang === 'fr' ? '⏱️ À venir' : '⏱️ Upcoming');
 
               return (
                 <div
@@ -737,7 +792,7 @@ export const LiveTrackingMap = ({
                             : 'bg-slate-200 text-slate-600'
                         }`}
                       >
-                        {isPassed ? '✓ Franchi' : isCurrent ? '📍 Position Bus' : '⏱️ À venir'}
+                        {statusLabel}
                       </span>
                     </div>
 
@@ -748,7 +803,7 @@ export const LiveTrackingMap = ({
                   <div className="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between text-[10px]">
                     <span className="text-slate-400">{wp.category}</span>
                     <span className="font-bold text-blue-700 flex items-center gap-0.5 group-hover:translate-x-0.5 transition">
-                      Voir ➔
+                      {lang === 'fr' ? 'Voir ➔' : 'View ➔'}
                     </span>
                   </div>
                 </div>

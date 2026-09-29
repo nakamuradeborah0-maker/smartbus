@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle, Send, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }) => {
+  const { lang } = useLanguage();
   const [trackingNumber, setTrackingNumber] = useState(initialTrackingNumber);
   const [reporterName, setReporterName] = useState('');
   const [reporterPhone, setReporterPhone] = useState('');
@@ -57,8 +59,8 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
             <AlertTriangle size={22} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Signaler un Incident sur un Colis</h3>
-            <p className="text-xs text-slate-500">Ouverture d'un dossier de réclamation auprès du chef de gare</p>
+            <h3 className="text-lg font-bold text-slate-900">{lang === 'fr' ? 'Signaler un Incident sur un Colis' : 'Report an Issue with a Parcel'}</h3>
+            <p className="text-xs text-slate-500">{lang === 'fr' ? 'Ouverture d\'un dossier de réclamation auprès du chef de gare' : 'Open a claim / support ticket with the terminal master'}</p>
           </div>
         </div>
 
@@ -79,7 +81,7 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-              Numéro de Suivi *
+              {lang === 'fr' ? 'Numéro de Suivi *' : 'Tracking Number *'}
             </label>
             <input
               type="text"
@@ -157,7 +159,7 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
               onClick={onClose}
               className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Annuler
+              {lang === 'fr' ? 'Annuler' : 'Cancel'}
             </button>
             <button
               type="submit"

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Truck, Plus, Trash2, Calendar, Clock, X, User } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 import { StatusBadge } from '../common/StatusBadge';
 
 export const TripManagement = () => {
+  const { lang } = useLanguage();
   const [trips, setTrips] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -87,8 +89,8 @@ export const TripManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900">Horaires & Trajets de Bus</h3>
-          <p className="text-xs text-slate-500">Planification des départs, affectation des chauffeurs et gestion de flotte</p>
+          <h3 className="text-base font-bold text-slate-900">{lang === 'fr' ? 'Horaires & Trajets de Bus' : 'Bus Departures & Schedules'}</h3>
+          <p className="text-xs text-slate-500">{lang === 'fr' ? 'Planification des départs, affectation des chauffeurs et gestion de flotte' : 'Departure planning, driver assignment and fleet management'}</p>
         </div>
 
         <button
@@ -96,7 +98,7 @@ export const TripManagement = () => {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Programmer un Trajet</span>
+          <span>{lang === 'fr' ? 'Programmer un Trajet' : 'Schedule Trip'}</span>
         </button>
       </div>
 
@@ -117,11 +119,11 @@ export const TripManagement = () => {
             <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-slate-400">Chargement des trajets...</td>
+                  <td colSpan="7" className="py-8 text-center text-slate-400">{lang === 'fr' ? 'Chargement des trajets...' : 'Loading trips...'}</td>
                 </tr>
               ) : trips.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-slate-400">Aucun trajet programmé.</td>
+                  <td colSpan="7" className="py-8 text-center text-slate-400">{lang === 'fr' ? 'Aucun trajet programmé.' : 'No scheduled trips.'}</td>
                 </tr>
               ) : (
                 trips.map((t) => (

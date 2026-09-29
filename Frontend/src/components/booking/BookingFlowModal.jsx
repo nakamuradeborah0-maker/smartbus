@@ -20,7 +20,8 @@ import {
   Sparkles,
   Download,
   User,
-  IdCard
+  IdCard,
+  Mail
 } from 'lucide-react';
 import { api } from '../../api/api';
 import { useLanguage } from '../../context/LanguageContext';
@@ -98,92 +99,69 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
       busModel: 'Scania VIP Lounge Express #LT-890-BB',
       totalSeats: 32,
       availableSeats: 8,
-      occupiedSeats: [1, 2, 3, 5, 6, 7, 10, 11, 13, 14, 17, 18, 21, 22, 26, 27, 29, 30],
+      occupiedSeats: [3, 5, 6, 10, 13, 14, 17, 21, 22, 26, 28, 29, 32],
       price: 5000,
-      amenities: ['AC', 'Leather', 'USB Plug'],
-    },
-    {
-      id: 'DEP-04',
-      tripNumber: 'GV-1030',
-      from: 'Douala (Gare Centrale Akwa)',
-      to: 'Yaoundé (Terminal Mvan)',
-      departureTime: '18:30',
-      arrivalTime: '22:30',
-      duration: '4h 00m',
-      busModel: 'Volvo Highliner Night Executive #CE-555-CX',
-      totalSeats: 32,
-      availableSeats: 19,
-      occupiedSeats: [4, 8, 12, 15, 19, 22, 28],
-      price: 6000,
-      amenities: ['AC', 'Reclining', 'Night Light', 'Wi-Fi'],
+      amenities: ['AC', 'Snack', 'Wi-Fi', 'USB Plug'],
     },
   ];
 
   useEffect(() => {
     if (initialTrip) {
-      const normalizedTrip = {
-        ...initialTrip,
-        tripNumber: initialTrip.tripNumber || 'GV-1025',
-        from: initialTrip.from || initialTrip.originStationId?.name || initialTrip.originStationId?.city || fromCity,
-        to: initialTrip.to || initialTrip.destinationStationId?.name || initialTrip.destinationStationId?.city || toCity,
-        departureTime: initialTrip.departureTime
-          ? (String(initialTrip.departureTime).includes('T')
-              ? new Date(initialTrip.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : initialTrip.departureTime)
-          : '08:30',
-        arrivalTime: initialTrip.arrivalTime || '12:30',
-        duration: initialTrip.duration || '4h 00m',
-        busModel: initialTrip.busModel || (initialTrip.busId?.plateNumber ? `Autocar #${initialTrip.busId.plateNumber}` : 'Scania VIP First Class'),
-        availableSeats: initialTrip.availableSeats || 24,
-        price: initialTrip.price || 5000,
-        occupiedSeats: initialTrip.occupiedSeats || [2, 5, 8, 11, 16, 20]
-      };
-      setSelectedTrip(normalizedTrip);
+      setSelectedTrip(initialTrip);
       setStep('seat');
     } else {
-      setSelectedTrip(defaultDepartures[1]);
+      setSelectedTrip(defaultDepartures[0]);
       setStep('schedule');
     }
-  }, [initialTrip, isOpen]);
+    setPaymentResult(null);
+    setPaymentError('');
+    if (user?.name) setPassengerName(user.name);
+    if (user?.email) setPassengerEmail(user.email);
+  }, [isOpen, initialTrip, user]);
 
   if (!isOpen) return null;
 
-  const currentTrip = selectedTrip || defaultDepartures[1];
-  const occupiedSet = new Set(currentTrip.occupiedSeats || [3, 7, 10, 18, 24]);
+  const currentTrip = selectedTrip || defaultDepartures[0];
+  const occupiedSet = new Set(currentTrip.occupiedSeats || [2, 5, 8, 12]);
 
   const handleSelectTrip = (trip) => {
     setSelectedTrip(trip);
-    // Auto-select first available seat
-    const firstFree = [14, 13, 12, 6, 5, 1, 2].find(s => !(trip.occupiedSeats || []).includes(s)) || 14;
-    setSelectedSeat(firstFree);
     setStep('seat');
   };
 
-  const handleSeatClick = (seatNum) => {
-    if (occupiedSet.has(seatNum)) return;
-    setSelectedSeat(seatNum);
+  const handleSeatClick = (seatNumber) => {
+    if (occupiedSet.has(seatNumber)) return;
+    setSelectedSeat(seatNumber);
   };
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
-    setPaymentError('');
     setPaymentLoading(true);
+    setPaymentError('');
 
     try {
-      // Normalize Cameroon phone number automatically (e.g. 677949699 -> 237677949699)
-      let cleanPhone = String(phoneNumber).replace(/\D/g, '');
-      if (cleanPhone.startsWith('00237')) {
-        cleanPhone = cleanPhone.substring(2);
+      const cleanPhone = phoneNumber.replace(/\D/g, '');
+      if (cleanPhone.length < 9) {
+        throw new Error(
+          lang === 'fr'
+            ? 'Numéro de téléphone invalide (au moins 9 chiffres requis, ex: 677949699).'
+            : 'Invalid phone number (must be at least 9 digits, e.g. 677949699).'
+        );
       }
-      if (cleanPhone.length === 9 && (cleanPhone.startsWith('6') || cleanPhone.startsWith('2'))) {
-        cleanPhone = '237' + cleanPhone;
+
+      if (!passengerName.trim()) {
+        throw new Error(
+          lang === 'fr'
+            ? 'Veuillez saisir le nom complet du passager titulaire.'
+            : 'Please enter the full passenger name.'
+        );
       }
 
       const amount = currentTrip.price || 5000;
       const res = await api.collectPayment({
         amount,
         phoneNumber: cleanPhone,
-        description: `Global Voyages Bus Ticket ${currentTrip.tripNumber} - Seat ${selectedSeat}`
+        description: `Global Voyages Ticket ${currentTrip.tripNumber} - Seat ${selectedSeat} - ${passengerName.trim()}`
       });
 
       const resultPayload = {
@@ -193,8 +171,8 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
         operator: res.operator || (paymentMethod === 'OM' ? 'Orange Money' : 'MTN MoMo'),
         ussdCode: res.ussdCode || (paymentMethod === 'OM' ? '#150*50#' : '*126#'),
         phone: cleanPhone,
-        passenger: passengerName.trim() || 'Deborah Nakamura',
-        cni: passengerCni.trim() || 'Vérifié',
+        passenger: passengerName.trim(),
+        cni: passengerCni.trim() || (lang === 'fr' ? 'Vérifié' : 'Verified'),
         email: passengerEmail.trim(),
         seatNumber: selectedSeat,
         trip: currentTrip,
@@ -203,28 +181,27 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
       };
 
       setPaymentResult(resultPayload);
-      setStep('success'); // Persistent success screen! (NO timer closing!)
+      setStep('success'); // Persistent success screen
 
-      // If parent wants to update tickets list
       if (onBookingSuccess) {
         onBookingSuccess({
           id: resultPayload.reference,
           tripNumber: currentTrip.tripNumber,
-          passenger: passengerName.trim() || 'Deborah Nakamura',
-          cni: passengerCni.trim() || 'Vérifié',
+          passenger: passengerName.trim(),
+          cni: passengerCni.trim() || (lang === 'fr' ? 'Vérifié' : 'Verified'),
           origin: currentTrip.from || `${fromCity} Akwa`,
           destination: currentTrip.to || `${toCity} Mvan`,
           date: travelDate,
           time: currentTrip.departureTime,
           bus: currentTrip.busModel,
-          seat: `Siège N° ${selectedSeat} (VIP)`,
+          seat: lang === 'fr' ? `Siège N° ${selectedSeat} (VIP)` : `Seat No. ${selectedSeat} (VIP)`,
           price: amount,
           status: 'PAID'
         });
       }
 
     } catch (err) {
-      setPaymentError(err.message || (lang === 'fr' ? 'Échec d\'initiation du paiement. Vérifiez le numéro.' : 'Payment initiation failed. Check your phone number.'));
+      setPaymentError(err.message || (lang === "fr" ? "Échec d'initiation du paiement. Vérifiez le numéro." : "Payment initiation failed. Check your phone number."));
     } finally {
       setPaymentLoading(false);
     }
@@ -233,11 +210,13 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
   const handleDownloadTicket = () => {
     if (!paymentResult) return;
     const passName = paymentResult.passenger || passengerName || 'Deborah Nakamura';
+    const isEn = lang === 'en';
+
     const ticketHtml = `<!DOCTYPE html>
-<html lang="fr">
+<html lang="${isEn ? 'en' : 'fr'}">
 <head>
   <meta charset="UTF-8">
-  <title>Billet de Transport - Global Voyages - ${paymentResult.reference}</title>
+  <title>${isEn ? 'Boarding Pass - Global Voyages' : 'Billet de Transport - Global Voyages'} - ${paymentResult.reference}</title>
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; }
     .ticket-card { max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #cbd5e1; }
@@ -265,61 +244,63 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
   <div class="ticket-card">
     <div class="header">
       <div class="logo">GLOBAL <span>VOYAGES</span> VIP</div>
-      <div class="badge">TITRE CONFIRMÉ & VALIDÉ</div>
+      <div class="badge">${isEn ? 'CONFIRMED & VALIDATED TICKET' : 'TITRE CONFIRMÉ & VALIDÉ'}</div>
     </div>
     <div class="body">
       <div class="route-banner">
         <div class="station">
-          <p>Gare de Départ</p>
+          <p>${isEn ? 'Departure Station' : 'Gare de Départ'}</p>
           <h3>${currentTrip.from || fromCity}</h3>
         </div>
         <div class="arrow">➔</div>
         <div class="station" style="text-align: right;">
-          <p>Gare de Destination</p>
+          <p>${isEn ? 'Arrival Station' : 'Gare de Destination'}</p>
           <h3>${currentTrip.to || toCity}</h3>
         </div>
       </div>
       <div class="grid">
         <div class="item">
-          <div class="item-label">Nom du Voyageur / Passager</div>
+          <div class="item-label">${isEn ? 'Full Passenger Name' : 'Nom du Voyageur / Passager'}</div>
           <div class="item-val">${passName}</div>
         </div>
         <div class="item">
-          <div class="item-label">Siège Réservé</div>
-          <div class="item-val seat-val">N° ${paymentResult.seatNumber} (VIP)</div>
+          <div class="item-label">${isEn ? 'Reserved Seat' : 'Siège Réservé'}</div>
+          <div class="item-val seat-val">${isEn ? `Seat No. ${paymentResult.seatNumber} (VIP)` : `Siège N° ${paymentResult.seatNumber} (VIP)`}</div>
         </div>
         <div class="item">
-          <div class="item-label">Date & Heure de Départ</div>
-          <div class="item-val">${travelDate} • ${currentTrip.departureTime}</div>
+          <div class="item-label">${isEn ? 'Departure Date & Time' : 'Date & Heure de Départ'}</div>
+          <div class="item-val">${paymentResult.travelDate} • ${currentTrip.departureTime}</div>
         </div>
         <div class="item">
-          <div class="item-label">Autocar & Ligne</div>
-          <div class="item-val">${currentTrip.tripNumber} (${currentTrip.busModel || 'Scania VIP'})</div>
+          <div class="item-label">${isEn ? 'Coach & Fleet' : 'Autocar & Ligne'}</div>
+          <div class="item-val">${currentTrip.tripNumber} (${currentTrip.busModel})</div>
         </div>
         <div class="item">
-          <div class="item-label">Référence Réservation</div>
+          <div class="item-label">${isEn ? 'Booking Reference' : 'Référence Réservation'}</div>
           <div class="item-val" style="font-family: monospace;">${paymentResult.reference}</div>
         </div>
         <div class="item">
-          <div class="item-label">Tarif Acquitté (CamPay)</div>
-          <div class="item-val" style="color: #059669;">${paymentResult.amount?.toLocaleString()} FCFA (PAYÉ)</div>
+          <div class="item-label">${isEn ? 'Fare Paid (CamPay)' : 'Tarif Acquitté (CamPay)'}</div>
+          <div class="item-val" style="color: #059669;">${paymentResult.amount?.toLocaleString()} ${isEn ? 'XAF (PAID)' : 'FCFA (PAYÉ)'}</div>
         </div>
       </div>
       <div class="barcode-section">
         <div>
-          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">Code de Contrôle Quai</div>
+          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
+            ${isEn ? 'Gate Boarding Control Code' : 'Code de Contrôle Quai'}
+          </div>
           <div class="barcode">*${paymentResult.reference}-${paymentResult.seatNumber}*</div>
         </div>
         <div style="text-align: right;">
           <span style="display: inline-block; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 11px; font-weight: bold;">
-            ✓ Validé CamPay MoMo (${paymentResult.phone})
+            ✓ ${isEn ? 'Validated CamPay MoMo' : 'Validé CamPay MoMo'} (${paymentResult.phone})
           </span>
         </div>
       </div>
     </div>
     <div class="footer">
-      <span>Présentez ce billet électronique à l'embarquement avec votre pièce d'identité.</span>
-      <span>Global Voyages Cameroun • Service VIP Interurbain</span>
+      <span>${isEn ? 'Please present this electronic boarding pass along with your ID at the gate.' : 'Présentez ce billet électronique à l\'embarquement avec votre pièce d\'identité.'}</span>
+      <span>Global Voyages Cameroon • VIP Intercity Express</span>
     </div>
   </div>
 </body>
@@ -329,7 +310,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Billet_GlobalVoyages_${paymentResult.reference}_Siege_${paymentResult.seatNumber}.html`;
+    link.download = `Ticket_GlobalVoyages_${paymentResult.reference}_Seat_${paymentResult.seatNumber}.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -363,10 +344,10 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
             </div>
             <div>
               <h3 className="text-base font-black tracking-tight text-white">
-                {step === 'schedule' && (lang === 'fr' ? '1. Horaires & Disponibilités' : '1. Departures & Schedules')}
-                {step === 'seat' && (lang === 'fr' ? '2. Plan du Bus & Choix du Siège' : '2. Coach Map & Seat Selection')}
-                {step === 'payment' && (lang === 'fr' ? '3. Paiement Sécurisé Mobile Money' : '3. Secure Mobile Payment')}
-                {step === 'success' && (lang === 'fr' ? '✓ Titre de Transport Émis' : '✓ Ticket Issued Successfully')}
+                {step === 'schedule' && t('booking.stepSchedule', '1. Horaires & Disponibilités')}
+                {step === 'seat' && t('booking.stepSeat', '2. Plan du Bus & Choix du Siège')}
+                {step === 'payment' && t('booking.stepPayment', '3. Paiement Sécurisé Mobile Money')}
+                {step === 'success' && t('booking.stepSuccess', '✓ Titre de Transport Émis')}
               </h3>
               <p className="text-[11px] text-blue-200">
                 {currentTrip.from || fromCity} ➔ {currentTrip.to || toCity} • {travelDate}
@@ -377,7 +358,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
-            title="Fermer"
+            title={lang === 'fr' ? "Fermer" : "Close"}
           >
             <X size={20} />
           </button>
@@ -387,22 +368,22 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
         <div className="flex items-center justify-between px-6 py-2.5 bg-slate-100 border-b border-slate-200 text-[11px] font-bold text-slate-500">
           <span className={`flex items-center gap-1.5 ${step === 'schedule' ? 'text-blue-700 font-black' : step !== 'schedule' ? 'text-emerald-700' : ''}`}>
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 'schedule' ? 'bg-blue-600 text-white' : 'bg-emerald-600 text-white'}`}>1</span>
-            {lang === 'fr' ? 'Horaires' : 'Schedule'}
+            {t('booking.step1', 'Horaires')}
           </span>
           <ChevronRight size={14} className="text-slate-300" />
           <span className={`flex items-center gap-1.5 ${step === 'seat' ? 'text-blue-700 font-black' : ['payment', 'success'].includes(step) ? 'text-emerald-700' : ''}`}>
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 'seat' ? 'bg-blue-600 text-white' : ['payment', 'success'].includes(step) ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-slate-700'}`}>2</span>
-            {lang === 'fr' ? 'Choix du Siège' : 'Seat Selection'}
+            {t('booking.step2', 'Choix du Siège')}
           </span>
           <ChevronRight size={14} className="text-slate-300" />
           <span className={`flex items-center gap-1.5 ${step === 'payment' ? 'text-blue-700 font-black' : step === 'success' ? 'text-emerald-700' : ''}`}>
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 'payment' ? 'bg-blue-600 text-white' : step === 'success' ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-slate-700'}`}>3</span>
-            {lang === 'fr' ? 'Paiement' : 'Payment'}
+            {t('booking.step3', 'Paiement')}
           </span>
           <ChevronRight size={14} className="text-slate-300" />
           <span className={`flex items-center gap-1.5 ${step === 'success' ? 'text-emerald-700 font-black' : ''}`}>
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step === 'success' ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-slate-700'}`}>4</span>
-            {lang === 'fr' ? 'Billet' : 'Ticket'}
+            {t('booking.step4', 'Billet')}
           </span>
         </div>
 
@@ -415,7 +396,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
               <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    {lang === 'fr' ? 'Gare de Départ' : 'Departure Station'}
+                    {t('booking.origin', 'Gare de Départ')}
                   </label>
                   <select
                     value={fromCity}
@@ -429,7 +410,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    {lang === 'fr' ? 'Gare d\'Arrivée' : 'Arrival Station'}
+                    {t('booking.destination', 'Gare d\'Arrivée')}
                   </label>
                   <select
                     value={toCity}
@@ -443,7 +424,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    {lang === 'fr' ? 'Date de Voyage' : 'Travel Date'}
+                    {t('booking.date', 'Date de Voyage')}
                   </label>
                   <input
                     type="date"
@@ -458,9 +439,11 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <h4 className="font-bold text-slate-900 uppercase tracking-wider">
-                    {lang === 'fr' ? 'Départs disponibles ce jour :' : 'Available departures today:'}
+                    {t('booking.availableDepartures', 'Départs disponibles ce jour :')}
                   </h4>
-                  <span className="text-slate-500 font-medium">{defaultDepartures.length} {lang === 'fr' ? 'voyages programmés' : 'scheduled trips'}</span>
+                  <span className="text-slate-500 font-medium">
+                    {defaultDepartures.length} {t('booking.scheduledTrips', 'voyages programmés')}
+                  </span>
                 </div>
 
                 {defaultDepartures.map((dep) => (
@@ -491,7 +474,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                       <div className="flex items-center gap-2 text-[11px] text-slate-500">
                         <Users size={13} className="text-emerald-600" />
                         <span className="font-semibold text-emerald-700">
-                          {dep.availableSeats} {lang === 'fr' ? 'places disponibles' : 'seats available'}
+                          {dep.availableSeats} {t('booking.seatsAvailable', 'places disponibles')}
                         </span>
                         <span>•</span>
                         <span>{dep.amenities.join(' • ')}</span>
@@ -503,9 +486,9 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                       <button
                         type="button"
                         onClick={() => handleSelectTrip(dep)}
-                        className="px-4 py-1.5 rounded-lg bg-blue-600 group-hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition"
+                        className="px-4 py-1.5 rounded-lg bg-blue-600 group-hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
                       >
-                        {lang === 'fr' ? 'Choisir ce départ' : 'Select Departure'}
+                        {t('booking.selectDeparture', 'Choisir ce départ')}
                       </button>
                     </div>
                   </div>
@@ -525,14 +508,16 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     <span>•</span>
                     <span>{currentTrip.departureTime} ({currentTrip.from || fromCity} ➔ {currentTrip.to || toCity})</span>
                   </div>
-                  <span className="text-blue-700 text-[11px]">{currentTrip.busModel} • Tarif : {currentTrip.price?.toLocaleString()} FCFA</span>
+                  <span className="text-blue-700 text-[11px]">
+                    {currentTrip.busModel} • {t('booking.fare', 'Tarif :')} {currentTrip.price?.toLocaleString()} FCFA
+                  </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep('schedule')}
                   className="px-2.5 py-1 bg-white border border-blue-300 text-blue-700 hover:bg-blue-100 rounded-md font-bold text-[11px] transition cursor-pointer"
                 >
-                  {lang === 'fr' ? 'Changer départ' : 'Change time'}
+                  {t('booking.changeDeparture', 'Changer départ')}
                 </button>
               </div>
 
@@ -540,19 +525,19 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
               <div className="flex items-center justify-center gap-6 py-2 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                  <span className="text-slate-600">{lang === 'fr' ? 'Libre' : 'Available'}</span>
+                  <span className="text-slate-600">{t('booking.available', 'Libre')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
                     <Check size={12} />
                   </div>
-                  <span className="text-blue-700 font-bold">{lang === 'fr' ? 'Sélectionné' : 'Selected'}</span>
+                  <span className="text-blue-700 font-bold">{t('booking.selected', 'Sélectionné')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-md bg-slate-300 text-slate-500 flex items-center justify-center text-[10px] cursor-not-allowed">
                     ✕
                   </div>
-                  <span className="text-slate-400">{lang === 'fr' ? 'Occupé' : 'Occupied'}</span>
+                  <span className="text-slate-400">{t('booking.occupied', 'Occupé')}</span>
                 </div>
               </div>
 
@@ -562,10 +547,10 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 <div className="flex items-center justify-between pb-4 mb-4 border-b-2 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider">
                   <div className="flex items-center gap-1.5 bg-slate-200 px-3 py-1 rounded-md text-slate-700">
                     <span className="text-base">🛞</span>
-                    <span>{lang === 'fr' ? 'Poste Chauffeur' : 'Driver'}</span>
+                    <span>{t('booking.driverCabin', 'Poste Chauffeur')}</span>
                   </div>
                   <div className="text-[10px] bg-slate-200 text-slate-600 px-2 py-1 rounded">
-                    {lang === 'fr' ? 'Porte d\'accès' : 'Door'}
+                    {t('booking.door', 'Porte d\'accès')}
                   </div>
                 </div>
 
@@ -587,7 +572,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                           type="button"
                           disabled={isOccupied}
                           onClick={() => handleSeatClick(num)}
-                          title={isOccupied ? 'Siège déjà réservé' : getSeatLabel(num)}
+                          title={isOccupied ? (lang === 'fr' ? 'Siège déjà réservé' : 'Seat already reserved') : getSeatLabel(num)}
                           className={`w-10 h-10 rounded-lg text-xs font-bold transition flex flex-col items-center justify-center relative cursor-pointer ${
                             isOccupied
                               ? 'bg-slate-300 text-slate-500 border border-slate-400 opacity-60 cursor-not-allowed'
@@ -627,7 +612,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
 
                 {/* Back of bus */}
                 <div className="pt-4 mt-4 border-t-2 border-slate-200 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                  {lang === 'fr' ? 'Arrière du Car VIP' : 'Rear of VIP Coach'}
+                  {t('booking.busRear', 'Arrière du Car VIP')}
                 </div>
               </div>
 
@@ -635,13 +620,13 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 block">
-                    {lang === 'fr' ? 'Votre sélection :' : 'Your selection:'}
+                    {t('booking.yourSelection', 'Votre sélection :')}
                   </span>
                   <div className="text-sm font-black text-slate-900 mt-0.5">
                     {getSeatLabel(selectedSeat)}
                   </div>
                   <span className="text-xs text-slate-600">
-                    {lang === 'fr' ? 'Tarif unique première classe :' : 'First class fare:'} <strong>{currentTrip.price?.toLocaleString()} FCFA</strong>
+                    {t('booking.firstClassFare', 'Tarif unique première classe :')} <strong>{currentTrip.price?.toLocaleString()} FCFA</strong>
                   </span>
                 </div>
 
@@ -651,14 +636,14 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     onClick={() => setStep('schedule')}
                     className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition cursor-pointer"
                   >
-                    {lang === 'fr' ? 'Retour' : 'Back'}
+                    {t('booking.back', 'Retour')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('payment')}
                     className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>{lang === 'fr' ? 'Continuer vers le Paiement' : 'Continue to Payment'}</span>
+                    <span>{t('booking.continuePayment', 'Continuer vers le Paiement')}</span>
                     <ChevronRight size={16} />
                   </button>
                 </div>
@@ -666,7 +651,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
             </div>
           )}
 
-          {/* ================= STEP 3: CAMPAY MOBILE MONEY PAYMENT ================= */}
+          {/* ================= STEP 3: PASSENGER DETAILS & CAMPAY PAYMENT ================= */}
           {step === 'payment' && (
             <div className="space-y-6 animate-fadeIn">
               {/* Order Recap */}
@@ -677,17 +662,67 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-slate-600 text-[11px]">
                   <div>Date : <strong className="text-slate-800">{travelDate}</strong></div>
-                  <div>Départ : <strong className="text-slate-800">{currentTrip.departureTime}</strong></div>
-                  <div>Siège réservé : <strong className="text-blue-800">{getSeatLabel(selectedSeat)}</strong></div>
-                  <div>Autocar : <strong className="text-slate-800">{currentTrip.busModel}</strong></div>
+                  <div>{lang === 'fr' ? 'Départ :' : 'Departure:'} <strong className="text-slate-800">{currentTrip.departureTime}</strong></div>
+                  <div>{lang === 'fr' ? 'Siège réservé :' : 'Reserved Seat:'} <strong className="text-blue-800">{getSeatLabel(selectedSeat)}</strong></div>
+                  <div>{lang === 'fr' ? 'Autocar :' : 'Coach:'} <strong className="text-slate-800">{currentTrip.busModel}</strong></div>
                 </div>
               </div>
 
               {/* Payment Form */}
               <form onSubmit={handlePaymentSubmit} className="space-y-4">
+                {/* Passenger Reservation Details Inputs */}
+                <div className="p-4 bg-blue-50/50 border border-blue-200 rounded-xl space-y-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-900 flex items-center gap-1.5">
+                    <User size={15} className="text-blue-700" />
+                    <span>{t('booking.passengerDetails', 'Informations Réservation & Passager')}</span>
+                  </span>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      {t('booking.passengerName', 'Nom & Prénom du Voyageur')} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={passengerName}
+                      onChange={(e) => setPassengerName(e.target.value)}
+                      placeholder={t('booking.passengerNamePlaceholder', 'ex: Deborah Nakamura')}
+                      className="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {t('booking.cniLabel', 'Numéro CNI / Passeport')}
+                      </label>
+                      <input
+                        type="text"
+                        value={passengerCni}
+                        onChange={(e) => setPassengerCni(e.target.value)}
+                        placeholder={t('booking.cniPlaceholder', 'ex: 110293847')}
+                        className="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {t('booking.emailLabel', 'Email (Billet PDF)')}
+                      </label>
+                      <input
+                        type="email"
+                        value={passengerEmail}
+                        onChange={(e) => setPassengerEmail(e.target.value)}
+                        placeholder={t('booking.emailPlaceholder', 'ex: deborah@example.com')}
+                        className="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Operator Selector */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                    {lang === 'fr' ? 'Choisissez votre Opérateur Mobile Money' : 'Choose Mobile Money Operator'}
+                    {t('booking.operatorLabel', 'Choisissez votre Opérateur Mobile Money')}
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
@@ -720,7 +755,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                    {lang === 'fr' ? 'Numéro de Téléphone Mobile Money' : 'Mobile Money Phone Number'}
+                    {t('booking.phoneLabel', 'Numéro de Téléphone Mobile Money')}
                   </label>
                   <div className="relative">
                     <input
@@ -733,9 +768,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     />
                   </div>
                   <span className="text-[11px] text-slate-500 mt-1 block">
-                    {lang === 'fr'
-                      ? 'Entrez vos 9 chiffres (ex: 677 94 96 99). L\'indicatif +237 est géré automatiquement.'
-                      : 'Enter 9 digits (e.g. 677 94 96 99). The +237 code is added automatically.'}
+                    {t('booking.phoneHint', "Entrez vos 9 chiffres (ex: 677 94 96 99). L'indicatif +237 est géré automatiquement.")}
                   </span>
                 </div>
 
@@ -752,7 +785,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     onClick={() => setStep('seat')}
                     className="flex-1 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer"
                   >
-                    {lang === 'fr' ? 'Modifier le Siège' : 'Change Seat'}
+                    {t('booking.changeSeat', 'Modifier le Siège')}
                   </button>
                   <button
                     type="submit"
@@ -762,8 +795,8 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     {paymentLoading ? <RotateCw size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
                     <span>
                       {paymentLoading
-                        ? (lang === 'fr' ? 'Envoi de la demande CamPay...' : 'Sending CamPay Push...')
-                        : `${lang === 'fr' ? 'Valider & Payer' : 'Confirm & Pay'} ${currentTrip.price?.toLocaleString()} FCFA`}
+                        ? t('booking.sendingPush', 'Envoi de la demande CamPay...')
+                        : `${t('booking.confirmAndPay', 'Valider & Payer')} ${currentTrip.price?.toLocaleString()} FCFA`}
                     </span>
                   </button>
                 </div>
@@ -772,7 +805,6 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
           )}
 
           {/* ================= STEP 4: PERSISTENT CONFIRMATION & USSD SCREEN ================= */}
-          {/* CRITICAL: THIS SCREEN DOES NOT DISAPPEAR UNTIL USER CLICKS 'Done' */}
           {step === 'success' && paymentResult && (
             <div className="space-y-6 animate-fadeIn py-2">
               <div className="text-center space-y-2">
@@ -780,12 +812,10 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                   <CheckCircle2 size={36} />
                 </div>
                 <h4 className="text-xl font-black text-slate-900 tracking-tight">
-                  {lang === 'fr' ? 'Demande de Paiement Transmise !' : 'Payment Push Notification Sent!'}
+                  {t('booking.pushSent', 'Demande de Paiement Transmise !')}
                 </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto">
-                  {lang === 'fr' 
-                    ? 'Un message push a été envoyé sur votre téléphone. Veuillez valider le débit avec votre code PIN secret.'
-                    : 'A push notification was sent to your mobile. Please approve the charge using your secret PIN.'}
+                  {t('booking.pushDesc', 'Un message push a été envoyé sur votre téléphone. Veuillez valider le débit avec votre code PIN secret.')}
                 </p>
               </div>
 
@@ -794,16 +824,14 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
                     <Sparkles size={14} className="text-amber-600" />
-                    {lang === 'fr' ? 'Action requise sur votre mobile :' : 'Action required on your phone:'}
+                    {t('booking.actionRequired', 'Action requise sur votre mobile :')}
                   </span>
                   <span className="px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-mono text-[10px] font-bold">
                     {paymentResult.operator}
                   </span>
                 </div>
                 <p className="text-xs leading-relaxed">
-                  {lang === 'fr'
-                    ? `Si vous n'avez pas reçu de popup automatique, composez directement le code USSD ci-dessous pour confirmer :`
-                    : `If you didn't receive an automated prompt, dial the USSD code below to confirm:`}
+                  {t('booking.ussdHint', "Si vous n'avez pas reçu de popup automatique, composez directement le code USSD ci-dessous pour confirmer :")}
                 </p>
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-amber-200">
                   <span className="font-mono text-base font-black text-slate-900 tracking-wider">
@@ -815,7 +843,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                     className="flex items-center gap-1 px-3 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs rounded-lg transition cursor-pointer"
                   >
                     <Copy size={13} />
-                    <span>{copiedCode ? (lang === 'fr' ? 'Copié !' : 'Copied!') : (lang === 'fr' ? 'Copier' : 'Copy')}</span>
+                    <span>{copiedCode ? t('booking.copied', 'Copié !') : t('booking.copy', 'Copier')}</span>
                   </button>
                 </div>
               </div>
@@ -823,7 +851,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
               {/* Digital Boarding Pass / Ticket Card */}
               <div className="p-5 bg-white border-2 border-blue-200 rounded-2xl shadow-sm space-y-4 relative overflow-hidden">
                 <div className="absolute top-0 right-0 bg-blue-600 text-white font-mono text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-                  {lang === 'fr' ? 'Billet Réservé' : 'Ticket Reserved'}
+                  {t('booking.ticketReserved', 'Billet Réservé')}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -837,41 +865,41 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                 <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between text-xs">
                   <div>
                     <span className="text-[10px] text-slate-500 uppercase font-bold block">
-                      {lang === 'fr' ? 'Passager Titulaire (Réservation)' : 'Passenger Name'}
+                      {t('booking.passengerReservation', 'Passager Titulaire (Réservation)')}
                     </span>
                     <strong className="text-blue-950 font-black text-sm">
                       {paymentResult.passenger || passengerName || 'Deborah Nakamura'}
                     </strong>
                   </div>
-                  {paymentResult.cni && paymentResult.cni !== 'Vérifié' && (
+                  {paymentResult.cni && paymentResult.cni !== 'Vérifié' && paymentResult.cni !== 'Verified' && (
                     <span className="text-[11px] text-slate-600 font-mono">CNI: {paymentResult.cni}</span>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2 border-t border-slate-100">
                   <div>
-                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{lang === 'fr' ? 'Voyage' : 'Trip'}</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{t('booking.trip', 'Voyage')}</span>
                     <strong className="text-slate-900 font-mono">{currentTrip.tripNumber}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{lang === 'fr' ? 'Date & Heure' : 'Date & Time'}</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{t('booking.dateTime', 'Date & Heure')}</span>
                     <strong className="text-slate-900">{travelDate} • {currentTrip.departureTime}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{lang === 'fr' ? 'Siège Attribué' : 'Chosen Seat'}</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{t('booking.assignedSeat', 'Siège Attribué')}</span>
                     <strong className="text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
                       N° {paymentResult.seatNumber}
                     </strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{lang === 'fr' ? 'Montant' : 'Amount'}</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold">{t('booking.amount', 'Montant')}</span>
                     <strong className="text-emerald-700 font-black">{paymentResult.amount?.toLocaleString()} FCFA</strong>
                   </div>
                 </div>
 
                 <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-100 flex items-center justify-between">
                   <span>Réf: <strong className="font-mono text-slate-700">{paymentResult.reference}</strong></span>
-                  <span>Tél: <strong className="font-mono text-slate-700">{paymentResult.phone}</strong></span>
+                  <span>{lang === 'fr' ? 'Tél:' : 'Tel:'} <strong className="font-mono text-slate-700">{paymentResult.phone}</strong></span>
                 </div>
               </div>
 
@@ -883,7 +911,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                   className="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download size={15} />
-                  <span>{lang === 'fr' ? 'Télécharger Billet' : 'Download Ticket'}</span>
+                  <span>{t('booking.downloadTicket', 'Télécharger Billet')}</span>
                 </button>
                 <button
                   type="button"
@@ -891,7 +919,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                   className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Printer size={15} />
-                  <span>{lang === 'fr' ? 'Imprimer' : 'Print'}</span>
+                  <span>{t('booking.print', 'Imprimer')}</span>
                 </button>
                 <button
                   type="button"
@@ -899,7 +927,7 @@ export const BookingFlowModal = ({ isOpen, onClose, initialTrip = null, onBookin
                   className="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Check size={16} />
-                  <span>{lang === 'fr' ? 'Terminer & Voir Billets' : 'Done & View Tickets'}</span>
+                  <span>{t('booking.done', 'Terminer & Voir Billets')}</span>
                 </button>
               </div>
             </div>

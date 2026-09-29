@@ -67,11 +67,12 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
 
   const handleDownloadCustomerTicket = (ticket) => {
     const passName = ticket.passenger || user?.name || 'Deborah Nakamura';
+    const isEn = lang === 'en';
     const ticketHtml = `<!DOCTYPE html>
-<html lang="fr">
+<html lang="${isEn ? 'en' : 'fr'}">
 <head>
   <meta charset="UTF-8">
-  <title>Billet de Transport - Global Voyages - ${ticket.id}</title>
+  <title>${isEn ? 'Boarding Pass - Global Voyages' : 'Billet de Transport - Global Voyages'} - ${ticket.id}</title>
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; }
     .ticket-card { max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #cbd5e1; }
@@ -99,61 +100,63 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
   <div class="ticket-card">
     <div class="header">
       <div class="logo">GLOBAL <span>VOYAGES</span> VIP</div>
-      <div class="badge">TITRE CONFIRMÉ & VALIDÉ</div>
+      <div class="badge">${isEn ? 'CONFIRMED & VALIDATED TICKET' : 'TITRE CONFIRMÉ & VALIDÉ'}</div>
     </div>
     <div class="body">
       <div class="route-banner">
         <div class="station">
-          <p>Gare de Départ</p>
+          <p>${isEn ? 'Departure Station' : 'Gare de Départ'}</p>
           <h3>${ticket.origin}</h3>
         </div>
         <div class="arrow">➔</div>
         <div class="station" style="text-align: right;">
-          <p>Gare de Destination</p>
+          <p>${isEn ? 'Arrival Station' : 'Gare de Destination'}</p>
           <h3>${ticket.destination}</h3>
         </div>
       </div>
       <div class="grid">
         <div class="item">
-          <div class="item-label">Nom du Voyageur / Passager</div>
+          <div class="item-label">${isEn ? 'Full Passenger Name' : 'Nom du Voyageur / Passager'}</div>
           <div class="item-val">${passName}</div>
         </div>
         <div class="item">
-          <div class="item-label">Siège Réservé</div>
-          <div class="item-val seat-val">${ticket.seat || 'Siège N° 14 (VIP)'}</div>
+          <div class="item-label">${isEn ? 'Reserved Seat' : 'Siège Réservé'}</div>
+          <div class="item-val seat-val">${ticket.seat || (isEn ? 'Seat No. 14 (VIP)' : 'Siège N° 14 (VIP)')}</div>
         </div>
         <div class="item">
-          <div class="item-label">Date & Heure de Départ</div>
+          <div class="item-label">${isEn ? 'Departure Date & Time' : 'Date & Heure de Départ'}</div>
           <div class="item-val">${ticket.date} • ${ticket.time}</div>
         </div>
         <div class="item">
-          <div class="item-label">Autocar & Ligne</div>
+          <div class="item-label">${isEn ? 'Coach & Fleet' : 'Autocar & Ligne'}</div>
           <div class="item-val">${ticket.tripNumber} (${ticket.bus || 'Scania VIP First Class'})</div>
         </div>
         <div class="item">
-          <div class="item-label">Référence Réservation</div>
+          <div class="item-label">${isEn ? 'Booking Reference' : 'Référence Réservation'}</div>
           <div class="item-val" style="font-family: monospace;">${ticket.id}</div>
         </div>
         <div class="item">
-          <div class="item-label">Tarif Acquitté (CamPay)</div>
-          <div class="item-val" style="color: #059669;">${ticket.price?.toLocaleString()} FCFA (PAYÉ)</div>
+          <div class="item-label">${isEn ? 'Fare Paid (CamPay)' : 'Tarif Acquitté (CamPay)'}</div>
+          <div class="item-val" style="color: #059669;">${ticket.price?.toLocaleString()} ${isEn ? 'XAF (PAID)' : 'FCFA (PAYÉ)'}</div>
         </div>
       </div>
       <div class="barcode-section">
         <div>
-          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">Code de Contrôle Embarquement</div>
+          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
+            ${isEn ? 'Boarding Control Code' : 'Code de Contrôle Embarquement'}
+          </div>
           <div class="barcode">*${ticket.id}*</div>
         </div>
         <div style="text-align: right;">
           <span style="display: inline-block; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 11px; font-weight: bold;">
-            ✓ Titre Validé
+            ✓ ${isEn ? 'Validated Ticket' : 'Titre Validé'}
           </span>
         </div>
       </div>
     </div>
     <div class="footer">
-      <span>Présentez ce billet électronique à l'embarquement avec votre pièce d'identité.</span>
-      <span>Global Voyages Cameroun • Service VIP Interurbain</span>
+      <span>${isEn ? 'Please present this electronic boarding pass along with your ID at the gate.' : 'Présentez ce billet électronique à l\'embarquement avec votre pièce d\'identité.'}</span>
+      <span>Global Voyages Cameroon • VIP Intercity Express</span>
     </div>
   </div>
 </body>
@@ -163,7 +166,7 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Billet_GlobalVoyages_${ticket.id}.html`;
+    link.download = `Ticket_GlobalVoyages_${ticket.id}.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -428,13 +431,15 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
             <div className="relative p-6 sm:p-10 max-w-2xl space-y-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
                 <ShieldCheck size={14} />
-                Flotte Confort VIP
+                {lang === 'fr' ? 'Flotte Confort VIP' : 'VIP First-Class Fleet'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Voyagez en Première Classe Interurbaine
+                {lang === 'fr' ? 'Voyagez en Première Classe Interurbaine' : 'Travel in First-Class Intercity Comfort'}
               </h2>
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                Fauteuils en cuir inclinables, climatisation régulée et wifi à bord sur toutes nos liaisons quotidiennes directes.
+                {lang === 'fr'
+                  ? 'Fauteuils en cuir inclinables, climatisation régulée et wifi à bord sur toutes nos liaisons quotidiennes directes.'
+                  : 'Reclining leather seats, climate control, and onboard Wi-Fi across all daily non-stop routes.'}
               </p>
               <div className="pt-2">
                 <button
@@ -470,7 +475,7 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
                   </div>
 
                   <div className="mb-2">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Voyageur / Titulaire</span>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('customer.passenger', 'Voyageur / Titulaire')}</span>
                     <div className="flex items-center gap-1.5 text-xs text-slate-800 font-bold">
                       <User size={13} className="text-blue-600" />
                       <span>{ticket.passenger || 'Deborah Nakamura'}</span>
@@ -496,7 +501,7 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
                       <button
                         type="button"
                         onClick={() => handleDownloadCustomerTicket(ticket)}
-                        title="Télécharger le billet"
+                        title={lang === "fr" ? "Télécharger le billet" : "Download ticket"}
                         className="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 transition cursor-pointer flex items-center gap-1"
                       >
                         <Download size={13} />

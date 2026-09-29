@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, Radio, CheckCircle2, ShieldAlert, Cpu } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const AssignTrackerModal = ({ isOpen, onClose, parcel, onAssigned }) => {
+  const { lang } = useLanguage();
   const [trackers, setTrackers] = useState([]);
   const [selectedTrackerId, setSelectedTrackerId] = useState(parcel?.trackerId?._id || '');
   const [loading, setLoading] = useState(false);
@@ -111,7 +113,7 @@ export const AssignTrackerModal = ({ isOpen, onClose, parcel, onAssigned }) => {
               onClick={onClose}
               className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Annuler
+              {lang === 'fr' ? 'Annuler' : 'Cancel'}
             </button>
             <button
               type="submit"

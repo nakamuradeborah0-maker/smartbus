@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, AlertTriangle, Send, ShieldAlert } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const ResolveIssueModal = ({ isOpen, onClose, issue, onResolved }) => {
+  const { lang } = useLanguage();
   const [status, setStatus] = useState(issue?.status || 'RESOLVED');
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,7 @@ export const ResolveIssueModal = ({ isOpen, onClose, issue, onResolved }) => {
             <AlertTriangle size={22} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Traitement de la Réclamation</h3>
+            <h3 className="text-lg font-bold text-slate-900">{lang === 'fr' ? 'Traitement de la Réclamation' : 'Resolve Parcel Claim'}</h3>
             <p className="text-xs text-slate-500 font-mono font-bold">{issue.trackingNumber}</p>
           </div>
         </div>
@@ -106,7 +108,7 @@ export const ResolveIssueModal = ({ isOpen, onClose, issue, onResolved }) => {
               onClick={onClose}
               className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Annuler
+              {lang === 'fr' ? 'Annuler' : 'Cancel'}
             </button>
             <button
               type="submit"

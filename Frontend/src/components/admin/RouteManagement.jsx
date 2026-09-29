@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Navigation, Plus, Edit2, Trash2, X, Clock, ArrowRight } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const RouteManagement = () => {
+  const { lang } = useLanguage();
   const [routes, setRoutes] = useState([]);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -104,8 +106,8 @@ export const RouteManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900">Lignes & Corridors Interurbains</h3>
-          <p className="text-xs text-slate-500">Gestion des liaisons routières, distances kilométriques et durées estimées</p>
+          <h3 className="text-base font-bold text-slate-900">{lang === 'fr' ? 'Lignes & Corridors Interurbains' : 'Intercity Routes & Corridors'}</h3>
+          <p className="text-xs text-slate-500">{lang === 'fr' ? 'Gestion des liaisons routières, distances kilométriques et durées estimées' : 'Manage highway corridors, distances and estimated travel times'}</p>
         </div>
 
         <button
@@ -113,15 +115,15 @@ export const RouteManagement = () => {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Ajouter une Ligne</span>
+          <span>{lang === 'fr' ? 'Ajouter une Ligne' : 'Add Route'}</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Chargement des lignes...</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">{lang === 'fr' ? 'Chargement des lignes...' : 'Loading routes...'}</div>
         ) : routes.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Aucune ligne enregistrée.</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">{lang === 'fr' ? 'Aucune ligne enregistrée.' : 'No routes registered.'}</div>
         ) : (
           routes.map((r) => (
             <div
@@ -155,12 +157,12 @@ export const RouteManagement = () => {
 
                 <div className="mt-3 flex items-center justify-between text-xs text-slate-800 bg-slate-50 border border-slate-200 p-3 rounded-xl">
                   <div>
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Gare Départ</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">{lang === 'fr' ? 'Gare Départ' : 'Origin Station'}</span>
                     <strong>{r.originStationId?.city || 'Douala'}</strong>
                   </div>
                   <ArrowRight size={16} className="text-blue-700" />
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Gare Arrivée</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">{lang === 'fr' ? 'Gare Arrivée' : 'Destination Station'}</span>
                     <strong>{r.destinationStationId?.city || 'Yaoundé'}</strong>
                   </div>
                 </div>
@@ -219,7 +221,7 @@ export const RouteManagement = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1 uppercase">Gare Départ *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">{lang === 'fr' ? 'Gare Départ' : 'Origin Station'} *</label>
                   <select
                     value={originStationId}
                     onChange={(e) => setOriginStationId(e.target.value)}
@@ -231,7 +233,7 @@ export const RouteManagement = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1 uppercase">Gare Arrivée *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">{lang === 'fr' ? 'Gare Arrivée' : 'Destination Station'} *</label>
                   <select
                     value={destinationStationId}
                     onChange={(e) => setDestinationStationId(e.target.value)}

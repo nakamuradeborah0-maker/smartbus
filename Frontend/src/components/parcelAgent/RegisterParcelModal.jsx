@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { X, PackagePlus, Radio, Send, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '../../api/api';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
   const { user } = useAuth();
+  const { lang } = useLanguage();
   const [stations, setStations] = useState([]);
   const [trackers, setTrackers] = useState([]);
   const [trips, setTrips] = useState([]);
@@ -114,8 +116,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
             <PackagePlus size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Enregistrer un Nouveau Colis</h3>
-            <p className="text-xs text-slate-500">Prise en charge guichet avec tarification et assignation de balise IoT</p>
+            <h3 className="text-xl font-bold text-slate-900">{lang === 'fr' ? 'Enregistrer un Nouveau Colis' : 'Register New Parcel'}</h3>
+            <p className="text-xs text-slate-500">{lang === 'fr' ? 'Prise en charge guichet avec tarification et assignation de balise IoT' : 'Counter intake with automatic pricing and IoT tracker assignment'}</p>
           </div>
         </div>
 
@@ -138,7 +140,7 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
             <div className="space-y-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
-                Informations Expéditeur
+                {lang === 'fr' ? 'Informations Expéditeur' : 'Sender Information'}
               </span>
               <div>
                 <input
@@ -173,7 +175,7 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
 
             <div className="space-y-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
-                Informations Destinataire
+                {lang === 'fr' ? 'Informations Destinataire' : 'Recipient Information'}
               </span>
               <div>
                 <input
@@ -211,7 +213,7 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Gare de Départ *
+                {lang === 'fr' ? 'Gare de Départ *' : 'Origin Station *'}
               </label>
               <select
                 value={originStationId}
@@ -319,7 +321,7 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
               onClick={onClose}
               className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Annuler
+              {lang === 'fr' ? 'Annuler' : 'Cancel'}
             </button>
             <button
               type="submit"

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../api/api';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { GlobalParcelMonitor } from './GlobalParcelMonitor';
 import { UserManagement } from './UserManagement';
 import { StationManagement } from './StationManagement';
@@ -25,6 +26,7 @@ import { ResolveIssueModal } from '../parcelAgent/ResolveIssueModal';
 
 export const AdminDashboard = () => {
   const { user } = useAuth();
+  const { lang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('monitor'); // 'monitor' | 'users' | 'stations' | 'routes' | 'trips' | 'issues'
   const [stats, setStats] = useState({
     totalParcels: 0,
@@ -70,13 +72,13 @@ export const AdminDashboard = () => {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700 mb-1.5">
             <Shield size={16} />
-            <span>Portail d'Administration Réseau & Flotte</span>
+            <span>{t('admin.badge', 'Portail d\'Administration Réseau & Flotte')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Supervision Nationale & Logistique
+            {t('admin.title', 'Supervision Nationale & Logistique')}
           </h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">
-            Gouvernance centralisée des gares routières, trajets de bus, comptes utilisateurs et télémétrie GPS en direct
+            {t('admin.subtitle', 'Gouvernance centralisée des gares routières, trajets de bus, comptes utilisateurs et télémétrie GPS en direct')}
           </p>
         </div>
 
@@ -85,19 +87,19 @@ export const AdminDashboard = () => {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-700 transition shadow-xs self-start md:self-auto"
         >
           <RotateCw size={14} />
-          <span>Actualiser les données</span>
+          <span>{t('admin.refresh', 'Actualiser les données')}</span>
         </button>
       </div>
 
       {/* Global KPI Metrics */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 my-6">
         <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Colis Enregistrés</span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('admin.kpiParcels', 'Total Colis Enregistrés')}</span>
           <div className="text-2xl font-black text-slate-900 mt-1">{stats.totalParcels}</div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
-          <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider">En Transit (Balises GPS)</span>
+          <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider">{t('admin.kpiTrackers', 'En Transit (Balises GPS)')}</span>
           <div className="text-2xl font-black text-blue-700 mt-1 flex items-center gap-2">
             <span>{stats.inTransitGps}</span>
             <Radio size={16} className="animate-pulse text-blue-600" />
@@ -105,17 +107,17 @@ export const AdminDashboard = () => {
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
-          <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Trajets Actifs</span>
+          <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">{t('admin.kpiTrips', 'Trajets Actifs')}</span>
           <div className="text-2xl font-black text-amber-700 mt-1">{stats.activeTrips}</div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Gares & Hubs</span>
+          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">{t('admin.kpiStations', 'Gares & Hubs')}</span>
           <div className="text-2xl font-black text-slate-900 mt-1">{stats.totalStations}</div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
-          <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider">Signalements / Réclamations</span>
+          <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider">{t('admin.kpiIssues', 'Signalements / Réclamations')}</span>
           <div className="text-2xl font-black text-rose-700 mt-1">{stats.openIssues}</div>
         </div>
       </div>
@@ -131,7 +133,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Radio size={14} />
-          <span>Carte GPS Réseau Flotte</span>
+          <span>{lang === 'fr' ? 'Carte GPS Réseau Flotte' : 'Fleet & Cargo GPS Map'}</span>
         </button>
 
         <button
@@ -143,7 +145,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Users size={14} />
-          <span>Gestion des Utilisateurs</span>
+          <span>{lang === 'fr' ? 'Gestion des Utilisateurs' : 'User Accounts'}</span>
         </button>
 
         <button
@@ -155,7 +157,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Building2 size={14} />
-          <span>Gares Routières</span>
+          <span>{lang === 'fr' ? 'Gares Routières' : 'Bus Terminals'}</span>
         </button>
 
         <button
@@ -167,7 +169,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Navigation size={14} />
-          <span>Lignes & Itinéraires</span>
+          <span>{lang === 'fr' ? 'Lignes & Itinéraires' : 'Routes & Corridors'}</span>
         </button>
 
         <button
@@ -179,7 +181,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Truck size={14} />
-          <span>Départs & Trajets Bus</span>
+          <span>{lang === 'fr' ? 'Départs & Trajets Bus' : 'Trips & Departures'}</span>
         </button>
 
         <button
@@ -191,7 +193,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <Cpu size={14} />
-          <span>Balises IoT GPS</span>
+          <span>{lang === 'fr' ? 'Balises IoT GPS' : 'IoT Trackers Fleet'}</span>
         </button>
 
         <button
@@ -203,7 +205,7 @@ export const AdminDashboard = () => {
           }`}
         >
           <AlertTriangle size={14} />
-          <span>Incidents Nationaux ({issues.length})</span>
+          <span>{lang === 'fr' ? `Incidents Nationaux (${issues.length})` : `National Issues (${issues.length})`}</span>
         </button>
       </div>
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Building2, Plus, Edit2, Trash2, MapPin, X, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const StationManagement = () => {
+  const { lang } = useLanguage();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -100,8 +102,8 @@ export const StationManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900">Réseau des Gares & Terminaux</h3>
-          <p className="text-xs text-slate-500">Gestion des hubs logistiques, adresses physiques et coordonnées GPS</p>
+          <h3 className="text-base font-bold text-slate-900">{lang === 'fr' ? 'Réseau des Gares & Terminaux' : 'Stations & Terminals Network'}</h3>
+          <p className="text-xs text-slate-500">{lang === 'fr' ? 'Gestion des hubs logistiques, adresses physiques et coordonnées GPS' : 'Manage logistic hubs, physical street addresses and GPS coordinates'}</p>
         </div>
 
         <button
@@ -109,15 +111,15 @@ export const StationManagement = () => {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Ajouter une Gare</span>
+          <span>{lang === 'fr' ? 'Ajouter une Gare' : 'Add Station'}</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Chargement des gares...</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">{lang === 'fr' ? 'Chargement des gares...' : 'Loading stations...'}</div>
         ) : stations.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Aucune gare enregistrée.</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">{lang === 'fr' ? 'Aucune gare enregistrée.' : 'No stations registered.'}</div>
         ) : (
           stations.map((s) => (
             <div
@@ -175,7 +177,7 @@ export const StationManagement = () => {
             </button>
 
             <h3 className="text-xl font-black text-slate-900 mb-4">
-              {editingStation ? 'Modifier la gare' : 'Ajouter une nouvelle gare'}
+              {editingStation ? (lang === 'fr' ? 'Modifier la gare' : 'Edit Station') : (lang === 'fr' ? 'Ajouter une nouvelle gare' : 'Add New Station')}
             </h3>
 
             {error && (

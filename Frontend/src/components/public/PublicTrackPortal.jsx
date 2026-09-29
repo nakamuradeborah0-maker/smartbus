@@ -309,10 +309,10 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs">
                   <div className="flex items-center gap-2 text-blue-950 font-bold">
                     <Radio size={16} className="text-blue-700 animate-pulse shrink-0" />
-                    <span>Liaison Interurbaine Douala ➔ Yaoundé (Axe Lourd N3)</span>
+                    <span>{lang === "fr" ? "Liaison Interurbaine Douala ➔ Yaoundé (Axe Lourd N3)" : "Intercity Express Douala ➔ Yaoundé (Highway N3)"}</span>
                   </div>
                   <span className="text-[11px] text-blue-700 font-mono font-bold bg-white px-2 py-0.5 rounded border border-blue-200 w-fit">
-                    Autocar VIP #LT-782-AA • Télémétrie 4G
+                    {lang === "fr" ? "Autocar VIP #LT-782-AA • Télémétrie 4G" : "VIP Coach #LT-782-AA • 4G Live Telemetry"}
                   </span>
                 </div>
 
@@ -343,7 +343,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
             <h3 className="text-base font-bold text-slate-900">
               {t('book.availableTrips')} ({fromCity} → {toCity})
             </h3>
-            <span className="text-xs text-slate-500">{filteredTrips.length} départs</span>
+            <span className="text-xs text-slate-500">{filteredTrips.length} {lang === "fr" ? "départs" : "departures"}</span>
           </div>
 
           <div className="space-y-3">
@@ -370,7 +370,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                         {trip.routeId?.name || `${fromCity} ↔ ${toCity} Express`}
                       </h4>
                       <p className="text-xs text-slate-500">
-                        {trip.busNumber || 'Scania VIP'} • Départ : {new Date(trip.departureScheduled).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {trip.busNumber || 'Scania VIP'} • {lang === 'fr' ? 'Départ :' : 'Departure:'} {new Date(trip.departureScheduled).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                   </div>
@@ -425,7 +425,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                     </span>
                     <button
                       onClick={() => copyToClipboard(result.trackingNumber)}
-                      title="Copier le code"
+                      title={lang === "fr" ? "Copier le code" : "Copy tracking code"}
                       className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-200 transition"
                     >
                       {copied ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
@@ -444,7 +444,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-700 transition"
                   >
                     <RotateCw size={13} />
-                    <span>Actualiser</span>
+                    <span>{t("track.refresh", "Actualiser")}</span>
                   </button>
                   <button
                     onClick={() => setIssueModalOpen(true)}
@@ -488,7 +488,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                       />
                     </div>
                     <span className="text-[11px] text-slate-500">
-                      {result.trip ? `Bus #${result.trip.busNumber || result.trip.tripNumber}` : 'Liaison directe'}
+                      {result.trip ? `Bus #${result.trip.busNumber || result.trip.tripNumber}` : t('book.directLink', 'Liaison directe')}
                     </span>
                   </div>
 
@@ -511,7 +511,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-900 flex items-center gap-1.5">
                           <Radio size={14} className="text-blue-700" />
-                          <span>Télémétrie GPS en direct</span>
+                          <span>{lang === "fr" ? "Télémétrie GPS en direct" : "Live GPS Telemetry"}</span>
                         </span>
                         <span className="font-mono text-[11px] font-bold text-blue-700">
                           {result.trackerCode}
@@ -530,7 +530,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                   ) : (
                     <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-600 flex items-center gap-3">
                       <Info size={18} className="text-slate-500 shrink-0" />
-                      <span>Ce colis est validé manuellement à chaque gare de transit.</span>
+                      <span>{lang === "fr" ? "Ce colis est validé manuellement à chaque gare de transit." : "This parcel is verified manually at each transit station checkpoint."}</span>
                     </div>
                   )}
                 </div>
@@ -538,7 +538,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                 {/* Checkpoint audit timeline */}
                 <div className="mt-8 pt-6 border-t border-slate-200">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4">
-                    Historique des étapes de transport
+                    {t("book.history", "Historique des étapes de transport")}
                   </h4>
                   <div className="space-y-4">
                     {result.timeline?.map((ev, i) => (
@@ -589,7 +589,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-900/80 text-white font-bold text-xs border border-white/20">
-                Flotte VIP King Long & Scania
+                {lang === 'fr' ? 'Flotte VIP King Long & Scania' : 'VIP King Long & Scania Fleet'}
               </div>
             </div>
 
@@ -603,16 +603,16 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
 
               <div className="grid grid-cols-2 gap-2 text-xs font-medium text-slate-700 pt-3 border-t border-slate-100">
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Sièges cuir inclinables
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Sièges cuir inclinables' : 'Reclining leather seats'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Climatisation régulée
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Climatisation régulée' : 'Regulated AC'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Prises de recharge USB
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Prises de recharge USB' : 'USB charging outlets'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Suspension confort
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Suspension confort' : 'Air comfort suspension'}
                 </span>
               </div>
             </div>
@@ -627,7 +627,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-900/80 text-white font-bold text-xs border border-white/20">
-                Terminaux Douala & Yaoundé
+                {lang === 'fr' ? 'Terminaux Douala & Yaoundé' : 'Douala & Yaoundé Hubs'}
               </div>
             </div>
 
@@ -641,16 +641,16 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
 
               <div className="grid grid-cols-2 gap-2 text-xs font-medium text-slate-700 pt-3 border-t border-slate-100">
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Départs ponctuels
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Départs ponctuels' : 'Punctual departures'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Salles d'attente équipées
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Salles d\'attente équipées' : 'Air-conditioned lounges'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Bagages sécurisés
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Bagages sécurisés' : 'Secure baggage hold'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check size={14} className="text-blue-700 shrink-0" /> Sécurité 24/7 sur quai
+                  <Check size={14} className="text-blue-700 shrink-0" /> {lang === 'fr' ? 'Sécurité 24/7 sur quai' : '24/7 platform security'}
                 </span>
               </div>
             </div>

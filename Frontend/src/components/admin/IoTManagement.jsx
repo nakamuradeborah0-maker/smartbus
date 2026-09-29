@@ -17,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import { api } from '../../api/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 const StatusConfig = {
   AVAILABLE: {
@@ -53,6 +54,7 @@ const BatteryBar = ({ level }) => {
 };
 
 export const IoTManagement = () => {
+  const { lang } = useLanguage();
   const [trackers, setTrackers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
