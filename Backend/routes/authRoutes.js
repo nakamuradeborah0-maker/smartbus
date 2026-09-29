@@ -58,24 +58,35 @@ router.post('/register', async (req, res) => {
 });
 
 // @route   POST /api/auth/login
-// @desc    Authenticate user & get token
+// @desc    Authenticate user & get token (supports username, login, or email)
 // @access  Public
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const rawIdentifier = req.body.login || req.body.email || req.body.username || '';
+    const { password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide email and password.' });
+    if (!rawIdentifier || !password) {
+      return res.status(400).json({ error: 'Please provide username/email and password.' });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() }).populate('stationId');
+    const cleanIdentifier = String(rawIdentifier).trim().toLowerCase();
+
+    // Find by email, username, or name
+    const user = await User.findOne({
+      $or: [
+        { email: cleanIdentifier },
+        { username: cleanIdentifier },
+        { name: new RegExp('^' + cleanIdentifier + '$', 'i') }
+      ]
+    }).populate('stationId');
+
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials. User not found.' });
+      return res.status(401).json({ error: 'User not found. Please check your login credentials.' });
     }
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials. Password incorrect.' });
+      return res.status(401).json({ error: 'Incorrect password. Please verify and try again.' });
     }
 
     const token = generateToken(user._id);
@@ -85,6 +96,7 @@ router.post('/login', async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
         phone: user.phone,
         role: user.role,
@@ -103,27 +115,34 @@ router.post('/login', async (req, res) => {
 router.post('/demo-login', async (req, res) => {
   try {
     const { roleKey } = req.body;
-    let query = {};
+    let user = null;
 
-    if (roleKey === 'ADMIN') {
-      query = { role: 'ADMIN' };
+    if (roleKey === 'DEBORA') {
+      user = await User.findOne({
+        $or: [
+          { username: 'debora' },
+          { email: 'debora@globalvoyage.com' },
+          { name: /debora/i }
+        ]
+      }).populate('stationId');
+    } else if (roleKey === 'ADMIN') {
+      user = await User.findOne({ role: 'ADMIN' }).populate('stationId');
     } else if (roleKey === 'PARCEL_AGENT_DOUALA') {
       const doualaStation = await Station.findOne({ city: /Douala/i });
-      query = { role: 'PARCEL_AGENT', stationId: doualaStation ? doualaStation._id : { $exists: true } };
+      user = await User.findOne({ role: 'PARCEL_AGENT', stationId: doualaStation ? doualaStation._id : { $exists: true } }).populate('stationId');
     } else if (roleKey === 'PARCEL_AGENT_YAOUNDE') {
       const yaoundeStation = await Station.findOne({ city: /Yaound/i });
-      query = { role: 'PARCEL_AGENT', stationId: yaoundeStation ? yaoundeStation._id : { $exists: true } };
+      user = await User.findOne({ role: 'PARCEL_AGENT', stationId: yaoundeStation ? yaoundeStation._id : { $exists: true } }).populate('stationId');
     } else if (roleKey === 'DRIVER') {
-      query = { role: 'DRIVER' };
+      user = await User.findOne({ role: 'DRIVER' }).populate('stationId');
     } else if (roleKey === 'CUSTOMER') {
-      query = { role: 'CUSTOMER' };
+      user = await User.findOne({ role: 'CUSTOMER' }).populate('stationId');
     } else {
-      query = { role: 'ADMIN' };
+      user = await User.findOne({ role: 'ADMIN' }).populate('stationId');
     }
 
-    const user = await User.findOne(query).populate('stationId');
     if (!user) {
-      return res.status(404).json({ error: `Demo account for role '${roleKey}' not found.` });
+      return res.status(404).json({ error: `Demo account for '${roleKey}' not found.` });
     }
 
     const token = generateToken(user._id);
@@ -133,6 +152,7 @@ router.post('/demo-login', async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
         phone: user.phone,
         role: user.role,
@@ -154,6 +174,7 @@ router.get('/me', protect, async (req, res) => {
       user: {
         id: req.user._id,
         name: req.user.name,
+        username: req.user.username,
         email: req.user.email,
         phone: req.user.phone,
         role: req.user.role,

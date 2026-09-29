@@ -100,34 +100,34 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 animate-fadeIn">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl text-slate-900">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          className="absolute top-5 right-5 p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
         >
           <X size={20} />
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-            <PackagePlus size={24} />
+          <div className="w-11 h-11 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+            <PackagePlus size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white">Register New Parcel</h3>
-            <p className="text-xs text-slate-500">Counter intake with optional IoT GPS tracker assignment</p>
+            <h3 className="text-xl font-bold text-slate-900">Enregistrer un Nouveau Colis</h3>
+            <p className="text-xs text-slate-500">Prise en charge guichet avec tarification et assignation de balise IoT</p>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 flex items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300">
+          <div className="mb-4 flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
             <ShieldAlert size={16} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 flex items-center gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-700 dark:text-emerald-300">
+          <div className="mb-4 flex items-center gap-2 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700">
             <CheckCircle2 size={16} className="shrink-0" />
             <span>{success}</span>
           </div>
@@ -135,10 +135,10 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Sender & Recipient Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
             <div className="space-y-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-                Sender Information
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
+                Informations Expéditeur
               </span>
               <div>
                 <input
@@ -146,8 +146,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   required
                   value={senderName}
                   onChange={(e) => setSenderName(e.target.value)}
-                  placeholder="Sender Full Name *"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Nom & Prénom de l'expéditeur *"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
               <div>
@@ -156,8 +156,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   required
                   value={senderPhone}
                   onChange={(e) => setSenderPhone(e.target.value)}
-                  placeholder="Sender Phone Number *"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Téléphone expéditeur *"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
               <div>
@@ -165,15 +165,15 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   type="email"
                   value={senderEmail}
                   onChange={(e) => setSenderEmail(e.target.value)}
-                  placeholder="Sender Email (Optional)"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Email expéditeur (Facultatif)"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                Recipient Information
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                Informations Destinataire
               </span>
               <div>
                 <input
@@ -181,8 +181,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   required
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
-                  placeholder="Recipient Full Name *"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Nom & Prénom destinataire *"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
               <div>
@@ -191,8 +191,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   required
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  placeholder="Recipient Phone Number *"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Téléphone destinataire *"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
               <div>
@@ -200,8 +200,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                   type="text"
                   value={recipientAddress}
                   onChange={(e) => setRecipientAddress(e.target.value)}
-                  placeholder="Delivery Address / Landmark"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="Adresse de remise / Quartier"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
             </div>
@@ -210,13 +210,13 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
           {/* Stations & Route */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Origin Station *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Gare de Départ *
               </label>
               <select
                 value={originStationId}
                 onChange={(e) => setOriginStationId(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               >
                 {stations.map((s) => (
                   <option key={s._id} value={s._id}>
@@ -227,13 +227,13 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Destination Station *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Gare de Destination *
               </label>
               <select
                 value={destinationStationId}
                 onChange={(e) => setDestinationStationId(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               >
                 {stations.map((s) => (
                   <option key={s._id} value={s._id}>
@@ -247,8 +247,8 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
           {/* Weight & Value */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Weight (kg) *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Poids (kg) *
               </label>
               <input
                 type="number"
@@ -257,57 +257,57 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
                 required
                 value={weightKg}
                 onChange={(e) => setWeightKg(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Declared Value (FCFA)
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Valeur Déclarée (FCFA)
               </label>
               <input
                 type="number"
                 value={declaredValue}
                 onChange={(e) => setDeclaredValue(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Package Description
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Description du Contenu
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Spare mechanical parts, documents, electronics..."
-              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+              placeholder="Ex: Pièces mécaniques, documents, vêtements, matériel informatique..."
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
           {/* IoT GPS Tracker Assignment (OPTIONAL) */}
-          <div className="p-4 rounded-2xl bg-cyan-50/50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-900/50">
-            <div className="flex items-center gap-2 mb-2">
-              <Radio size={16} className="text-cyan-600 dark:text-cyan-400" />
-              <label className="text-xs font-bold uppercase tracking-wider text-cyan-900 dark:text-cyan-200">
-                Optional IoT GPS Tracker Assignment
+          <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Radio size={16} className="text-blue-700" />
+              <label className="text-xs font-bold uppercase tracking-wider text-blue-900">
+                Dispositif IoT Télémétrique GPS (Optionnel)
               </label>
             </div>
-            <p className="text-[11px] text-cyan-700 dark:text-cyan-300 mb-2">
-              Attach an active GPS device to provide real-time location telemetry to customer.
+            <p className="text-[11px] text-blue-800 mb-2">
+              Associez une balise active pour fournir le suivi satellite en direct sur autoroute.
             </p>
             <select
               value={trackerId}
               onChange={(e) => setTrackerId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-cyan-300 dark:border-cyan-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-3 py-2 rounded-lg border border-blue-300 bg-white text-xs text-slate-900 focus:outline-none focus:border-blue-600"
             >
-              <option value="">No IoT Tracker (Standard Checkpoint Status)</option>
+              <option value="">Aucune balise IoT (Suivi classique par étapes de gare)</option>
               {trackers.map((trk) => (
                 <option key={trk._id} value={trk._id}>
-                  {trk.trackerCode} - Battery {trk.batteryLevel}% ({trk.deviceModel})
+                  {trk.trackerCode} - Batterie {trk.batteryLevel}% ({trk.deviceModel})
                 </option>
               ))}
             </select>
@@ -317,17 +317,17 @@ export const RegisterParcelModal = ({ isOpen, onClose, onCreated }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-sky-500/25 transition disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition disabled:opacity-50 cursor-pointer"
             >
               <Send size={14} />
-              <span>{loading ? 'Registering...' : 'Complete Registration'}</span>
+              <span>{loading ? 'Création en cours...' : 'Valider l\'Enregistrement'}</span>
             </button>
           </div>
         </form>

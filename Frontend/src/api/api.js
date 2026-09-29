@@ -90,4 +90,7 @@ export const api = {
   getNotifications: () => request('/notifications'),
   markNotificationRead: (id) => request(`/notifications/${id}/read`, { method: 'PATCH' }),
   markAllNotificationsRead: () => request('/notifications/mark-all-read', { method: 'PATCH' }),
+
+  // Payments (CamPay)
+  collectPayment: (paymentData) => request('/payment/collect', { method: 'POST', body: paymentData }),
 };

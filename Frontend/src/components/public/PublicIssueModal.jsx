@@ -43,34 +43,34 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 animate-fadeIn">
+      <div className="relative w-full max-w-lg rounded-xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl text-slate-900">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          className="absolute top-5 right-5 p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
         >
           <X size={20} />
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-            <AlertTriangle size={24} />
+          <div className="w-11 h-11 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+            <AlertTriangle size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white">Report Parcel Issue</h3>
-            <p className="text-xs text-slate-500">Public incident report for station investigation</p>
+            <h3 className="text-lg font-bold text-slate-900">Signaler un Incident sur un Colis</h3>
+            <p className="text-xs text-slate-500">Ouverture d'un dossier de réclamation auprès du chef de gare</p>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="mb-4 flex items-center gap-2 p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
+          <div className="mb-4 flex items-center gap-2 p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
             <ShieldAlert size={18} className="shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="mb-4 flex items-center gap-2 p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-sm text-emerald-700 dark:text-emerald-300">
+          <div className="mb-4 flex items-center gap-2 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700">
             <CheckCircle2 size={18} className="shrink-0" />
             <span>{successMsg}</span>
           </div>
@@ -78,76 +78,76 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Tracking Number *
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Numéro de Suivi *
             </label>
             <input
               type="text"
               required
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
-              placeholder="e.g. PAR-2026-00125"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              placeholder="Ex: PAR-2026-00125"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 font-mono text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Your Name *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Votre Nom Complet *
               </label>
               <input
                 type="text"
                 required
                 value={reporterName}
                 onChange={(e) => setReporterName(e.target.value)}
-                placeholder="Full name"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                placeholder="Nom & Prénom"
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Contact Phone *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Téléphone de Contact *
               </label>
               <input
                 type="tel"
                 required
                 value={reporterPhone}
                 onChange={(e) => setReporterPhone(e.target.value)}
-                placeholder="+237 ..."
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                placeholder="+237 6..."
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Issue Category *
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Catégorie de Réclamation *
             </label>
             <select
               value={issueType}
               onChange={(e) => setIssueType(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             >
-              <option value="DELAYED">Delayed Transport / Schedule Query</option>
-              <option value="MISSING">Missing Parcel Report</option>
-              <option value="DAMAGED">Damaged Package Condition</option>
-              <option value="WRONG_LOCATION">Delivered to Wrong Station</option>
-              <option value="OTHER">Other Inquiry / Assistance</option>
+              <option value="DELAYED">Retard anormal d'acheminement</option>
+              <option value="MISSING">Colis introuvable ou perdu</option>
+              <option value="DAMAGED">Colis endommagé ou avarié</option>
+              <option value="WRONG_LOCATION">Acheminé à la mauvaise gare</option>
+              <option value="OTHER">Autre demande d'assistance</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Issue Description *
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Description Détaillée *
             </label>
             <textarea
               required
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the issue in detail..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+              placeholder="Précisez les circonstances de l'incident..."
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 resize-none"
             />
           </div>
 
@@ -155,17 +155,17 @@ export const PublicIssueModal = ({ isOpen, onClose, initialTrackingNumber = '' }
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition disabled:opacity-50"
             >
-              <Send size={16} />
-              <span>{loading ? 'Submitting...' : 'Submit Report'}</span>
+              <Send size={15} />
+              <span>{loading ? 'Transmission...' : 'Envoyer la Réclamation'}</span>
             </button>
           </div>
         </form>

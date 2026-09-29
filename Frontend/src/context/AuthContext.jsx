@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = async (email, password) => {
-    const res = await api.login({ email, password });
+  const login = async (identifier, password) => {
+    const res = await api.login({ login: identifier, email: identifier, password });
     localStorage.setItem('gv_token', res.token);
     setToken(res.token);
     setUser(res.user);

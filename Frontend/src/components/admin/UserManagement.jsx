@@ -119,17 +119,17 @@ export const UserManagement = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search user accounts by name or email..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+              placeholder="Rechercher par nom ou email..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
             />
           </div>
 
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
           >
-            <option value="">All Roles</option>
+            <option value="">Tous les rôles</option>
             <option value="ADMIN">ADMIN</option>
             <option value="PARCEL_AGENT">PARCEL_AGENT</option>
             <option value="DRIVER">DRIVER</option>
@@ -139,71 +139,73 @@ export const UserManagement = () => {
 
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md transition"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <UserPlus size={16} />
-          <span>Add User</span>
+          <span>Ajouter un Utilisateur</span>
         </button>
       </div>
 
       {/* User Table */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-slate-300 bg-white overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+            <thead className="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-300">
               <tr>
-                <th className="py-3.5 px-4">User Name</th>
-                <th className="py-3.5 px-4">Email</th>
-                <th className="py-3.5 px-4">Role</th>
-                <th className="py-3.5 px-4">Assigned Station</th>
-                <th className="py-3.5 px-4">Phone</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">Nom</th>
+                <th className="py-3 px-4">Adresse e-mail</th>
+                <th className="py-3 px-4">Rôle</th>
+                <th className="py-3 px-4">Gare Assignée</th>
+                <th className="py-3 px-4">Téléphone</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-slate-400">Loading user registry...</td>
+                  <td colSpan="6" className="py-8 text-center text-slate-400">Chargement de l'annuaire des utilisateurs...</td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-slate-400">No users found.</td>
+                  <td colSpan="6" className="py-8 text-center text-slate-400">Aucun utilisateur trouvé.</td>
                 </tr>
               ) : (
                 filteredUsers.map((u) => (
-                  <tr key={u._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{u.name}</td>
+                  <tr key={u._id} className="hover:bg-slate-50 transition">
+                    <td className="py-3.5 px-4 font-bold text-slate-900">{u.name}</td>
                     <td className="py-3.5 px-4 text-slate-500 font-mono">{u.email}</td>
                     <td className="py-3.5 px-4">
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                           u.role === 'ADMIN'
-                            ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                            ? 'bg-blue-50 text-blue-800 border-blue-200'
                             : u.role === 'PARCEL_AGENT'
-                            ? 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300'
+                            ? 'bg-cyan-50 text-cyan-800 border-cyan-200'
                             : u.role === 'DRIVER'
-                            ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                            : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                         }`}
                       >
                         {u.role}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
-                      {u.stationId?.name || (u.role === 'PARCEL_AGENT' ? 'Unassigned' : 'N/A')}
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
+                      {u.stationId?.name || (u.role === 'PARCEL_AGENT' ? 'Non assignée' : '—')}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-400">{u.phone || 'N/A'}</td>
+                    <td className="py-3.5 px-4 text-slate-500">{u.phone || '—'}</td>
                     <td className="py-3.5 px-4 text-right">
-                      <div className="inline-flex items-center gap-2">
+                      <div className="inline-flex items-center gap-1.5">
                         <button
                           onClick={() => openEditModal(u)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
+                          title="Modifier"
                         >
                           <Edit2 size={14} />
                         </button>
                         <button
                           onClick={() => handleDeleteUser(u._id)}
-                          className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
+                          className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
+                          title="Supprimer"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -219,97 +221,98 @@ export const UserManagement = () => {
 
       {/* User Create/Edit Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 animate-fadeIn">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
             >
               <X size={20} />
             </button>
 
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">
-              {editingUser ? 'Edit User Account' : 'Create User Account'}
+            <h3 className="text-xl font-black text-slate-900 mb-4">
+              {editingUser ? 'Modifier le compte utilisateur' : 'Créer un compte utilisateur'}
             </h3>
 
             {modalError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 text-xs text-red-700 dark:text-red-300">
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700">
                 {modalError}
               </div>
             )}
 
             <form onSubmit={handleSaveUser} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Name *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Nom complet *</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Email *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Adresse e-mail *</label>
                 <input
                   type="email"
                   required
                   disabled={Boolean(editingUser)}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white disabled:opacity-50"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 disabled:bg-slate-100 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">
-                  {editingUser ? 'New Password (Leave blank to keep)' : 'Password *'}
+                <label className="block font-bold text-slate-700 mb-1 uppercase">
+                  {editingUser ? 'Nouveau mot de passe (laisser vide pour conserver)' : 'Mot de passe initial *'}
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={editingUser ? 'Keep existing password' : '••••••••'}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder={editingUser ? 'Conserver le mot de passe actuel' : '••••••••'}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Phone</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Téléphone</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder="+237 ..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Role *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Rôle assigné *</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 >
-                  <option value="CUSTOMER">CUSTOMER</option>
-                  <option value="PARCEL_AGENT">PARCEL_AGENT (Station Agent)</option>
-                  <option value="DRIVER">DRIVER (Bus Driver)</option>
-                  <option value="ADMIN">ADMIN (System Administrator)</option>
+                  <option value="CUSTOMER">CUSTOMER (Client particulier)</option>
+                  <option value="PARCEL_AGENT">PARCEL_AGENT (Agent de guichet gare)</option>
+                  <option value="DRIVER">DRIVER (Conducteur de bus)</option>
+                  <option value="ADMIN">ADMIN (Super Administrateur)</option>
                 </select>
               </div>
 
               {role === 'PARCEL_AGENT' && (
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">
-                    Assigned Station Hub *
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">
+                    Gare de rattachement *
                   </label>
                   <select
                     value={stationId}
                     onChange={(e) => setStationId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   >
-                    <option value="">Select Station...</option>
+                    <option value="">Sélectionner une gare...</option>
                     {stations.map((s) => (
                       <option key={s._id} value={s._id}>
                         {s.name} ({s.city})
@@ -323,15 +326,15 @@ export const UserManagement = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 font-bold transition"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs transition"
                 >
-                  Save User
+                  Enregistrer l'utilisateur
                 </button>
               </div>
             </form>

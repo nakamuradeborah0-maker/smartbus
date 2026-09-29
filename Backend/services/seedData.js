@@ -9,13 +9,47 @@ const ParcelStatusHistory = require('../models/ParcelStatusHistory');
 const ParcelIssue = require('../models/ParcelIssue');
 const Notification = require('../models/Notification');
 
+async function ensureDeboraUser() {
+  try {
+    let debora = await User.findOne({
+      $or: [
+        { username: 'debora' },
+        { email: 'debora@globalvoyage.com' },
+        { name: 'Debora' }
+      ]
+    });
+
+    if (!debora) {
+      debora = new User({
+        name: 'Debora',
+        username: 'debora',
+        email: 'debora@globalvoyage.com',
+        password: 'Demodebora',
+        phone: '+237 690 00 00 00',
+        role: 'ADMIN',
+      });
+      await debora.save();
+      console.log('✅ Created debora user (ADMIN) with password Demodebora');
+    } else {
+      debora.username = 'debora';
+      debora.password = 'Demodebora';
+      debora.role = 'ADMIN';
+      await debora.save();
+      console.log('✅ Ensured debora user credentials updated to Demodebora');
+    }
+  } catch (err) {
+    console.error('Error ensuring debora user:', err.message);
+  }
+}
+
 async function seedDatabase() {
   try {
     const parcelCount = await Parcel.countDocuments();
     const stationCount = await Station.countDocuments();
 
     if (parcelCount > 0 && stationCount > 0) {
-      console.log('Database already has stations and parcels. Skipping re-seed.');
+      console.log('Database already has stations and parcels. Ensuring debora account exists...');
+      await ensureDeboraUser();
       return;
     }
 
@@ -478,6 +512,7 @@ async function seedDatabase() {
       },
     ]);
 
+    await ensureDeboraUser();
     console.log('Database seeded successfully with Cameroon stations, routes, IoT trackers, and test parcels!');
   } catch (error) {
     console.error('Seed error:', error);

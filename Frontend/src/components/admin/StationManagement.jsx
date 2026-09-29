@@ -100,59 +100,61 @@ export const StationManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">Station Hub Network</h3>
-          <p className="text-xs text-slate-500">Manage transit terminal hubs and geo-coordinates</p>
+          <h3 className="text-base font-bold text-slate-900">Réseau des Gares & Terminaux</h3>
+          <p className="text-xs text-slate-500">Gestion des hubs logistiques, adresses physiques et coordonnées GPS</p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md transition"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Add Station</span>
+          <span>Ajouter une Gare</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Loading stations...</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">Chargement des gares...</div>
         ) : stations.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">No stations registered.</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">Aucune gare enregistrée.</div>
         ) : (
           stations.map((s) => (
             <div
               key={s._id}
-              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 flex flex-col justify-between"
+              className="p-5 rounded-xl bg-white border border-slate-300 shadow-xs space-y-3 flex flex-col justify-between hover:shadow-md transition"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="px-2 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950 font-mono font-bold text-[10px] text-sky-700 dark:text-sky-300">
+                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 font-mono font-bold text-[10px] text-blue-800">
                     {s.stationCode}
                   </span>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => openEditModal(s)}
-                      className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
+                      title="Modifier"
                     >
                       <Edit2 size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteStation(s._id)}
-                      className="p-1 rounded text-red-400 hover:text-red-600"
+                      className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
+                      title="Supprimer"
                     >
                       <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
 
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white">{s.name}</h4>
+                <h4 className="font-bold text-sm text-slate-900">{s.name}</h4>
                 <div className="text-xs text-slate-500 mt-1 flex items-start gap-1.5">
                   <MapPin size={14} className="text-slate-400 shrink-0 mt-0.5" />
                   <span>{s.city} • {s.address}</span>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-mono text-slate-400 flex justify-between">
+              <div className="pt-3 border-t border-slate-200 text-[11px] font-mono text-slate-500 flex justify-between">
                 <span>Lat: {s.latitude}</span>
                 <span>Lng: {s.longitude}</span>
               </div>
@@ -163,95 +165,95 @@ export const StationManagement = () => {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 animate-fadeIn">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl text-xs">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
             >
               <X size={20} />
             </button>
 
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">
-              {editingStation ? 'Edit Station' : 'Add New Station'}
+            <h3 className="text-xl font-black text-slate-900 mb-4">
+              {editingStation ? 'Modifier la gare' : 'Ajouter une nouvelle gare'}
             </h3>
 
             {error && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700">
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSaveStation} className="space-y-3">
+            <form onSubmit={handleSaveStation} className="space-y-3.5">
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Station Code *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Code Gare *</label>
                 <input
                   type="text"
                   required
                   value={stationCode}
                   onChange={(e) => setStationCode(e.target.value)}
-                  placeholder="e.g. ST-DLA"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
+                  placeholder="ex: ST-DLA"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Station Name *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Nom de la gare *</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Douala Central Station"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder="ex: Gare Centrale Douala Akwa"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">City *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Ville *</label>
                 <input
                   type="text"
                   required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  placeholder="e.g. Douala"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder="ex: Douala"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Address *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Adresse / Quartier *</label>
                 <input
                   type="text"
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Boulevard de la Liberté"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Latitude *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Latitude *</label>
                   <input
                     type="number"
                     step="0.0001"
                     required
                     value={latitude}
                     onChange={(e) => setLatitude(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Longitude *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Longitude *</label>
                   <input
                     type="number"
                     step="0.0001"
                     required
                     value={longitude}
                     onChange={(e) => setLongitude(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
               </div>
@@ -260,15 +262,15 @@ export const StationManagement = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 font-bold transition"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs transition"
                 >
-                  Save Station
+                  Enregistrer la gare
                 </button>
               </div>
             </form>

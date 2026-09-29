@@ -104,69 +104,71 @@ export const RouteManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">Intercity Bus Routes</h3>
-          <p className="text-xs text-slate-500">Manage highway connections and estimated travel duration</p>
+          <h3 className="text-base font-bold text-slate-900">Lignes & Corridors Interurbains</h3>
+          <p className="text-xs text-slate-500">Gestion des liaisons routières, distances kilométriques et durées estimées</p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md transition"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Add Route</span>
+          <span>Ajouter une Ligne</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">Loading routes...</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">Chargement des lignes...</div>
         ) : routes.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-xs text-slate-400">No routes registered.</div>
+          <div className="col-span-full py-12 text-center text-xs text-slate-400">Aucune ligne enregistrée.</div>
         ) : (
           routes.map((r) => (
             <div
               key={r._id}
-              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between"
+              className="p-5 rounded-xl bg-white border border-slate-300 shadow-xs space-y-4 flex flex-col justify-between hover:shadow-md transition"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 font-mono font-bold text-[10px] text-indigo-700 dark:text-indigo-300">
+                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 font-mono font-bold text-[10px] text-blue-800">
                     {r.routeCode}
                   </span>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => openEditModal(r)}
-                      className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
+                      title="Modifier"
                     >
                       <Edit2 size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteRoute(r._id)}
-                      className="p-1 rounded text-red-400 hover:text-red-600"
+                      className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
+                      title="Supprimer"
                     >
                       <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
 
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white">{r.name}</h4>
+                <h4 className="font-bold text-sm text-slate-900">{r.name}</h4>
 
-                <div className="mt-3 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl">
+                <div className="mt-3 flex items-center justify-between text-xs text-slate-800 bg-slate-50 border border-slate-200 p-3 rounded-xl">
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Origin</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Gare Départ</span>
                     <strong>{r.originStationId?.city || 'Douala'}</strong>
                   </div>
-                  <ArrowRight size={16} className="text-slate-400" />
+                  <ArrowRight size={16} className="text-blue-700" />
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Destination</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Gare Arrivée</span>
                     <strong>{r.destinationStationId?.city || 'Yaoundé'}</strong>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 flex justify-between font-medium">
-                <span>Distance: <strong>{r.distanceKm} km</strong></span>
-                <span>Est. Duration: <strong>{r.estimatedHours} hrs</strong></span>
+              <div className="pt-3 border-t border-slate-200 text-xs text-slate-600 flex justify-between font-medium">
+                <span>Distance: <strong className="text-slate-900">{r.distanceKm} km</strong></span>
+                <span>Durée estimée: <strong className="text-slate-900">{r.estimatedHours} h</strong></span>
               </div>
             </div>
           ))
@@ -175,53 +177,53 @@ export const RouteManagement = () => {
 
       {/* Route Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 animate-fadeIn">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl text-xs">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
             >
               <X size={20} />
             </button>
 
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">
-              {editingRoute ? 'Edit Route' : 'Add New Route'}
+            <h3 className="text-xl font-black text-slate-900 mb-4">
+              {editingRoute ? 'Modifier la ligne' : 'Créer une nouvelle ligne'}
             </h3>
 
-            {error && <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700">{error}</div>}
+            {error && <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700">{error}</div>}
 
-            <form onSubmit={handleSaveRoute} className="space-y-3">
+            <form onSubmit={handleSaveRoute} className="space-y-3.5">
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Route Code *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Code Ligne *</label>
                 <input
                   type="text"
                   required
                   value={routeCode}
                   onChange={(e) => setRouteCode(e.target.value)}
-                  placeholder="e.g. RT-DLA-YAO"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
+                  placeholder="ex: RT-DLA-YAO"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Route Name *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Libellé de la ligne *</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Douala ↔ Yaoundé Express (N3)"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder="ex: Douala ↔ Yaoundé Express (Nationale 3)"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Origin Station *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Gare Départ *</label>
                   <select
                     value={originStationId}
                     onChange={(e) => setOriginStationId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   >
                     {stations.map((s) => (
                       <option key={s._id} value={s._id}>{s.name} ({s.city})</option>
@@ -229,11 +231,11 @@ export const RouteManagement = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Destination Station *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Gare Arrivée *</label>
                   <select
                     value={destinationStationId}
                     onChange={(e) => setDestinationStationId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   >
                     {stations.map((s) => (
                       <option key={s._id} value={s._id}>{s.name} ({s.city})</option>
@@ -244,24 +246,24 @@ export const RouteManagement = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Distance (km) *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Distance (km) *</label>
                   <input
                     type="number"
                     required
                     value={distanceKm}
                     onChange={(e) => setDistanceKm(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Est. Hours *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Durée estimée (h) *</label>
                   <input
                     type="number"
                     step="0.5"
                     required
                     value={estimatedHours}
                     onChange={(e) => setEstimatedHours(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
               </div>
@@ -270,15 +272,15 @@ export const RouteManagement = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 font-bold transition"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs transition"
                 >
-                  Save Route
+                  Enregistrer la ligne
                 </button>
               </div>
             </form>

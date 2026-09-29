@@ -13,6 +13,7 @@ const routeRoutes = require('./routes/routeRoutes');
 const userRoutes = require('./routes/userRoutes');
 const iotRoutes = require('./routes/iotRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const { seedDatabase } = require('./services/seedData');
 const { startIoTSimulator } = require('./services/iotSimulator');
@@ -35,6 +36,7 @@ app.use('/api/routes', routeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/iot', iotRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

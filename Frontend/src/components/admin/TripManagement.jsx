@@ -87,57 +87,57 @@ export const TripManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">Scheduled Bus Trips</h3>
-          <p className="text-xs text-slate-500">Dispatch departures, driver allocations, and fleet assignments</p>
+          <h3 className="text-base font-bold text-slate-900">Horaires & Trajets de Bus</h3>
+          <p className="text-xs text-slate-500">Planification des départs, affectation des chauffeurs et gestion de flotte</p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md transition"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-sm transition"
         >
           <Plus size={16} />
-          <span>Schedule Trip</span>
+          <span>Programmer un Trajet</span>
         </button>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-slate-300 bg-white overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+            <thead className="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-300">
               <tr>
-                <th className="py-3.5 px-4">Trip #</th>
-                <th className="py-3.5 px-4">Route</th>
-                <th className="py-3.5 px-4">Bus Vehicle</th>
-                <th className="py-3.5 px-4">Driver</th>
-                <th className="py-3.5 px-4">Departure</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 text-right">Action</th>
+                <th className="py-3 px-4">N° Trajet</th>
+                <th className="py-3 px-4">Ligne & Destination</th>
+                <th className="py-3 px-4">Véhicule Bus</th>
+                <th className="py-3 px-4">Conducteur</th>
+                <th className="py-3 px-4">Heure Départ</th>
+                <th className="py-3 px-4">Statut</th>
+                <th className="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-slate-400">Loading trips...</td>
+                  <td colSpan="7" className="py-8 text-center text-slate-400">Chargement des trajets...</td>
                 </tr>
               ) : trips.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-slate-400">No scheduled trips.</td>
+                  <td colSpan="7" className="py-8 text-center text-slate-400">Aucun trajet programmé.</td>
                 </tr>
               ) : (
                 trips.map((t) => (
-                  <tr key={t._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                  <tr key={t._id} className="hover:bg-slate-50 transition">
+                    <td className="py-3.5 px-4 font-mono font-bold text-blue-800">
                       #{t.tripNumber}
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200">
+                    <td className="py-3.5 px-4 font-semibold text-slate-900">
                       {t.routeId?.originStationId?.city} → {t.routeId?.destinationStationId?.city}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{t.busNumber}</td>
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">{t.busNumber}</td>
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">{t.driverId?.name}</div>
+                      <div className="font-bold text-slate-800">{t.driverId?.name}</div>
                       <div className="text-[10px] text-slate-400">{t.driverId?.phone}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
                       {new Date(t.departureScheduled).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="py-3.5 px-4">
@@ -146,7 +146,8 @@ export const TripManagement = () => {
                     <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => handleDeleteTrip(t._id)}
-                        className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
+                        className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
+                        title="Supprimer"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -161,28 +162,28 @@ export const TripManagement = () => {
 
       {/* Schedule Trip Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 animate-fadeIn">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-300 p-6 sm:p-8 shadow-2xl text-xs">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
             >
               <X size={20} />
             </button>
 
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">
-              Schedule Intercity Bus Trip
+            <h3 className="text-xl font-black text-slate-900 mb-4">
+              Programmer un Trajet de Bus
             </h3>
 
-            {error && <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700">{error}</div>}
+            {error && <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700">{error}</div>}
 
-            <form onSubmit={handleCreateTrip} className="space-y-3">
+            <form onSubmit={handleCreateTrip} className="space-y-3.5">
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Route *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Ligne *</label>
                 <select
                   value={routeId}
                   onChange={(e) => setRouteId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 >
                   {routes.map((r) => (
                     <option key={r._id} value={r._id}>
@@ -193,11 +194,11 @@ export const TripManagement = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Assigned Driver *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Conducteur affecté *</label>
                 <select
                   value={driverId}
                   onChange={(e) => setDriverId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 >
                   {drivers.map((d) => (
                     <option key={d._id} value={d._id}>
@@ -208,36 +209,36 @@ export const TripManagement = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Bus Vehicle Details *</label>
+                <label className="block font-bold text-slate-700 mb-1 uppercase">Immatriculation & Modèle Bus *</label>
                 <input
                   type="text"
                   required
                   value={busNumber}
                   onChange={(e) => setBusNumber(e.target.value)}
-                  placeholder="e.g. LT-782-AA (Scania VIP)"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  placeholder="ex: LT-782-AA (Scania VIP)"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Departure Time *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Heure Départ *</label>
                   <input
                     type="datetime-local"
                     required
                     value={departureScheduled}
                     onChange={(e) => setDepartureScheduled(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase">Arrival Time *</label>
+                  <label className="block font-bold text-slate-700 mb-1 uppercase">Heure Arrivée *</label>
                   <input
                     type="datetime-local"
                     required
                     value={arrivalScheduled}
                     onChange={(e) => setArrivalScheduled(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-xs"
                   />
                 </div>
               </div>
@@ -246,15 +247,15 @@ export const TripManagement = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 font-bold transition"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs transition"
                 >
-                  Create Trip
+                  Créer le trajet
                 </button>
               </div>
             </form>
