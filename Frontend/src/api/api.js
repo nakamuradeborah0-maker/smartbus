@@ -91,6 +91,18 @@ export const api = {
   markNotificationRead: (id) => request(`/notifications/${id}/read`, { method: 'PATCH' }),
   markAllNotificationsRead: () => request('/notifications/mark-all-read', { method: 'PATCH' }),
 
-  // Payments (CamPay)
+  // Bookings (Persistent MongoDB)
+  getBookings: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/bookings${query ? `?${query}` : ''}`);
+  },
+  getBookingById: (id) => request(`/bookings/${id}`),
+  createBooking: (bookingData) => request('/bookings', { method: 'POST', body: bookingData }),
+  confirmBooking: (id, data = {}) => request(`/bookings/${id}/confirm`, { method: 'PATCH', body: data }),
+  cancelBooking: (id) => request(`/bookings/${id}/cancel`, { method: 'PATCH' }),
+
+  // Payments (CamPay Mobile Money)
   collectPayment: (paymentData) => request('/payment/collect', { method: 'POST', body: paymentData }),
+  checkPaymentStatus: (reference) => request(`/payment/status/${encodeURIComponent(reference)}`),
+  confirmDemoPayment: (payload) => request('/payment/confirm-demo', { method: 'POST', body: payload }),
 };

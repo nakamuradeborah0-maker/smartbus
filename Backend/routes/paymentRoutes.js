@@ -1,17 +1,33 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const Booking = require('../models/Booking');
+
+// Optional auth helper
+const optionalAuth = async (req, res, next) => {
+  try {
+    let token = null;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey12345');
+      req.user = await User.findById(decoded.id).select('-password');
+    }
+  } catch (err) {
+    req.user = null;
+  }
+  next();
+};
 
 // Normalizes Cameroon phone numbers to international format required by CamPay (2376XXXXXXXX)
 function normalizeCameroonPhone(phone) {
   if (!phone) return null;
-  // Strip non-digits
   let cleaned = String(phone).replace(/\D/g, '');
-  // Remove international prefix 00
   if (cleaned.startsWith('00237')) {
     cleaned = cleaned.substring(2);
   }
-  // If 9 digits starting with 6 or 2 -> prepend 237
   if (cleaned.length === 9 && (cleaned.startsWith('6') || cleaned.startsWith('2'))) {
     cleaned = '237' + cleaned;
   }
@@ -39,10 +55,10 @@ const getCamPayToken = async () => {
 
 // @route   POST /api/payment/collect
 // @desc    Initiate mobile money collection via CamPay
-// @access  Private
-router.post('/collect', protect, async (req, res) => {
+// @access  Public / Authenticated
+router.post('/collect', optionalAuth, async (req, res) => {
   try {
-    const { amount, phoneNumber, description } = req.body;
+    const { amount, phoneNumber, description, bookingReference } = req.body;
 
     if (!amount || !phoneNumber) {
       return res.status(400).json({ error: 'Amount and phone number are required' });
@@ -55,7 +71,7 @@ router.post('/collect', protect, async (req, res) => {
       });
     }
 
-    const externalReference = `RES-${Date.now()}`;
+    const externalReference = bookingReference || `GV-${Date.now()}`;
     const isDemo = process.env.CAMPAY_USE_DEMO === 'true';
     const finalAmount = isDemo ? (process.env.CAMPAY_DEMO_MAX_AMOUNT || '25') : String(amount);
 
@@ -68,15 +84,25 @@ router.post('/collect', protect, async (req, res) => {
 
     // If simulation enabled or token failed
     if (process.env.CAMPAY_SIMULATION === 'true' || !token) {
+      const simRef = `SIM-${Date.now()}`;
+      if (bookingReference) {
+        await Booking.findOneAndUpdate(
+          { bookingReference },
+          { campayReference: simRef, campayOperator: 'MTN', campayUssdCode: '*126#' }
+        );
+      }
       return res.status(200).json({
         success: true,
-        message: `[Simulated] Payment request of ${amount} FCFA approved for ${formattedPhone}. Ticket reservation confirmed!`,
-        reference: `SIM-${Date.now()}`,
-        externalReference
+        message: `[Simulated] Payment request of ${amount} FCFA approved for ${formattedPhone}.`,
+        reference: simRef,
+        operator: 'MTN',
+        ussdCode: '*126#',
+        externalReference,
+        status: 'PENDING'
       });
     }
     
-    // Create collection request
+    // Create collection request with CamPay
     const collectUrl = `${process.env.CAMPAY_BASE_URL}/api/collect/`;
     
     const response = await fetch(collectUrl, {
@@ -101,6 +127,18 @@ router.post('/collect', protect, async (req, res) => {
       return res.status(400).json({ error: data.message || 'Payment initiation failed with mobile money provider.' });
     }
 
+    // If bookingReference was supplied, update the booking with campay reference
+    if (bookingReference && data.reference) {
+      await Booking.findOneAndUpdate(
+        { bookingReference },
+        {
+          campayReference: data.reference,
+          campayOperator: data.operator || '',
+          campayUssdCode: data.ussd_code || ''
+        }
+      );
+    }
+
     res.status(200).json({
       success: true,
       message: data.ussd_code 
@@ -109,12 +147,109 @@ router.post('/collect', protect, async (req, res) => {
       reference: data.reference,
       operator: data.operator,
       ussdCode: data.ussd_code,
-      externalReference
+      externalReference,
+      status: 'PENDING'
     });
 
   } catch (error) {
     console.error('CamPay Error:', error);
     res.status(500).json({ error: error.message || 'Internal server error during payment processing' });
+  }
+});
+
+// @route   GET /api/payment/status/:reference
+// @desc    Check transaction status from CamPay
+// @access  Public
+router.get('/status/:reference', async (req, res) => {
+  try {
+    const { reference } = req.params;
+    if (!reference) {
+      return res.status(400).json({ error: 'Reference parameter is required' });
+    }
+
+    // Check if it is a simulated reference
+    if (reference.startsWith('SIM-')) {
+      return res.json({
+        reference,
+        status: 'SUCCESSFUL',
+        amount: '5000',
+        currency: 'XAF',
+        operator: 'MTN'
+      });
+    }
+
+    let token = await getCamPayToken();
+    const statusUrl = `${process.env.CAMPAY_BASE_URL}/api/transaction/${reference}/`;
+    
+    const response = await fetch(statusUrl, {
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return res.status(400).json({ error: data.message || 'Failed to check transaction status with CamPay' });
+    }
+
+    // If status is SUCCESSFUL, automatically update matching booking to PAID
+    if (data.status === 'SUCCESSFUL') {
+      await Booking.findOneAndUpdate(
+        { $or: [{ campayReference: reference }, { externalReference: data.external_reference }] },
+        { paymentStatus: 'PAID', updatedAt: Date.now() }
+      );
+    }
+
+    res.json({
+      reference: data.reference,
+      status: data.status, // 'SUCCESSFUL' | 'PENDING' | 'FAILED'
+      operator: data.operator,
+      amount: data.amount,
+      externalReference: data.external_reference,
+      reason: data.reason
+    });
+
+  } catch (error) {
+    console.error('Check CamPay Status Error:', error);
+    res.status(500).json({ error: error.message || 'Error checking payment status' });
+  }
+});
+
+// @route   POST /api/payment/confirm-demo
+// @desc    One-click confirmation for demo/testing mode when user validated on phone
+// @access  Public
+router.post('/confirm-demo', async (req, res) => {
+  try {
+    const { reference, bookingReference } = req.body;
+    
+    let booking = null;
+    if (bookingReference) {
+      booking = await Booking.findOne({ bookingReference });
+    } else if (reference) {
+      booking = await Booking.findOne({
+        $or: [
+          { campayReference: reference },
+          { bookingReference: reference },
+          { externalReference: reference }
+        ]
+      });
+    }
+
+    if (booking) {
+      booking.paymentStatus = 'PAID';
+      booking.updatedAt = Date.now();
+      await booking.save();
+    }
+
+    res.json({
+      success: true,
+      status: 'SUCCESSFUL',
+      message: 'Payment confirmed and ticket issued in database.',
+      booking
+    });
+  } catch (error) {
+    console.error('Confirm demo error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 

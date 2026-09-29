@@ -1,32 +1,64 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const Trip = require('../models/Trip');
 const Parcel = require('../models/Parcel');
 const ParcelStatusHistory = require('../models/ParcelStatusHistory');
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 const { protect, authorize } = require('../middleware/auth');
 const { generateTripNumber } = require('../utils/generateCode');
 
+// Optional auth helper
+const optionalAuth = async (req, res, next) => {
+  try {
+    let token = null;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey12345');
+      req.user = await User.findById(decoded.id).select('-password');
+    }
+  } catch (err) {
+    req.user = null;
+  }
+  next();
+};
+
 // @route   GET /api/trips
-// @desc    List trips (scoped to driver for DRIVER role, all for ADMIN/PARCEL_AGENT)
-// @access  Private
-router.get('/', protect, async (req, res) => {
+// @desc    List trips (scoped to driver for DRIVER role, all for public/customer/admin)
+// @access  Public / Authenticated
+router.get('/', optionalAuth, async (req, res) => {
   try {
     let query = {};
-    if (req.user.role === 'DRIVER') {
+    if (req.user && req.user.role === 'DRIVER') {
       query.driverId = req.user._id;
+    }
+
+    const { date, status } = req.query;
+    if (status) {
+      query.status = status.toUpperCase();
+    }
+
+    if (date) {
+      const startDate = new Date(date);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(date);
+      endDate.setHours(23, 59, 59, 999);
+      query.departureScheduled = { $gte: startDate, $lte: endDate };
     }
 
     const trips = await Trip.find(query)
       .populate({
         path: 'routeId',
         populate: [
-          { path: 'originStationId', select: 'name city stationCode' },
-          { path: 'destinationStationId', select: 'name city stationCode' }
+          { path: 'originStationId', select: 'name city stationCode latitude longitude' },
+          { path: 'destinationStationId', select: 'name city stationCode latitude longitude' }
         ]
       })
       .populate('driverId', 'name phone email')
-      .sort({ departureScheduled: -1 });
+      .sort({ departureScheduled: 1 });
 
     res.json(trips);
   } catch (error) {
@@ -64,7 +96,13 @@ router.post('/', protect, authorize('ADMIN'), async (req, res) => {
     });
 
     const populated = await Trip.findById(trip._id)
-      .populate('routeId')
+      .populate({
+        path: 'routeId',
+        populate: [
+          { path: 'originStationId', select: 'name city stationCode' },
+          { path: 'destinationStationId', select: 'name city stationCode' }
+        ]
+      })
       .populate('driverId', 'name phone email');
 
     res.status(201).json(populated);

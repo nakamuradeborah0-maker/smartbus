@@ -46,24 +46,55 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
   const [availableTrips, setAvailableTrips] = useState([]);
   const [tripsLoading, setTripsLoading] = useState(false);
 
-  // Booking Flow & User Tickets state (with Coach Seat Selection & CamPay)
+  // Booking Flow & User Tickets state (Loaded from MongoDB)
   const [bookingFlowOpen, setBookingFlowOpen] = useState(false);
   const [selectedTripForBooking, setSelectedTripForBooking] = useState(null);
-  const [myTickets, setMyTickets] = useState([
-    {
-      id: 'RES-99823',
-      tripNumber: 'GV-1025',
-      passenger: 'Deborah Nakamura',
-      origin: 'Douala (Gare Centrale Akwa)',
-      destination: 'Yaoundé (Terminal Mvan)',
-      date: '12 Octobre 2026',
-      time: '06:30',
-      bus: 'Scania VIP First Class',
-      seat: 'Siège N° 14 (Fenêtre VIP)',
-      price: 5000,
-      status: 'PAID'
+  const [myTickets, setMyTickets] = useState([]);
+
+  // Load Bookings from MongoDB
+  const loadBookings = async () => {
+    try {
+      const data = await api.getBookings();
+      if (data && data.length > 0) {
+        setMyTickets(data.map(b => ({
+          id: b.bookingReference,
+          tripNumber: b.tripNumber,
+          passenger: b.passengerName,
+          cni: b.passengerIdNumber,
+          origin: b.origin,
+          destination: b.destination,
+          date: b.travelDate,
+          time: b.departureTime,
+          bus: b.busModel,
+          seat: b.seatLabel || (lang === 'fr' ? `Siège N° ${b.seatNumber}` : `Seat No. ${b.seatNumber}`),
+          price: b.amount,
+          status: b.paymentStatus
+        })));
+      }
+    } catch (err) {
+      console.warn('Failed to load bookings from MongoDB:', err);
     }
-  ]);
+  };
+
+  // Load Trips from MongoDB
+  const loadTrips = async () => {
+    setTripsLoading(true);
+    try {
+      const data = await api.getTrips();
+      if (data && data.length > 0) {
+        setAvailableTrips(data);
+      }
+    } catch (err) {
+      console.warn('Failed to load trips from MongoDB:', err);
+    } finally {
+      setTripsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBookings();
+    loadTrips();
+  }, [activeTab]);
 
   const handleDownloadCustomerTicket = (ticket) => {
     const passName = ticket.passenger || user?.name || 'Deborah Nakamura';
@@ -528,14 +559,25 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
 
           {/* Live Scheduled Trips from DB */}
           <div className="pt-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Bus size={18} className="text-blue-600" />
                 <span>{t('customer.availableTrips', 'Liaisons Programmées en Temps Réel')}</span>
               </h3>
-              <span className="text-xs text-slate-500">
-                {availableTrips.length} {lang === 'fr' ? 'départs configurés' : 'scheduled routes'}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-500">
+                  {availableTrips.length} {lang === 'fr' ? 'départs en base MongoDB' : 'departures in MongoDB'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => { loadTrips(); loadBookings(); }}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition cursor-pointer"
+                  title={lang === 'fr' ? 'Actualiser les données MongoDB' : 'Refresh MongoDB data'}
+                >
+                  <RotateCw size={13} className={tripsLoading ? 'animate-spin' : ''} />
+                  <span>{lang === 'fr' ? 'Actualiser' : 'Refresh'}</span>
+                </button>
+              </div>
             </div>
 
             {tripsLoading ? (
@@ -553,30 +595,29 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <span className="font-mono text-xs font-bold text-slate-500">{trip.tripNumber}</span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
-                          {trip.status === 'scheduled' ? (lang === 'fr' ? 'Programmé' : 'Scheduled') : trip.status}
+                          {trip.status === 'SCHEDULED' || trip.status === 'scheduled' ? (lang === 'fr' ? 'Programmé' : 'Scheduled') : trip.status}
                         </span>
                       </div>
 
                       <div className="text-base font-black text-slate-900 flex items-center gap-2 mb-1">
-                        <span>{trip.originStationId?.name || trip.originStationId?.city || 'Douala'}</span>
-                        <ChevronRight size={16} className="text-slate-400" />
-                        <span>{trip.destinationStationId?.name || trip.destinationStationId?.city || 'Yaoundé'}</span>
+                        <span>{trip.routeId?.originStationId?.name || trip.routeId?.originStationId?.city || 'Douala (Akwa)'}</span>
+                        <ChevronRight size={16} className="text-slate-400 shrink-0" />
+                        <span>{trip.routeId?.destinationStationId?.name || trip.routeId?.destinationStationId?.city || 'Yaoundé (Mvan)'}</span>
                       </div>
 
                       <div className="space-y-1.5 text-xs text-slate-600 my-3">
                         <div className="flex items-center gap-2">
                           <Clock size={14} className="text-slate-400" />
-                          <span>{t('customer.departure', 'Départ :')} {new Date(trip.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span>{t('customer.departure', 'Départ :')} {new Date(trip.departureScheduled).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(trip.departureScheduled).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-700 font-semibold">
+                          <Bus size={14} className="text-blue-600" />
+                          <span>{trip.busNumber || 'Scania VIP First Class'}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Users size={14} className="text-slate-400" />
-                          <span>{trip.availableSeats} {t('customer.seatsLeft', 'places dispo')}</span>
+                          <span className="text-emerald-700 font-bold">{lang === 'fr' ? '32 places VIP disponibles' : '32 VIP seats available'}</span>
                         </div>
-                        {trip.busId?.plateNumber && (
-                          <div className="flex items-center gap-2 text-slate-500 font-mono text-[11px]">
-                            <span>{t('customer.busNumber', 'Autocar N°')} {trip.busId.plateNumber}</span>
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -604,6 +645,8 @@ export const CustomerDashboard = ({ onNavigateTrack }) => {
         initialTrip={selectedTripForBooking}
         onBookingSuccess={(newTicket) => {
           setMyTickets((prev) => [newTicket, ...prev]);
+          loadBookings();
+          loadTrips();
         }}
       />
 

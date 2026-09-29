@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Station = require('../models/Station');
 const Route = require('../models/Route');
 const Trip = require('../models/Trip');
+const Booking = require('../models/Booking');
 const IoTTracker = require('../models/IoTTracker');
 const Parcel = require('../models/Parcel');
 const ParcelLocation = require('../models/ParcelLocation');
@@ -42,6 +43,111 @@ async function ensureDeboraUser() {
   }
 }
 
+
+async function ensureTripsAndBookings() {
+  try {
+    const bookingCount = await Booking.countDocuments();
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    if (bookingCount === 0) {
+      await Booking.create({
+        bookingReference: 'BK-2026-99823',
+        tripNumber: 'GV-1025',
+        busModel: 'Scania VIP First Class #LT-782-AA',
+        passengerName: 'Deborah Nakamura',
+        passengerIdNumber: '110293849',
+        passengerEmail: 'debora@globalvoyage.com',
+        passengerPhone: '677949699',
+        origin: 'Douala (Gare Centrale Akwa)',
+        destination: 'Yaoundé (Terminal Mvan)',
+        travelDate: todayStr,
+        departureTime: '06:30',
+        seatNumber: 14,
+        seatLabel: 'Siège N° 14 (Fenêtre VIP)',
+        amount: 5000,
+        paymentMethod: 'MTN_MOMO',
+        paymentStatus: 'PAID',
+        campayReference: 'd7745cb0-a29c-4104-bd90-9aff213b342c',
+        campayOperator: 'MTN',
+        campayUssdCode: '*126#',
+        externalReference: 'GV-INIT-001',
+      });
+      console.log('✅ Seeded initial persistent booking BK-2026-99823 for Deborah Nakamura in MongoDB');
+    }
+
+    // Ensure we have rich upcoming trips
+    const existingScheduled = await Trip.countDocuments({ status: { $in: ['SCHEDULED', 'IN_TRANSIT'] } });
+    if (existingScheduled < 4) {
+      const routes = await Route.find();
+      const drivers = await User.find({ role: 'DRIVER' });
+      const driver = drivers.length > 0 ? drivers[0] : await User.findOne();
+      const rtDLA_YAO = routes.find(r => r.routeCode === 'RT-DLA-YAO') || routes[0];
+      const rtDLA_BAF = routes.find(r => r.routeCode === 'RT-DLA-BAF') || routes[0];
+
+      if (rtDLA_YAO && driver) {
+        const baseDate = new Date();
+        const tripsToCreate = [
+          {
+            tripNumber: 'GV-1030',
+            routeId: rtDLA_YAO._id,
+            driverId: driver._id,
+            busNumber: 'LT-782-AA (Scania VIP First Class)',
+            departureScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 7, 0, 0),
+            arrivalScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 11, 0, 0),
+            status: 'SCHEDULED'
+          },
+          {
+            tripNumber: 'GV-1031',
+            routeId: rtDLA_YAO._id,
+            driverId: driver._id,
+            busNumber: 'CE-341-BA (Mercedes Comfort Express)',
+            departureScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 10, 30, 0),
+            arrivalScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 14, 30, 0),
+            status: 'SCHEDULED'
+          },
+          {
+            tripNumber: 'GV-1032',
+            routeId: rtDLA_YAO._id,
+            driverId: driver._id,
+            busNumber: 'LT-890-BB (Scania VIP Lounge Express)',
+            departureScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 14, 0, 0),
+            arrivalScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 18, 0, 0),
+            status: 'SCHEDULED'
+          },
+          {
+            tripNumber: 'GV-1033',
+            routeId: rtDLA_YAO._id,
+            driverId: driver._id,
+            busNumber: 'LT-902-CC (Volvo Highliner Luxury)',
+            departureScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 17, 30, 0),
+            arrivalScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 21, 30, 0),
+            status: 'SCHEDULED'
+          },
+          {
+            tripNumber: 'GV-2045',
+            routeId: (rtDLA_BAF || rtDLA_YAO)._id,
+            driverId: driver._id,
+            busNumber: 'OU-112-DA (Marcopolo Paradiso)',
+            departureScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 8, 30, 0),
+            arrivalScheduled: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 13, 0, 0),
+            status: 'SCHEDULED'
+          }
+        ];
+
+        for (const t of tripsToCreate) {
+          const exists = await Trip.findOne({ tripNumber: t.tripNumber });
+          if (!exists) {
+            await Trip.create(t);
+          }
+        }
+        console.log('✅ Added rich upcoming trips for today in MongoDB');
+      }
+    }
+  } catch (err) {
+    console.error('ensureTripsAndBookings error:', err.message);
+  }
+}
+
 async function seedDatabase() {
   try {
     const parcelCount = await Parcel.countDocuments();
@@ -50,6 +156,7 @@ async function seedDatabase() {
     if (parcelCount > 0 && stationCount > 0) {
       console.log('Database already has stations and parcels. Ensuring debora account exists...');
       await ensureDeboraUser();
+      await ensureTripsAndBookings();
       return;
     }
 

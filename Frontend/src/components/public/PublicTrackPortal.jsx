@@ -104,15 +104,24 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSearchTrips = (e) => {
-    e.preventDefault();
+  const handleSearchTrips = async (e) => {
+    if (e) e.preventDefault();
     setHasSearched(true);
-    const matches = allTrips.filter((t) => {
+    let trips = allTrips;
+    if (!trips || trips.length === 0) {
+      try {
+        trips = await api.getTrips();
+        setAllTrips(trips);
+      } catch (err) {
+        console.warn('Trips reload error:', err);
+      }
+    }
+    const matches = (trips || []).filter((t) => {
       const originMatch = !fromCity || t.routeId?.originStationId?.city?.toLowerCase().includes(fromCity.toLowerCase());
       const destMatch = !toCity || t.routeId?.destinationStationId?.city?.toLowerCase().includes(toCity.toLowerCase());
       return originMatch && destMatch;
     });
-    setFilteredTrips(matches.length > 0 ? matches : allTrips.slice(0, 3));
+    setFilteredTrips(matches.length > 0 ? matches : (trips || []).slice(0, 5));
   };
 
   const sampleParcels = [
@@ -670,6 +679,7 @@ export const PublicTrackPortal = ({ onOpenAuth }) => {
         isOpen={bookingModalOpen}
         onClose={() => setBookingModalOpen(false)}
         initialTrip={selectedTripForBooking}
+        initialDate={searchDate}
       />
     </div>
   );
