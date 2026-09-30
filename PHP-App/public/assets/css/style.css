@@ -1,0 +1,46 @@
+/* PHP-App/public/assets/css/style.css */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Bus Seat Plan */
+.seat-btn {
+  transition: all 0.15s ease-in-out;
+}
+.seat-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+.seat-btn.selected {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #1d4ed8;
+}
+.seat-btn.occupied {
+  background-color: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Leaflet Custom Marker & Telemetry HUD */
+.hud-telemetry {
+  background: rgba(11, 30, 54, 0.92);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.bus-pulsing-icon {
+  background: #1d4ed8;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(29, 78, 216, 0.8);
+  width: 22px;
+  height: 22px;
+}
