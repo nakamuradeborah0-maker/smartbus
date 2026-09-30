@@ -363,8 +363,11 @@ async function submitPaymentForm(event) {
 
     showBookingStep('pending');
 
-    // 4. Start polling CamPay status every 3.5s
-    paymentPollInterval = setInterval(() => checkCamPayStatus(payment.reference), 3500);
+    // 4. Start polling CamPay status automatically every 2.5s
+    if (paymentPollInterval) clearInterval(paymentPollInterval);
+    const targetRef = payment.reference || currentBookingRef;
+    setTimeout(() => checkCamPayStatus(targetRef), 2000);
+    paymentPollInterval = setInterval(() => checkCamPayStatus(targetRef), 2500);
 
   } catch (err) {
     errorBox.textContent = err.message;
@@ -384,26 +387,20 @@ async function checkCamPayStatus(ref = null) {
     const data = await res.json();
 
     if (data.status === 'SUCCESSFUL') {
-      if (paymentPollInterval) clearInterval(paymentPollInterval);
+      if (paymentPollInterval) {
+        clearInterval(paymentPollInterval);
+        paymentPollInterval = null;
+      }
       showSuccessTicket();
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn('Status poll error:', e);
+  }
 }
 
 async function confirmDemoPayment() {
-  if (!currentBookingRef) return;
-  try {
-    const res = await fetch('/api/payment-demo-confirm.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reference: currentBookingRef })
-    });
-    const data = await res.json();
-    if (data.success || data.status === 'SUCCESSFUL') {
-      if (paymentPollInterval) clearInterval(paymentPollInterval);
-      showSuccessTicket();
-    }
-  } catch (e) {}
+  // Graceful fallback helper: directly check status
+  checkCamPayStatus(currentBookingRef);
 }
 
 function showSuccessTicket() {
@@ -441,5 +438,10 @@ function resumeBookingPayment(ref, phone, operator, seat, bus) {
   modal.classList.remove('hidden');
   modal.classList.add('flex');
   showBookingStep('pending');
+
+  // Automatically begin checking status
+  if (paymentPollInterval) clearInterval(paymentPollInterval);
+  setTimeout(() => checkCamPayStatus(ref), 1500);
+  paymentPollInterval = setInterval(() => checkCamPayStatus(ref), 2500);
 }
 

@@ -185,12 +185,16 @@ $today = date('Y-m-d');
           <?= t('booking.ticketBlockedHelp', "⏳ Le billet électronique ne peut être téléchargé qu'après validation du débit par l'opérateur.") ?>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 pt-2">
-          <button type="button" onclick="checkCamPayStatus()" class="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-md transition cursor-pointer">
-            <?= t('booking.checkStatus', 'Vérifier le Statut du Paiement') ?>
-          </button>
-          <button type="button" onclick="confirmDemoPayment()" class="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition cursor-pointer" title="Validation instantanée démo">
-            <?= t('booking.demoConfirm', "J'ai validé sur mon téléphone") ?>
+        <!-- Live Automated Mobile Payment Detection Banner -->
+        <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 flex items-center justify-center gap-3 text-xs font-bold shadow-inner">
+          <i data-lucide="loader" class="w-4 h-4 animate-spin text-blue-600 shrink-0"></i>
+          <span id="pending-status-text"><?= t('booking.autoDetecting', 'Détection automatique du paiement mobile en cours...') ?></span>
+        </div>
+
+        <div class="pt-1">
+          <button type="button" onclick="checkCamPayStatus()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-300 transition cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span><?= t('booking.checkStatus', 'Vérifier le Statut du Paiement') ?></span>
           </button>
         </div>
       </div>

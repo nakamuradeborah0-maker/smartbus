@@ -22,8 +22,14 @@ class BookingService {
         $pdo = Database::getConnection();
         $ref = self::generateReference();
 
+        $travelDate = !empty($data['travel_date']) ? $data['travel_date'] : date('Y-m-d');
+        $data['travel_date'] = $travelDate;
+        $seatNum = (int)($data['seat_number'] ?? 14);
+        if ($seatNum <= 0) $seatNum = 14;
+        $data['seat_number'] = $seatNum;
+
         // Check if seat already taken
-        $occupied = self::getOccupiedSeats((int)($data['trip_id'] ?? 1), $data['travel_date']);
+        $occupied = self::getOccupiedSeats((int)($data['trip_id'] ?? 1), $travelDate);
         if (in_array((int)$data['seat_number'], $occupied)) {
             // Find next available seat
             for ($s = 1; $s <= 32; $s++) {
@@ -31,6 +37,28 @@ class BookingService {
                     $data['seat_number'] = $s;
                     break;
                 }
+            }
+        }
+
+        $tripId = (int)($data['trip_id'] ?? 0);
+        if ($tripId > 0) {
+            $checkStmt = $pdo->prepare("SELECT id FROM trips WHERE id = ?");
+            $checkStmt->execute([$tripId]);
+            if (!$checkStmt->fetchColumn()) {
+                $tripId = 0;
+            }
+        }
+        if ($tripId <= 0) {
+            $firstTrip = $pdo->query("SELECT id FROM trips ORDER BY id ASC LIMIT 1")->fetchColumn();
+            $tripId = $firstTrip ? (int)$firstTrip : null;
+        }
+
+        $userId = !empty($data['user_id']) ? (int)$data['user_id'] : null;
+        if ($userId) {
+            $userCheck = $pdo->prepare("SELECT id FROM users WHERE id = ?");
+            $userCheck->execute([$userId]);
+            if (!$userCheck->fetchColumn()) {
+                $userId = null;
             }
         }
 
@@ -46,8 +74,8 @@ class BookingService {
 
         $stmt->execute([
             $ref,
-            $data['user_id'] ?? null,
-            $data['trip_id'] ?? 1,
+            $userId,
+            $tripId,
             $data['trip_number'] ?? 'GV-1025',
             $data['bus_model'] ?? 'Scania VIP First Class',
             trim($data['passenger_name']),
