@@ -4,11 +4,21 @@ require_once __DIR__ . '/../config/database.php';
 
 echo "=== SmartBus PHP Database Migration & Clean Seeder (Douala <-> Yaoundé Only) ===\n";
 
+$isMysql = (defined('DB_TYPE') && DB_TYPE === 'mysql');
+echo "Target Database Engine: " . ($isMysql ? "MySQL / MariaDB (" . DB_HOST . ":" . DB_PORT . " / " . DB_NAME . ")" : "SQLite (" . DB_SQLITE_PATH . ")") . "\n";
+
 $pdo = Database::getConnection();
-$pdo->exec("PRAGMA foreign_keys = OFF;");
+
+if ($isMysql) {
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 0;");
+    $schemaFile = __DIR__ . '/schema_mysql.sql';
+} else {
+    $pdo->exec("PRAGMA foreign_keys = OFF;");
+    $schemaFile = __DIR__ . '/schema.sql';
+}
 
 // 1. Run Schema
-$schema = file_get_contents(__DIR__ . '/schema.sql');
+$schema = file_get_contents($schemaFile);
 $statements = array_filter(array_map('trim', explode(';', $schema)));
 
 foreach ($statements as $stmt) {
@@ -16,11 +26,11 @@ foreach ($statements as $stmt) {
         try {
             $pdo->exec($stmt);
         } catch (PDOException $e) {
-            // ignore table exists
+            echo "[Notice] " . $e->getMessage() . "\n";
         }
     }
 }
-echo "[OK] Schema verified.\n";
+echo "[OK] Schema structure verified and applied successfully.\n";
 
 // Clear non-Douala/Yaoundé data
 $pdo->exec("DELETE FROM bookings WHERE origin NOT LIKE '%Douala%' AND origin NOT LIKE '%Yaoundé%'");
@@ -157,6 +167,12 @@ $insH = $pdo->prepare("INSERT INTO parcel_status_history (parcel_id, station_id,
 $insH->execute([1, 1, 'REÇU_EN_GARE', "Dépôt du colis au guichet Gare Centrale Douala (Akwa)"]);
 $insH->execute([1, 1, 'CHARGÉ_EN_SOUTE', "Chargé en soute sécurisée dans le car Scania VIP #LT-782-AA"]);
 $insH->execute([1, 1, 'EN_TRANSIT', "Départ du convoi en direction de Yaoundé Mvan sur l'Axe Lourd N3"]);
+
+if ($isMysql) {
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1;");
+} else {
+    $pdo->exec("PRAGMA foreign_keys = ON;");
+}
 
 echo "[OK] Seeded sample parcel PAR-2026-00125 with checkpoint history.\n";
 echo "=== Migration Complete ===\n";
