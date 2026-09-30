@@ -74,20 +74,20 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex items-center gap-4">
       <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 shadow-sm shrink-0">
       <div>
-        <span class="px-2.5 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-wider">Cockpit Chauffeur • Axe Lourd N3 Douala ↔ Yaoundé</span>
+        <span class="px-2.5 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-wider"><?= t('driver.deckTitle', 'Cockpit Chauffeur • Axe Lourd N3 Douala ↔ Yaoundé') ?></span>
         <h1 class="text-2xl font-black tracking-tight text-white mt-1"><?= htmlspecialchars($user['name']) ?></h1>
-        <p class="text-xs text-slate-300 font-mono">Télémétrie GPS 4G • Scania VIP First Class</p>
+        <p class="text-xs text-slate-300 font-mono"><?= t('driver.deckSub', 'Télémétrie GPS 4G • Scania VIP First Class') ?></p>
       </div>
     </div>
     <div class="flex items-center gap-3">
       <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-mono font-bold border border-emerald-500/30 flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-        <span>GPS En Ligne (Batterie: <?= $trk['battery_level'] ?>%)</span>
+        <span><?= sprintf(t('driver.gpsOnline', 'GPS En Ligne (Batterie: %s%%)'), $trk['battery_level']) ?></span>
       </span>
       <button type="button" onclick="toggleDriverMap()" id="btn-toggle-driver-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span>🗺️ Voir sur la Carte (See on Map)</span>
+        <span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
       </button>
     </div>
   </div>
@@ -104,11 +104,11 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
         <i data-lucide="navigation" class="w-4 h-4 text-emerald-600 animate-pulse"></i>
-        <span>Itinéraire N3 en Direct • Douala ↔ Yaoundé (Carto HD)</span>
+        <span><?= t('driver.navTitle', 'Itinéraire N3 en Direct • Douala ↔ Yaoundé (Carto HD)') ?></span>
       </h3>
       <button type="button" onclick="toggleDriverMap()" class="text-xs text-slate-500 hover:text-slate-800 font-bold flex items-center gap-1 cursor-pointer">
         <i data-lucide="x" class="w-4 h-4"></i>
-        <span>Fermer la Carte</span>
+        <span><?= t('map.close', 'Fermer la Carte') ?></span>
       </button>
     </div>
     <div id="driver-nav-map" class="w-full h-[400px] rounded-xl border border-slate-300 z-10"></div>
@@ -118,7 +118,7 @@ include __DIR__ . '/../includes/header.php';
   <div class="space-y-4">
     <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
       <i data-lucide="bus" class="w-4 h-4 text-blue-600"></i>
-      <span>Trajets Douala ↔ Yaoundé Assignés (<?= count($driverTrips) ?>)</span>
+      <span><?= t('driver.assignedTrips', 'Trajets Douala ↔ Yaoundé Assignés') ?> (<?= count($driverTrips) ?>)</span>
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -141,11 +141,11 @@ include __DIR__ . '/../includes/header.php';
 
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-slate-600 pt-2 border-t border-slate-100">
               <div>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block">Autocar VIP</span>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block"><?= t('driver.coach', 'Autocar VIP') ?></span>
                 <strong class="text-slate-900"><?= htmlspecialchars($t['bus_number']) ?></strong>
               </div>
               <div>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block">Départ Prévu</span>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block"><?= t('driver.scheduledDep', 'Départ Prévu') ?></span>
                 <strong class="text-blue-700"><?= date('H:i • d/m/Y', strtotime($t['departure_scheduled'])) ?></strong>
               </div>
               <div>
@@ -168,12 +168,12 @@ include __DIR__ . '/../includes/header.php';
               <?php if ($t['status'] === 'SCHEDULED'): ?>
                 <button type="submit" name="action" value="depart" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                   <i data-lucide="play" class="w-3.5 h-3.5"></i>
-                  <span>Démarrer Trajet</span>
+                  <span><?= t('driver.btnDepart', 'Démarrer Trajet') ?></span>
                 </button>
               <?php elseif ($t['status'] === 'IN_TRANSIT'): ?>
                 <button type="submit" name="action" value="arrive" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                   <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                  <span>Confirmer Arrivée</span>
+                  <span><?= t('driver.btnArrive', 'Confirmer Arrivée') ?></span>
                 </button>
               <?php else: ?>
                 <span class="text-xs text-slate-400 font-semibold italic">Trajet clôturé avec succès</span>
@@ -183,11 +183,11 @@ include __DIR__ . '/../includes/header.php';
             <?php if ($t['status'] === 'IN_TRANSIT'): ?>
               <button type="button" onclick="openGpsModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center gap-1.5 border border-sky-200 cursor-pointer">
                 <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                <span>Pointer Étape GPS</span>
+                <span><?= t('driver.updateGpsStop', 'Pointer Étape GPS') ?></span>
               </button>
               <button type="button" onclick="openIncidentModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition flex items-center gap-1.5 border border-amber-200 cursor-pointer">
                 <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-                <span>Signaler Ralentissement</span>
+                <span><?= t('driver.reportIncident', 'Signaler Ralentissement') ?></span>
               </button>
             <?php endif; ?>
           </div>
@@ -201,7 +201,7 @@ include __DIR__ . '/../includes/header.php';
 <div id="gps-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-md w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-      <h3 class="font-black text-slate-900 text-base">Mettre à Jour la Position GPS</h3>
+      <h3 class="font-black text-slate-900 text-base"><?= t('driver.updateGpsStop', 'Mettre à Jour la Position GPS') ?></h3>
       <button type="button" onclick="document.getElementById('gps-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -225,13 +225,13 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Vitesse Instantanée (km/h)</label>
+        <label class="block font-bold text-slate-700 mb-1"><?= t('driver.currentSpeed', 'Vitesse Instantanée (km/h)') ?></label>
         <input type="number" name="current_speed" value="74" class="w-full p-2.5 rounded-lg border border-slate-300 font-mono font-bold">
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick="document.getElementById('gps-modal').classList.add('hidden')" class="px-4 py-2 border rounded-xl font-bold">Annuler</button>
-        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs">Actualiser Télémétrie</button>
+        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs"><?= t('driver.btnUpdatePosition', 'Actualiser Télémétrie') ?></button>
       </div>
     </form>
   </div>
@@ -241,7 +241,7 @@ include __DIR__ . '/../includes/header.php';
 <div id="incident-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-md w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-      <h3 class="font-black text-slate-900 text-base">Signaler un Ralentissement / Incident</h3>
+      <h3 class="font-black text-slate-900 text-base"><?= t('driver.reportIncident', 'Signaler un Ralentissement / Incident') ?></h3>
       <button type="button" onclick="document.getElementById('incident-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -258,7 +258,7 @@ include __DIR__ . '/../includes/header.php';
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick="document.getElementById('incident-modal').classList.add('hidden')" class="px-4 py-2 border rounded-xl font-bold">Annuler</button>
-        <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold shadow-xs">Transmettre l'Alerte</button>
+        <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold shadow-xs"><?= t('driver.btnTransmitReport', "Transmettre l'Alerte") ?></button>
       </div>
     </form>
   </div>
@@ -284,7 +284,7 @@ include __DIR__ . '/../includes/header.php';
     
     if (container.classList.contains('hidden')) {
       container.classList.remove('hidden');
-      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>' + (window.CURRENT_LANG === 'en' ? 'Hide Map' : 'Masquer la Carte') + '</span>';
       btn.classList.add('bg-slate-700', 'text-amber-300');
       
       if (!driverMapInitialized) {
@@ -293,7 +293,7 @@ include __DIR__ . '/../includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

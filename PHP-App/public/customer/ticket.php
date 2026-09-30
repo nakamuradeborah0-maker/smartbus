@@ -1,6 +1,7 @@
 <?php
 // PHP-App/public/customer/ticket.php
 require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../src/Language.php';
 require_once __DIR__ . '/../../src/Services/BookingService.php';
 
 $ref = trim($_GET['ref'] ?? $_GET['pnr'] ?? '');

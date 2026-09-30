@@ -82,12 +82,12 @@ include __DIR__ . '/includes/header.php';
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
           <span class="text-[11px] text-slate-500 flex items-center gap-1">
             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600"></i>
-            <span>Flotte VIP climatisée • Paiement CamPay sécurisé</span>
+            <span><?= t('hero.securityBadge') ?></span>
           </span>
           <div class="flex items-center gap-2">
             <button type="button" onclick="updateHomeDepartures()" class="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer flex items-center gap-1.5">
               <i data-lucide="filter" class="w-3.5 h-3.5"></i>
-              <span>Filtrer</span>
+              <span><?= t('hero.filter', 'Filtrer') ?></span>
             </button>
             <button type="button" onclick="triggerHeroSearch()" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-sm transition cursor-pointer">
               <i data-lucide="ticket" class="w-4 h-4"></i>
@@ -108,7 +108,7 @@ include __DIR__ . '/includes/header.php';
           </button>
         </form>
         <div class="flex items-center gap-2 text-xs text-slate-500">
-          <span class="font-bold">Démo instantanée :</span>
+          <span class="font-bold"><?= t('hero.instantDemo', 'Démo instantanée :') ?></span>
           <a href="<?= BASE_URL ?>/track.php?num=PAR-2026-00125" class="font-mono text-blue-700 hover:underline font-bold">PAR-2026-00125</a>
         </div>
       </div>
@@ -124,13 +124,13 @@ include __DIR__ . '/includes/header.php';
         <?= t('search.departuresTitle', 'Départs Programmés en Temps Réel') ?>
       </h2>
       <p class="text-xs text-slate-500" id="departures-sub-text">
-        Date sélectionnée : <strong class="text-blue-700" id="current-date-badge"><?= $today ?></strong> • Liaisons directes avec autocars VIP
+        <?= t('search.selectedDate') ?> <strong class="text-blue-700" id="current-date-badge"><?= $today ?></strong> • <?= t('search.directInfo') ?>
       </p>
     </div>
     <div class="flex items-center gap-2">
       <button type="button" onclick="openBookingModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="plus-circle" class="w-4 h-4"></i>
-        <span>Réserver Autre Date</span>
+        <span><?= t('search.reserveOther', 'Réserver Autre Date') ?></span>
       </button>
       <span id="trips-count-badge" class="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-3 py-2 rounded-xl border border-blue-200">
         <?= count($trips) ?> <?= Language::isEn() ? 'scheduled routes' : 'départs configurés' ?>
@@ -150,7 +150,7 @@ include __DIR__ . '/includes/header.php';
           <div class="flex items-center justify-between gap-2 mb-2">
             <span class="font-mono text-xs font-bold text-slate-500"><?= htmlspecialchars($trip['trip_number']) ?></span>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
-              <?= $trip['status'] === 'SCHEDULED' ? (Language::isEn() ? 'Scheduled' : 'Programmé') : htmlspecialchars($trip['status']) ?>
+              <?= $trip['status'] === 'SCHEDULED' ? t('search.scheduled', 'Programmé') : htmlspecialchars($trip['status']) ?>
             </span>
           </div>
 
@@ -163,7 +163,7 @@ include __DIR__ . '/includes/header.php';
           <div class="space-y-1.5 text-xs text-slate-600 my-3">
             <div class="flex items-center gap-2">
               <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
-              <span>Départ : <strong><?= $depTime ?></strong> • <?= date('d/m/Y', strtotime($depDate)) ?></span>
+              <span><?= t('search.departure') ?> <strong><?= $depTime ?></strong> • <?= date('d/m/Y', strtotime($depDate)) ?></span>
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="bus" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -171,15 +171,15 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
-              <span class="text-emerald-700 font-bold">32 places VIP disponibles</span>
+              <span class="text-emerald-700 font-bold">32 <?= t('search.seatsLeft') ?></span>
             </div>
           </div>
         </div>
 
         <div class="border-t border-slate-100 pt-3 flex items-center justify-between mt-2">
           <div>
-            <span class="text-lg font-black text-slate-900"><?= number_format($trip['price'], 0, ',', ' ') ?> FCFA</span>
-            <span class="text-[10px] text-slate-400 uppercase font-bold block">par voyageur</span>
+            <span class="text-lg font-black text-slate-900"><?= number_format($trip['price'], 0, ',', ' ') ?> <?= t('search.price') ?></span>
+            <span class="text-[10px] text-slate-400 uppercase font-bold block"><?= t('search.perPassenger') ?></span>
           </div>
           <button type="button" onclick="openBookingModal(<?= $tripJson ?>, '<?= $depDate ?>')"
             class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
@@ -198,20 +198,20 @@ include __DIR__ . '/includes/header.php';
       <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
       <div>
         <h3 class="font-bold text-slate-900 text-sm">
-          <?= Language::isEn() ? 'Intercity Highway N3 • Live 4G Telemetry (Carto HD)' : 'Liaison Interurbaine Axe Lourd N3 • Télémétrie 4G en Direct (Carto HD)' ?>
+          <?= t('map.title') ?>
         </h3>
-        <p class="text-[11px] text-slate-500 font-mono">Douala (Akwa) ↔ Yaoundé (Mvan) • Suivi des autocars et colis</p>
+        <p class="text-[11px] text-slate-500 font-mono"><?= t('map.subtitle') ?></p>
       </div>
     </div>
     <div class="flex items-center gap-3">
       <div class="hidden sm:flex items-center gap-3 text-xs font-mono">
-        <span>Vitesse : <strong id="hud-speed" class="text-blue-700">74 km/h</strong></span>
-        <span>Étape : <strong id="hud-stop" class="text-slate-800">Boumnyébel</strong></span>
+        <span><?= t('map.speed') ?> <strong id="hud-speed" class="text-blue-700">74 km/h</strong></span>
+        <span><?= t('map.stop') ?> <strong id="hud-stop" class="text-slate-800">Boumnyébel</strong></span>
       </div>
       <button type="button" onclick="toggleHomeMap()" id="btn-toggle-home-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span>🗺️ Voir sur la Carte (See on Map)</span>
+        <span><?= t('map.seeOnMap') ?></span>
       </button>
     </div>
   </div>
@@ -234,19 +234,19 @@ include __DIR__ . '/includes/header.php';
     <div class="relative p-6 sm:p-12 max-w-xl space-y-4">
       <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
         <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-        <span>Confort Première Classe</span>
+        <span><?= t('fleet.badge') ?></span>
       </span>
       <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-        Voyagez dans le Plus Grand Confort Interurbain
+        <?= t('fleet.title') ?>
       </h2>
       <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
-        Fauteuils en cuir inclinables, climatisation régulée et wifi 4G à bord sur toutes nos liaisons quotidiennes directes.
+        <?= t('fleet.desc') ?>
       </p>
       <div class="grid grid-cols-2 gap-2 text-xs font-medium text-slate-200 pt-2 border-t border-white/20">
-        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> Ponctualité 100%</div>
-        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> Salons VIP climatisés</div>
-        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> Soute à bagages sécurisée</div>
-        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> Sécurité 24/7 sur quai</div>
+        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> <?= t('fleet.punctuality') ?></div>
+        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> <?= t('fleet.salons') ?></div>
+        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> <?= t('fleet.secureCargo') ?></div>
+        <div class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-sky-400"></i> <?= t('fleet.security247') ?></div>
       </div>
     </div>
   </div>
@@ -277,19 +277,19 @@ include __DIR__ . '/includes/header.php';
     }
   }
 
-  function handleHeroCityChange(changed = 'origin') {
-    const originSelect = document.getElementById('hero-from-city');
-    const destSelect = document.getElementById('hero-to-city');
-    if (changed === 'origin') {
-      destSelect.value = (originSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
+  function handleHeroCityChange(type) {
+    const from = document.getElementById('hero-from-city');
+    const to = document.getElementById('hero-to-city');
+    if (type === 'origin') {
+      to.value = (from.value === 'Douala') ? 'Yaoundé' : 'Douala';
     } else {
-      originSelect.value = (destSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
+      from.value = (to.value === 'Douala') ? 'Yaoundé' : 'Douala';
     }
     updateHomeDepartures();
   }
 
-  function setHeroDate(dateStr) {
-    document.getElementById('hero-date').value = dateStr;
+  function setHeroDate(val) {
+    document.getElementById('hero-date').value = val;
     updateHomeDepartures();
   }
 
@@ -299,23 +299,33 @@ include __DIR__ . '/includes/header.php';
     const date = document.getElementById('hero-date').value;
     const grid = document.getElementById('home-trips-grid');
     const dateBadge = document.getElementById('current-date-badge');
-    if (dateBadge) dateBadge.textContent = date;
+    const countBadge = document.getElementById('trips-count-badge');
 
-    if (!grid) return;
-    grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200"><i data-lucide="loader" class="w-6 h-6 animate-spin mx-auto mb-2 text-blue-600"></i>Actualisation des départs en temps réel...</div>';
+    if (dateBadge) dateBadge.textContent = date;
+    grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-8 text-center text-xs text-slate-500"><i data-lucide="loader" class="w-6 h-6 animate-spin mx-auto mb-2 text-blue-600"></i>' + (window.I18N?.['booking.loadingDepartures'] || 'Chargement des départs...') + '</div>';
     if (window.lucide) lucide.createIcons();
 
     try {
       const res = await fetch(`/api/trips.php?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&date=${date}`);
       const trips = await res.json();
 
-      const countBadge = document.getElementById('trips-count-badge');
-      if (countBadge) countBadge.textContent = (trips?.length || 0) + ' départs configurés';
+      if (countBadge) {
+        countBadge.textContent = trips.length + (window.CURRENT_LANG === 'en' ? ' scheduled routes' : ' départs configurés');
+      }
 
       if (!trips || trips.length === 0) {
-        grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200 space-y-2"><p class="font-bold text-slate-700">Aucun départ direct prévu sur cette ligne pour le ' + date + '.</p><button type="button" onclick="setHeroDate(\'' + '<?= $tomorrow ?>' + '\')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">Consulter les départs de demain</button></div>';
+        const noText = (window.I18N?.['booking.noDepartures'] || 'Aucun départ programmé sur cette ligne pour le %s.').replace('%s', date);
+        const tomorrowText = window.I18N?.['booking.seeTomorrow'] || 'Consulter les départs de demain';
+        grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200 space-y-2"><p class="font-bold text-slate-700">' + noText + '</p><button type="button" onclick="setHeroDate('' + '<?= $tomorrow ?>' + '')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">' + tomorrowText + '</button></div>';
         return;
       }
+
+      const scheduledLabel = window.I18N?.['search.scheduled'] || 'Programmé';
+      const depLabel = window.I18N?.['search.departure'] || 'Départ :';
+      const seatsLabel = window.I18N?.['search.seatsLeft'] || 'places VIP disponibles';
+      const perPassLabel = window.I18N?.['search.perPassenger'] || 'par voyageur';
+      const reserveLabel = window.I18N?.['search.reserve'] || 'Réserver Siège VIP';
+      const currencyLabel = window.I18N?.['search.price'] || 'FCFA';
 
       grid.innerHTML = trips.map(t => {
         const parts = (t.departure_scheduled || '').split(' ');
@@ -329,7 +339,7 @@ include __DIR__ . '/includes/header.php';
               <div class="flex items-center justify-between gap-2 mb-2">
                 <span class="font-mono text-xs font-bold text-slate-500">${t.trip_number}</span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
-                  ${t.status === 'SCHEDULED' ? 'Programmé' : t.status}
+                  ${t.status === 'SCHEDULED' ? scheduledLabel : t.status}
                 </span>
               </div>
 
@@ -342,7 +352,7 @@ include __DIR__ . '/includes/header.php';
               <div class="space-y-1.5 text-xs text-slate-600 my-3">
                 <div class="flex items-center gap-2">
                   <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span>Départ : <strong>${depTime}</strong> • ${depDate}</span>
+                  <span>${depLabel} <strong>${depTime}</strong> • ${depDate}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <i data-lucide="bus" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -350,19 +360,19 @@ include __DIR__ . '/includes/header.php';
                 </div>
                 <div class="flex items-center gap-2">
                   <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span class="text-emerald-700 font-bold">32 places VIP disponibles</span>
+                  <span class="text-emerald-700 font-bold">32 ${seatsLabel}</span>
                 </div>
               </div>
             </div>
 
             <div class="border-t border-slate-100 pt-3 flex items-center justify-between mt-2">
               <div>
-                <span class="text-lg font-black text-slate-900">${Number(t.price).toLocaleString()} FCFA</span>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block">par voyageur</span>
+                <span class="text-lg font-black text-slate-900">${Number(t.price).toLocaleString()} ${currencyLabel}</span>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">${perPassLabel}</span>
               </div>
               <button type="button" onclick="openBookingModal(${tripEscaped}, '${depDate}')"
                 class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
-                Réserver Siège VIP
+                ${reserveLabel}
               </button>
             </div>
           </div>
@@ -371,7 +381,7 @@ include __DIR__ . '/includes/header.php';
 
       if (window.lucide) lucide.createIcons();
     } catch (e) {
-      grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-6 text-xs text-red-600 bg-red-50 rounded-xl">Erreur de chargement des départs.</div>';
+      grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-6 text-xs text-red-600 bg-red-50 rounded-xl">Error loading departures.</div>';
     }
   }
 
@@ -397,10 +407,11 @@ include __DIR__ . '/includes/header.php';
   function toggleHomeMap() {
     const container = document.getElementById('home-map-container');
     const btn = document.getElementById('btn-toggle-home-map');
+    const isEn = window.CURRENT_LANG === 'en';
     
     if (container.classList.contains('hidden')) {
       container.classList.remove('hidden');
-      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>' + (isEn ? 'Hide Map' : 'Masquer la Carte') + '</span>';
       btn.classList.add('bg-slate-700', 'text-amber-300');
       
       if (!homeMapInitialized) {
@@ -409,7 +420,7 @@ include __DIR__ . '/includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>' + (isEn ? '🗺️ See on Map' : '🗺️ Voir sur la Carte (See on Map)') + '</span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

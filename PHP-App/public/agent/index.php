@@ -108,10 +108,10 @@ include __DIR__ . '/../includes/header.php';
       <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 shadow-sm shrink-0">
       <div>
         <span class="px-2.5 py-0.5 rounded bg-indigo-500 text-white font-black text-[10px] uppercase tracking-wider">
-          <?= ($currentUser['role'] === 'BOOKING_AGENT') ? 'Guichet Réservations & Bagages VIP' : 'Guichet Fret, Colis & Messagerie' ?>
+          <?= ($currentUser['role'] === 'BOOKING_AGENT') ? t('agent.bookingDesk', 'Guichet Réservations & Bagages VIP') : t('agent.parcelDesk', 'Guichet Fret, Colis & Messagerie') ?>
         </span>
         <h1 class="text-2xl font-black tracking-tight text-white mt-1"><?= htmlspecialchars($currentUser['name']) ?></h1>
-        <p class="text-xs text-slate-300 font-mono">Douala (Akwa) ↔ Yaoundé (Mvan) • Gestion Opérationnelle</p>
+        <p class="text-xs text-slate-300 font-mono"><?= t('agent.operationalMgmt', 'Douala (Akwa) ↔ Yaoundé (Mvan) • Gestion Opérationnelle') ?></p>
       </div>
     </div>
     
@@ -120,13 +120,13 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="toggleAgentMap()" id="btn-toggle-agent-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span>🗺️ Voir sur la Carte (See on Map)</span>
+        <span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
       </button>
 
       <button type="button" onclick="openRegisterModal()"
         class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="package-plus" class="w-4 h-4"></i>
-        <span>Nouveau Colis</span>
+        <span><?= t('agent.newParcel', 'Nouveau Colis') ?></span>
       </button>
     </div>
   </div>
@@ -143,11 +143,11 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
         <i data-lucide="radio" class="w-4 h-4 text-blue-600 animate-pulse"></i>
-        <span>Position des Véhicules & Checkpoints en Ligne • Axe Douala ↔ Yaoundé (Carto HD)</span>
+        <span><?= t('map.title') ?></span>
       </h3>
       <button type="button" onclick="toggleAgentMap()" class="text-xs text-slate-500 hover:text-slate-800 font-bold flex items-center gap-1">
         <i data-lucide="x" class="w-4 h-4"></i>
-        <span>Fermer la Carte</span>
+        <span><?= t('map.close', 'Fermer la Carte') ?></span>
       </button>
     </div>
     <div id="agent-map" class="w-full h-[380px] rounded-xl border border-slate-300 z-10"></div>
@@ -159,12 +159,12 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="switchAgentTab('parcels')" id="agent-tab-parcels"
         class="pb-3 border-b-2 <?= $defaultTab === 'parcels' ? 'border-blue-700 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' ?> flex items-center gap-2 cursor-pointer">
         <i data-lucide="package" class="w-4 h-4"></i>
-        <span>📦 Espace Agent de Colis (<?= count($parcels) ?>)</span>
+        <span><?= t('agent.tabParcels', '📦 Espace Agent de Colis') ?> (<?= count($parcels) ?>)</span>
       </button>
       <button type="button" onclick="switchAgentTab('bookings')" id="agent-tab-bookings"
         class="pb-3 border-b-2 <?= $defaultTab === 'bookings' ? 'border-blue-700 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' ?> flex items-center gap-2 cursor-pointer">
         <i data-lucide="ticket" class="w-4 h-4"></i>
-        <span>🎫 Espace Agent de Réservation (<?= count($bookings) ?>)</span>
+        <span><?= t('agent.tabBookings', '🎫 Espace Agent de Réservation') ?> (<?= count($bookings) ?>)</span>
       </button>
     </div>
 
@@ -172,10 +172,10 @@ include __DIR__ . '/../includes/header.php';
     <div id="agent-view-parcels" class="space-y-4 <?= $defaultTab === 'parcels' ? '' : 'hidden' ?>">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h4 class="text-xs font-black uppercase tracking-wider text-slate-800">Gestion des Expéditions de Colis & Fret</h4>
-          <p class="text-xs text-slate-500">Enregistrement, Pesée, Checkpoints et Journal d'Audit</p>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-800"><?= t('agent.parcelsTitle', 'Gestion des Expéditions de Colis & Fret') ?></h4>
+          <p class="text-xs text-slate-500"><?= t('agent.parcelsSub', "Enregistrement, Pesée, Checkpoints et Journal d'Audit") ?></p>
         </div>
-        <input type="text" id="parcel-search" onkeyup="filterParcels()" placeholder="Rechercher par n° de suivi, expéditeur..."
+        <input type="text" id="parcel-search" onkeyup="filterParcels()" placeholder="<?= t('agent.searchPlaceholder', 'Rechercher par n° de suivi, expéditeur...') ?>"
           class="p-2 rounded-xl bg-slate-50 border border-slate-300 text-xs w-72 focus:outline-none focus:ring-2 focus:ring-blue-600">
       </div>
 
@@ -183,14 +183,14 @@ include __DIR__ . '/../includes/header.php';
         <table class="w-full text-left text-xs" id="parcels-table">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
             <tr>
-              <th class="p-3">Numéro</th>
-              <th class="p-3">Expéditeur</th>
-              <th class="p-3">Destinataire</th>
-              <th class="p-3">Ligne</th>
-              <th class="p-3">Poids / Frais</th>
-              <th class="p-3">Traceur IoT</th>
-              <th class="p-3">Statut</th>
-              <th class="p-3 text-right">Actions</th>
+              <th class="p-3"><?= t('agent.colNumber', 'Numéro') ?></th>
+              <th class="p-3"><?= t('agent.colSender', 'Expéditeur') ?></th>
+              <th class="p-3"><?= t('agent.colRecipient', 'Destinataire') ?></th>
+              <th class="p-3"><?= t('agent.colRoute', 'Ligne') ?></th>
+              <th class="p-3"><?= t('agent.colWeightFees', 'Poids / Frais') ?></th>
+              <th class="p-3"><?= t('agent.colTracker', 'Traceur IoT') ?></th>
+              <th class="p-3"><?= t('agent.colStatus', 'Statut') ?></th>
+              <th class="p-3 text-right"><?= t('agent.colActions', 'Actions') ?></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -206,7 +206,7 @@ include __DIR__ . '/../includes/header.php';
                   <?php if ($p['tracker_code']): ?>
                     <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-mono font-bold text-[10px]"><?= htmlspecialchars($p['tracker_code']) ?></span>
                   <?php else: ?>
-                    <span class="text-slate-400 italic">Aucun</span>
+                    <span class="text-slate-400 italic"><?= t('agent.none', 'Aucun') ?></span>
                   <?php endif; ?>
                 </td>
                 <td class="p-3">
@@ -219,17 +219,17 @@ include __DIR__ . '/../includes/header.php';
                   <!-- Checkpoint Status Update -->
                   <button type="button" onclick="openStatusModal(<?= $p['id'] ?>, '<?= htmlspecialchars($p['tracking_number']) ?>', '<?= htmlspecialchars($p['status']) ?>')"
                     class="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition text-[11px] cursor-pointer">
-                    Statut ⚙️
+                    <?= t('agent.btnStatus', 'Statut ⚙️') ?>
                   </button>
                   <!-- View History -->
                   <button type="button" onclick="openHistoryModal(<?= $p['id'] ?>, '<?= htmlspecialchars($p['tracking_number']) ?>')"
                     class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer">
-                    Historique 📜 (<?= $p['history_count'] ?>)
+                    <?= t('agent.btnHistory', 'Historique 📜') ?> (<?= $p['history_count'] ?>)
                   </button>
                   <!-- Printable Waybill -->
                   <a href="<?= BASE_URL ?>/agent/waybill.php?num=<?= urlencode($p['tracking_number']) ?>" target="_blank"
                      class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition text-[11px]">
-                    Bordereau 🖨️
+                    <?= t('agent.btnWaybill', 'Bordereau 🖨️') ?>
                   </a>
                 </td>
               </tr>
@@ -243,8 +243,8 @@ include __DIR__ . '/../includes/header.php';
     <div id="agent-view-bookings" class="space-y-4 <?= $defaultTab === 'bookings' ? '' : 'hidden' ?>">
       <div class="flex items-center justify-between">
         <div>
-          <h4 class="text-xs font-black uppercase tracking-wider text-slate-800">Gestion des Réservations & Attribution IoT Bagage</h4>
-          <p class="text-xs text-slate-500">Superviser les passagers, valider les encaissements guichet et lier un traceur physique au bagage</p>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-800"><?= t('agent.bookingsTitle', 'Gestion des Réservations & Attribution IoT Bagage') ?></h4>
+          <p class="text-xs text-slate-500"><?= t('agent.bookingsSub', 'Superviser les passagers, valider les encaissements guichet et lier un traceur physique au bagage') ?></p>
         </div>
       </div>
 
@@ -252,14 +252,14 @@ include __DIR__ . '/../includes/header.php';
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
             <tr>
-              <th class="p-3">Référence</th>
-              <th class="p-3">Passager (Profil)</th>
-              <th class="p-3">Trajet</th>
-              <th class="p-3">Siège VIP</th>
-              <th class="p-3">Date & Heure</th>
-              <th class="p-3">Traceur IoT Bagage</th>
-              <th class="p-3">Paiement</th>
-              <th class="p-3 text-right">Actions Guichet</th>
+              <th class="p-3"><?= t('agent.colRef', 'Référence') ?></th>
+              <th class="p-3"><?= t('agent.colPassenger', 'Passager (Profil)') ?></th>
+              <th class="p-3"><?= t('agent.colTrip', 'Trajet') ?></th>
+              <th class="p-3"><?= t('agent.colSeat', 'Siège VIP') ?></th>
+              <th class="p-3"><?= t('agent.colDateTime', 'Date & Heure') ?></th>
+              <th class="p-3"><?= t('agent.colLuggageTracker', 'Traceur IoT Bagage') ?></th>
+              <th class="p-3"><?= t('agent.colPayment', 'Paiement') ?></th>
+              <th class="p-3 text-right"><?= t('agent.colDeskActions', 'Actions Guichet') ?></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -279,7 +279,7 @@ include __DIR__ . '/../includes/header.php';
                       🏷️ <?= htmlspecialchars($b['tracker_code']) ?>
                     </span>
                   <?php else: ?>
-                    <span class="text-slate-400 italic text-[11px]">Non assigné</span>
+                    <span class="text-slate-400 italic text-[11px]"><?= t('agent.unassigned', 'Non assigné') ?></span>
                   <?php endif; ?>
                 </td>
                 <td class="p-3">
@@ -292,7 +292,7 @@ include __DIR__ . '/../includes/header.php';
                   <!-- Assign IoT Tracker to Luggage / Profile Modal Trigger -->
                   <button type="button" onclick="openAssignTrackerModal(<?= $b['id'] ?>, '<?= htmlspecialchars($b['booking_reference']) ?>', '<?= htmlspecialchars($b['passenger_name']) ?>')"
                     class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer">
-                    Lier Traceur IoT 🏷️
+                    <?= t('agent.btnLinkTracker', 'Lier Traceur IoT 🏷️') ?>
                   </button>
 
                   <!-- Validate Payment if Pending -->
@@ -301,13 +301,13 @@ include __DIR__ . '/../includes/header.php';
                       <input type="hidden" name="confirm_booking" value="1">
                       <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
                       <button type="submit" class="px-2.5 py-1 bg-emerald-600 text-white rounded font-bold text-[11px] cursor-pointer">
-                        Encaisser Guichet
+                        <?= t('agent.btnDeskCollect', 'Encaisser Guichet') ?>
                       </button>
                     </form>
                   <?php else: ?>
                     <a href="<?= BASE_URL ?>/customer/ticket.php?ref=<?= urlencode($b['booking_reference']) ?>" target="_blank"
                        class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px]">
-                      Billet 🖨️
+                      <?= t('agent.btnTicket', 'Billet 🖨️') ?>
                     </a>
                   <?php endif; ?>
                 </td>
@@ -324,7 +324,7 @@ include __DIR__ . '/../includes/header.php';
 <div id="assign-tracker-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-md w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-      <h3 class="font-black text-slate-900 text-base">Assigner un Appareil IoT au Bagage</h3>
+      <h3 class="font-black text-slate-900 text-base"><?= t('agent.modalAssignTitle', 'Assigner un Appareil IoT au Bagage') ?></h3>
       <button type="button" onclick="document.getElementById('assign-tracker-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -339,7 +339,7 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Sélectionner la Balise IoT Physique à Fixer *</label>
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.modalAssignSub', 'Sélectionner la Balise IoT Physique à Fixer *') ?></label>
         <select name="tracker_id" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50 font-bold text-xs">
           <?php foreach ($availableTrackers as $tk): ?>
             <option value="<?= $tk['id'] ?>">
@@ -351,7 +351,7 @@ include __DIR__ . '/../includes/header.php';
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick="document.getElementById('assign-tracker-modal').classList.add('hidden')" class="px-4 py-2 border rounded-xl font-bold">Annuler</button>
-        <button type="submit" class="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold shadow-xs">Associer au Bagage</button>
+        <button type="submit" class="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold shadow-xs"><?= t('agent.btnAttach', 'Associer au Bagage') ?></button>
       </div>
     </form>
   </div>
@@ -362,7 +362,7 @@ include __DIR__ . '/../includes/header.php';
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
       <div>
-        <h3 class="font-black text-slate-900 text-base">Historique d'Acheminement du Colis</h3>
+        <h3 class="font-black text-slate-900 text-base"><?= t('agent.modalHistoryTitle', "Historique d'Acheminement du Colis") ?></h3>
         <p class="text-xs text-slate-500 font-mono" id="history-parcel-ref">PAR-2026</p>
       </div>
       <button type="button" onclick="document.getElementById('history-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
@@ -382,7 +382,7 @@ include __DIR__ . '/../includes/header.php';
 <div id="status-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-md w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-      <h3 class="font-black text-slate-900 text-base">Actualiser le Statut du Colis</h3>
+      <h3 class="font-black text-slate-900 text-base"><?= t('agent.modalStatusTitle', 'Actualiser le Statut du Colis') ?></h3>
       <button type="button" onclick="document.getElementById('status-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -392,12 +392,12 @@ include __DIR__ . '/../includes/header.php';
       <input type="hidden" id="status-parcel-id" name="parcel_id" value="">
       
       <div>
-        <span class="text-slate-500 block text-[10px] uppercase font-bold">Colis Concerné</span>
+        <span class="text-slate-500 block text-[10px] uppercase font-bold"><?= t('agent.colisConcerned', 'Colis Concerné') ?></span>
         <strong id="status-parcel-ref" class="text-sm font-mono text-blue-900">PAR-2026</strong>
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Nouveau Statut d'Acheminement</label>
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.newStatusLabel', "Nouveau Statut d'Acheminement") ?></label>
         <select name="new_status" class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50 font-bold text-xs">
           <option value="REÇU_EN_GARE">REÇU EN GARE (Dépôt guichet validé)</option>
           <option value="CHARGÉ_EN_SOUTE">CHARGÉ EN SOUTE (Dans l'autocar VIP)</option>
@@ -408,7 +408,7 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Gare / Checkpoint Actuel</label>
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.currentStationLabel', 'Gare / Checkpoint Actuel') ?></label>
         <select name="checkpoint_station_id" class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50 font-semibold text-xs">
           <option value="1">Douala (Gare Centrale Akwa)</option>
           <option value="2">Yaoundé (Terminal Mvan)</option>
@@ -416,14 +416,14 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Notes & Observations Checkpoint</label>
-        <textarea name="status_notes" rows="2" placeholder="Ex: Colis inspecté, scellé intact, chargé dans soute VIP..."
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.notesLabel', 'Notes & Observations Checkpoint') ?></label>
+        <textarea name="status_notes" rows="2" placeholder="<?= t('agent.notesPlaceholder', 'Ex: Colis inspecté, scellé intact, chargé dans soute VIP...') ?>"
           class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50 text-xs font-semibold"></textarea>
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick="document.getElementById('status-modal').classList.add('hidden')" class="px-4 py-2 border rounded-xl font-bold">Annuler</button>
-        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs">Enregistrer Statut</button>
+        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs"><?= t('agent.btnSaveStatus', 'Enregistrer Statut') ?></button>
       </div>
     </form>
   </div>
@@ -433,7 +433,7 @@ include __DIR__ . '/../includes/header.php';
 <div id="register-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
   <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-      <h3 class="font-black text-slate-900 text-base">Enregistrer un Colis au Guichet</h3>
+      <h3 class="font-black text-slate-900 text-base"><?= t('agent.modalRegisterTitle', 'Enregistrer un Colis au Guichet') ?></h3>
       <button type="button" onclick="document.getElementById('register-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -444,41 +444,41 @@ include __DIR__ . '/../includes/header.php';
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Expéditeur (Nom) *</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.senderName', 'Expéditeur (Nom) *') ?></label>
           <input type="text" name="sender_name" required placeholder="Nom complet" class="w-full p-2 rounded-lg border border-slate-300">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Téléphone Expéditeur *</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.senderPhone', 'Téléphone Expéditeur *') ?></label>
           <input type="tel" name="sender_phone" required placeholder="6XXXXXXXX" class="w-full p-2 rounded-lg border border-slate-300 font-mono">
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Destinataire (Nom) *</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.recipientName', 'Destinataire (Nom) *') ?></label>
           <input type="text" name="recipient_name" required placeholder="Nom complet" class="w-full p-2 rounded-lg border border-slate-300">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Téléphone Destinataire *</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.recipientPhone', 'Téléphone Destinataire *') ?></label>
           <input type="tel" name="recipient_phone" required placeholder="6XXXXXXXX" class="w-full p-2 rounded-lg border border-slate-300 font-mono">
         </div>
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Adresse / Quartier de Livraison *</label>
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.recipientAddress', 'Adresse / Quartier de Livraison *') ?></label>
         <input type="text" name="recipient_address" required placeholder="Ex: Quartier Bastos, Yaoundé" class="w-full p-2 rounded-lg border border-slate-300">
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Gare Départ</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.originStation', 'Gare Départ') ?></label>
           <select name="origin_station_id" id="modal-orig" onchange="flipAgentDest()" class="w-full p-2 rounded-lg border border-slate-300 font-bold">
             <option value="1">Douala (Gare Centrale Akwa)</option>
             <option value="2">Yaoundé (Terminal Mvan)</option>
           </select>
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Gare Arrivée</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.destStation', 'Gare Arrivée') ?></label>
           <select name="destination_station_id" id="modal-dest" class="w-full p-2 rounded-lg border border-slate-300 font-bold">
             <option value="2">Yaoundé (Terminal Mvan)</option>
             <option value="1">Douala (Gare Centrale Akwa)</option>
@@ -488,12 +488,12 @@ include __DIR__ . '/../includes/header.php';
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Poids (kg) *</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.weightKg', 'Poids (kg) *') ?></label>
           <input type="number" step="0.5" name="weight_kg" id="parcel-weight" required value="5.0" oninput="calcPrice()"
             class="w-full p-2 rounded-lg border border-slate-300 font-mono font-bold">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Frais d'Expédition (500 F/kg)</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.shippingFee', "Frais d'Expédition (500 F/kg)") ?></label>
           <div id="price-display" class="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold font-mono">
             2 500 FCFA
           </div>
@@ -502,13 +502,13 @@ include __DIR__ . '/../includes/header.php';
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Valeur Déclarée (FCFA)</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.declaredValue', 'Valeur Déclarée (FCFA)') ?></label>
           <input type="number" name="declared_value" value="25000" class="w-full p-2 rounded-lg border border-slate-300 font-mono">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Traceur IoT Fixé</label>
+          <label class="block font-bold text-slate-700 mb-1"><?= t('agent.trackerSelect', 'Traceur IoT Fixé') ?></label>
           <select name="tracker_id" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-xs">
-            <option value="">Aucun (Traceur standard)</option>
+            <option value=""><?= t('agent.trackerNone', 'Aucun (Traceur standard)') ?></option>
             <?php foreach ($availableTrackers as $tk): ?>
               <option value="<?= $tk['id'] ?>"><?= htmlspecialchars($tk['tracker_code']) ?> (<?= $tk['battery_level'] ?>%)</option>
             <?php endforeach; ?>
@@ -517,14 +517,14 @@ include __DIR__ . '/../includes/header.php';
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">Description du Contenu</label>
-        <textarea name="description" rows="2" placeholder="Ex: Documents juridiques, pièces détachées, effets personnels..."
+        <label class="block font-bold text-slate-700 mb-1"><?= t('agent.description', 'Description du Contenu') ?></label>
+        <textarea name="description" rows="2" placeholder="<?= t('agent.descriptionPlaceholder', 'Ex: Documents juridiques, pièces détachées, effets personnels...') ?>"
           class="w-full p-2 rounded-lg border border-slate-300 text-xs"></textarea>
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
         <button type="button" onclick="document.getElementById('register-modal').classList.add('hidden')" class="px-4 py-2 border rounded-xl font-bold">Annuler</button>
-        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs">Enregistrer & Émettre Bordereau</button>
+        <button type="submit" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs"><?= t('agent.btnRegisterSubmit', 'Enregistrer & Émettre Bordereau') ?></button>
       </div>
     </form>
   </div>
@@ -541,7 +541,7 @@ include __DIR__ . '/../includes/header.php';
     
     if (container.classList.contains('hidden')) {
       container.classList.remove('hidden');
-      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>' + (window.CURRENT_LANG === 'en' ? 'Hide Map' : 'Masquer la Carte') + '</span>';
       btn.classList.add('bg-slate-700', 'text-amber-300');
       
       if (!agentMapInitialized) {
@@ -550,7 +550,7 @@ include __DIR__ . '/../includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

@@ -136,9 +136,9 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex items-center gap-4">
       <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 shadow-sm shrink-0">
       <div>
-        <span class="px-2.5 py-0.5 rounded bg-blue-600 text-white font-black text-[10px] uppercase tracking-wider">Supervision Centrale & Administration</span>
+        <span class="px-2.5 py-0.5 rounded bg-blue-600 text-white font-black text-[10px] uppercase tracking-wider"><?= t('admin.bannerTitle', 'Supervision Centrale & Administration') ?></span>
         <h1 class="text-2xl font-black tracking-tight text-white mt-1"><?= htmlspecialchars($currentUser['name']) ?></h1>
-        <p class="text-xs text-slate-300 font-mono">Contrôle des Utilisateurs, Traceurs IoT, Départs Douala ↔ Yaoundé & Billetterie</p>
+        <p class="text-xs text-slate-300 font-mono"><?= t('admin.bannerSubtitle', 'Contrôle des Utilisateurs, Traceurs IoT, Départs Douala ↔ Yaoundé & Billetterie') ?></p>
       </div>
     </div>
     <div class="flex flex-wrap items-center gap-2">
@@ -146,13 +146,13 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="toggleAdminMap()" id="btn-toggle-admin-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span>🗺️ Voir sur la Carte (See on Map)</span>
+        <span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
       </button>
 
       <button type="button" onclick="document.getElementById('new-trip-modal').classList.remove('hidden')"
         class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="plus-circle" class="w-4 h-4"></i>
-        <span>Nouveau Départ</span>
+        <span><?= t('admin.newTrip', 'Nouveau Départ') ?></span>
       </button>
     </div>
   </div>
@@ -174,32 +174,32 @@ include __DIR__ . '/../includes/header.php';
   <!-- Metric KPIs -->
   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Chiffre d'Affaires</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiRevenue', "Chiffre d'Affaires") ?></span>
       <span class="text-xl font-black text-slate-900"><?= number_format($revenue, 0, ',', ' ') ?> F</span>
       <span class="text-[10px] text-emerald-700 font-bold block mt-0.5">✓ CamPay MoMo</span>
     </div>
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Billets Réservés</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiBookings', 'Billets Réservés') ?></span>
       <span class="text-xl font-black text-blue-900"><?= $totalBookings ?></span>
       <span class="text-[10px] text-slate-500 font-semibold block mt-0.5">Voyageurs</span>
     </div>
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Colis & Fret</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiParcels', 'Colis & Fret') ?></span>
       <span class="text-xl font-black text-slate-900"><?= $totalParcels ?></span>
       <span class="text-[10px] text-blue-700 font-bold block mt-0.5">Expéditions</span>
     </div>
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Départs Ligne N3</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiTrips', 'Départs Ligne N3') ?></span>
       <span class="text-xl font-black text-slate-900"><?= $totalTrips ?></span>
       <span class="text-[10px] text-slate-500 font-semibold block mt-0.5">Autocars VIP</span>
     </div>
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Comptes Utilisateurs</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiUsers', 'Comptes Utilisateurs') ?></span>
       <span class="text-xl font-black text-indigo-900"><?= $totalUsers ?></span>
       <span class="text-[10px] text-slate-500 font-semibold block mt-0.5">Acteurs Système</span>
     </div>
     <div class="p-4 bg-white rounded-2xl border border-slate-300 shadow-xs">
-      <span class="text-[10px] text-slate-400 font-bold uppercase block">Traceurs IoT 4G</span>
+      <span class="text-[10px] text-slate-400 font-bold uppercase block"><?= t('admin.kpiTrackers', 'Traceurs IoT 4G') ?></span>
       <span class="text-xl font-black text-emerald-900"><?= $totalTrackers ?></span>
       <span class="text-[10px] text-emerald-700 font-bold block mt-0.5">Balises GPS</span>
     </div>
@@ -210,11 +210,11 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
         <i data-lucide="radio" class="w-4 h-4 text-blue-600 animate-pulse"></i>
-        <span>Supervision Cartographique en Temps Réel • Corridor Douala ↔ Yaoundé (Carto HD)</span>
+        <span><?= t('map.title') ?></span>
       </h3>
       <button type="button" onclick="toggleAdminMap()" class="text-xs text-slate-500 hover:text-slate-800 font-bold flex items-center gap-1">
         <i data-lucide="x" class="w-4 h-4"></i>
-        <span>Fermer la Carte</span>
+        <span><?= t('map.close', 'Fermer la Carte') ?></span>
       </button>
     </div>
     <div id="admin-map" class="w-full h-[400px] rounded-xl border border-slate-300 z-10"></div>
@@ -228,43 +228,43 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex flex-wrap border-b border-slate-200 gap-4 sm:gap-6 text-xs font-bold">
       <button type="button" onclick="switchAdminTab('users')" id="admin-tab-users" class="pb-3 border-b-2 border-blue-700 text-blue-700 flex items-center gap-2 cursor-pointer">
         <i data-lucide="users" class="w-4 h-4"></i>
-        <span>Comptes Utilisateurs (<?= count($allUsers) ?>)</span>
+        <span><?= t('admin.tabUsers', 'Comptes Utilisateurs') ?> (<?= count($allUsers) ?>)</span>
       </button>
       <button type="button" onclick="switchAdminTab('iot')" id="admin-tab-iot" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer">
         <i data-lucide="cpu" class="w-4 h-4"></i>
-        <span>Appareils IoT (<?= count($trackers) ?>)</span>
+        <span><?= t('admin.tabIoT', 'Appareils IoT') ?> (<?= count($trackers) ?>)</span>
       </button>
       <button type="button" onclick="switchAdminTab('bookings')" id="admin-tab-bookings" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer">
         <i data-lucide="ticket" class="w-4 h-4"></i>
-        <span>Réservations Billets (<?= count($bookings) ?>)</span>
+        <span><?= t('admin.tabBookings', 'Réservations Billets') ?> (<?= count($bookings) ?>)</span>
       </button>
       <button type="button" onclick="switchAdminTab('trips')" id="admin-tab-trips" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer">
         <i data-lucide="bus" class="w-4 h-4"></i>
-        <span>Départs Programmés (<?= count($trips) ?>)</span>
+        <span><?= t('admin.tabTrips', 'Départs Programmés') ?> (<?= count($trips) ?>)</span>
       </button>
       <button type="button" onclick="switchAdminTab('parcels')" id="admin-tab-parcels" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 cursor-pointer">
         <i data-lucide="package" class="w-4 h-4"></i>
-        <span>Fret & Colis (<?= count($parcels) ?>)</span>
+        <span><?= t('admin.tabParcels', 'Fret & Colis') ?> (<?= count($parcels) ?>)</span>
       </button>
     </div>
 
     <!-- View 1: User Accounts Management (manage account: update, ban, delete) -->
     <div id="admin-view-users" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h4 class="text-xs font-black uppercase tracking-wider text-slate-700">Gestion des Comptes Acteurs (Admin, Agents, Chauffeurs, Clients)</h4>
-        <span class="text-xs text-slate-500">Mettre à jour, bannir/débannir ou supprimer un compte</span>
+        <h4 class="text-xs font-black uppercase tracking-wider text-slate-700"><?= t('admin.usersTitle') ?></h4>
+        <span class="text-xs text-slate-500"><?= t('admin.usersSub') ?></span>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
             <tr>
-              <th class="p-3">ID</th>
-              <th class="p-3">Nom Complet</th>
-              <th class="p-3">Identifiant / Email</th>
-              <th class="p-3">Téléphone</th>
-              <th class="p-3">Rôle</th>
-              <th class="p-3">Statut</th>
-              <th class="p-3 text-right">Actions</th>
+              <th class="p-3"><?= t('admin.colId') ?></th>
+              <th class="p-3"><?= t('admin.colFullName') ?></th>
+              <th class="p-3"><?= t('admin.colUsername') ?></th>
+              <th class="p-3"><?= t('admin.colPhone') ?></th>
+              <th class="p-3"><?= t('admin.colRole') ?></th>
+              <th class="p-3"><?= t('admin.colStatus') ?></th>
+              <th class="p-3 text-right"><?= t('admin.colActions') ?></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -283,14 +283,14 @@ include __DIR__ . '/../includes/header.php';
                 </td>
                 <td class="p-3">
                   <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <?= $isBanned ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800' ?>">
-                    <?= $isBanned ? 'BANNI / SUSPENDU' : 'ACTIF' ?>
+                    <?= $isBanned ? t('admin.statusBanned', 'BANNI / SUSPENDU') : t('admin.statusActive', 'ACTIF') ?>
                   </span>
                 </td>
                 <td class="p-3 text-right space-x-1">
                   <!-- Edit Modal Trigger -->
                   <button type="button" onclick="openEditUserModal(<?= htmlspecialchars(json_encode($u)) ?>)"
                     class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px]">
-                    Modifier ✏️
+                    <?= t('admin.btnEdit', 'Modifier ✏️') ?>
                   </button>
 
                   <!-- Ban / Unban Form -->
@@ -712,7 +712,7 @@ include __DIR__ . '/../includes/header.php';
     
     if (container.classList.contains('hidden')) {
       container.classList.remove('hidden');
-      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>' + (window.CURRENT_LANG === 'en' ? 'Hide Map' : 'Masquer la Carte') + '</span>';
       btn.classList.add('bg-slate-700', 'text-amber-300');
       
       if (!adminMapInitialized) {
@@ -721,7 +721,7 @@ include __DIR__ . '/../includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

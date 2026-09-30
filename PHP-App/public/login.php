@@ -42,8 +42,8 @@ include __DIR__ . '/includes/header.php';
     <!-- Header -->
     <div class="bg-[#0B1E36] text-white p-6 border-b-2 border-blue-600 text-center">
       <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-16 h-16 rounded-2xl mx-auto mb-3 shadow-md border-2 border-white/20 object-cover">
-      <h2 class="text-xl font-black tracking-tight text-white"><?= t('nav.login', 'Connexion Sécurisée') ?></h2>
-      <p class="text-xs text-slate-300 mt-1">Accédez à votre espace Global Voyages</p>
+      <h2 class="text-xl font-black tracking-tight text-white"><?= t('login.title', 'Connexion Sécurisée') ?></h2>
+      <p class="text-xs text-slate-300 mt-1"><?= t('login.subtitle', 'Accédez à votre espace Global Voyages') ?></p>
     </div>
 
     <div class="p-6 space-y-6">
@@ -57,55 +57,55 @@ include __DIR__ . '/includes/header.php';
       <!-- 1-Click Role Switcher for Demo -->
       <div class="space-y-2">
         <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider text-center">
-          Accès Démo Instantané (1 Clic)
+          <?= t('login.demoQuick', 'Accès Démo Instantané (1 Clic)') ?>
         </label>
         <form method="POST" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
           <button type="submit" name="role_login" value="ADMIN" class="p-2.5 rounded-lg border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-blue-900 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-            <span>Admin</span>
+            <span><?= t('role.admin', 'Admin') ?></span>
           </button>
           <button type="submit" name="role_login" value="BOOKING_AGENT" class="p-2.5 rounded-lg border border-purple-200 bg-purple-50/60 hover:bg-purple-100 text-purple-900 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-purple-600"></span>
-            <span>Agent Réservations</span>
+            <span><?= t('role.booking_agent', 'Agent Réservations') ?></span>
           </button>
           <button type="submit" name="role_login" value="PARCEL_AGENT" class="p-2.5 rounded-lg border border-indigo-200 bg-indigo-50/60 hover:bg-indigo-100 text-indigo-900 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-            <span>Agent Colis</span>
+            <span><?= t('role.parcel_agent', 'Agent Colis') ?></span>
           </button>
           <button type="submit" name="role_login" value="DRIVER" class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span>Chauffeur N3</span>
+            <span><?= t('role.driver', 'Chauffeur N3') ?></span>
           </button>
           <button type="submit" name="role_login" value="CUSTOMER" class="p-2.5 rounded-lg border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100 text-emerald-900 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer col-span-2 sm:col-span-1">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Passager VIP</span>
+            <span><?= t('role.customer', 'Passager VIP') ?></span>
           </button>
         </form>
       </div>
 
       <div class="relative flex items-center justify-center">
         <div class="border-t border-slate-200 w-full"></div>
-        <span class="bg-white px-3 text-[10px] uppercase font-bold text-slate-400 absolute">ou par identifiant</span>
+        <span class="bg-white px-3 text-[10px] uppercase font-bold text-slate-400 absolute"><?= t('login.orCredentials', 'ou par identifiant') ?></span>
       </div>
 
       <!-- Credentials Form -->
       <form method="POST" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Identifiant ou Email</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1"><?= t('login.username', 'Identifiant ou Email') ?></label>
           <input type="text" name="username" required value="debora"
             class="w-full p-3 rounded-xl bg-slate-50 border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition"
             placeholder="debora">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Mot de passe</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1"><?= t('login.password', 'Mot de passe') ?></label>
           <input type="password" name="password" required value="Demodebora"
             class="w-full p-3 rounded-xl bg-slate-50 border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition"
             placeholder="Demodebora">
         </div>
 
         <button type="submit" class="w-full py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-black text-xs uppercase tracking-wider shadow-md transition cursor-pointer">
-          Se Connecter
+          <?= t('login.submit', 'Se Connecter') ?>
         </button>
       </form>
     </div>

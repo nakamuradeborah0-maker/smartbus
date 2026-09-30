@@ -2,24 +2,27 @@
 // PHP-App/public/agent/waybill.php
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../src/Services/ParcelService.php';
+require_once __DIR__ . '/../../src/Language.php';
 
 $num = trim($_GET['num'] ?? '');
 if (empty($num)) {
-    die("Numéro d'expédition manquant.");
+    die(Language::isEn() ? "Tracking reference missing." : "Numéro d'expédition manquant.");
 }
 
 $parcel = ParcelService::track($num);
 if (!$parcel) {
-    die("Bordereau introuvable pour ce colis.");
+    die(Language::isEn() ? "Consignment waybill not found for this parcel." : "Bordereau introuvable pour ce colis.");
 }
 
 $price = max(2500, (int)($parcel['weight_kg'] * 500));
+$isEn = Language::isEn();
+$currency = $isEn ? 'XAF' : 'FCFA';
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= $isEn ? 'en' : 'fr' ?>">
 <head>
   <meta charset="UTF-8">
-  <title>Bordereau d'Expédition Colis - <?= htmlspecialchars($parcel['tracking_number']) ?></title>
+  <title><?= t('waybill.title', "Bordereau d'Expédition Colis") ?> - <?= htmlspecialchars($parcel['tracking_number']) ?></title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 30px; background: #f8fafc; color: #0f172a; }
     .waybill-card { max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; }
@@ -53,91 +56,91 @@ $price = max(2500, (int)($parcel['weight_kg'] * 500));
         <img src="/assets/images/global_voyages_logo.jpg" alt="Logo" class="logo-img">
         <div class="logo-text">GLOBAL <span>VOYAGES</span> CARGO</div>
       </div>
-      <div class="badge">BORDEREAU D'EXPÉDITION</div>
+      <div class="badge"><?= t('waybill.badge', "BORDEREAU D'EXPÉDITION") ?></div>
     </div>
 
     <div class="body">
       <div class="route-banner">
         <div class="station">
-          <p>Gare de Dépôt</p>
+          <p><?= t('waybill.origin', 'Gare de Dépôt') ?></p>
           <h4><?= htmlspecialchars($parcel['origin_station']) ?></h4>
         </div>
         <div class="arrow">➔</div>
         <div class="station" style="text-align: right;">
-          <p>Gare de Destination</p>
+          <p><?= t('waybill.dest', 'Gare de Destination') ?></p>
           <h4><?= htmlspecialchars($parcel['dest_station']) ?></h4>
         </div>
       </div>
 
       <div class="grid">
         <div class="item">
-          <div class="item-label">Expéditeur</div>
+          <div class="item-label"><?= t('waybill.sender', 'Expéditeur') ?></div>
           <div class="item-val"><?= htmlspecialchars($parcel['sender_name']) ?></div>
           <div style="font-size:11px; color:#64748b; font-family:monospace; margin-top:2px;"><?= htmlspecialchars($parcel['sender_phone']) ?></div>
         </div>
 
         <div class="item">
-          <div class="item-label">Destinataire</div>
+          <div class="item-label"><?= t('waybill.recipient', 'Destinataire') ?></div>
           <div class="item-val"><?= htmlspecialchars($parcel['recipient_name']) ?></div>
           <div style="font-size:11px; color:#64748b; font-family:monospace; margin-top:2px;"><?= htmlspecialchars($parcel['recipient_phone']) ?></div>
         </div>
 
         <div class="item">
-          <div class="item-label">Poids & Volume</div>
+          <div class="item-label"><?= t('waybill.weight', 'Poids & Volume') ?></div>
           <div class="item-val"><?= $parcel['weight_kg'] ?> kg</div>
-          <div style="font-size:11px; color:#64748b; margin-top:2px;">Frais : <strong><?= number_format($price, 0, ',', ' ') ?> FCFA</strong></div>
+          <div style="font-size:11px; color:#64748b; margin-top:2px;"><?= t('waybill.fees', 'Frais :') ?> <strong><?= number_format($price, 0, ',', ' ') ?> <?= $currency ?></strong></div>
         </div>
 
         <div class="item">
-          <div class="item-label">Valeur Déclarée</div>
-          <div class="item-val" style="color:#059669;"><?= number_format($parcel['declared_value'], 0, ',', ' ') ?> FCFA</div>
-          <div style="font-size:11px; color:#64748b; margin-top:2px;">Assurance Fret VIP incluse</div>
+          <div class="item-label"><?= t('waybill.declaredValue', 'Valeur Déclarée') ?></div>
+          <div class="item-val" style="color:#059669;"><?= number_format($parcel['declared_value'], 0, ',', ' ') ?> <?= $currency ?></div>
+          <div style="font-size:11px; color:#64748b; margin-top:2px;"><?= t('waybill.insurance', 'Assurance Fret VIP incluse') ?></div>
         </div>
 
         <div class="item">
-          <div class="item-label">Contenu / Description</div>
-          <div class="item-val" style="font-size:12px;"><?= htmlspecialchars($parcel['description'] ?: 'Colis standard') ?></div>
+          <div class="item-label"><?= t('waybill.content', 'Contenu / Description') ?></div>
+          <div class="item-val" style="font-size:12px;"><?= htmlspecialchars($parcel['description'] ?: t('waybill.standardParcel', 'Colis standard')) ?></div>
         </div>
 
         <div class="item">
-          <div class="item-label">Traceur IoT GPS</div>
-          <div class="item-val" style="font-family:monospace; color:#1d4ed8;"><?= htmlspecialchars($parcel['tracker_code'] ?: 'Non assigné') ?></div>
+          <div class="item-label"><?= t('waybill.tracker', 'Traceur IoT GPS') ?></div>
+          <div class="item-val" style="font-family:monospace; color:#1d4ed8;"><?= htmlspecialchars($parcel['tracker_code'] ?: t('waybill.unassigned', 'Non assigné')) ?></div>
         </div>
       </div>
 
       <div class="barcode-section">
         <div>
-          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">Numéro de Suivi Colis</div>
+          <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 4px;"><?= t('waybill.trackingNum', 'Numéro de Suivi Colis') ?></div>
           <div class="barcode">*<?= htmlspecialchars($parcel['tracking_number']) ?>*</div>
         </div>
         <div style="text-align: right;">
           <span style="display:inline-block; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 11px; font-weight: bold;">
-            Statut : <?= htmlspecialchars($parcel['status']) ?>
+            <?= t('waybill.status', 'Statut :') ?> <?= htmlspecialchars($parcel['status']) ?>
           </span>
         </div>
       </div>
 
       <div class="signatures">
         <div>
-          <strong>Signature Expéditeur :</strong>
+          <strong><?= t('waybill.senderSig', 'Signature Expéditeur :') ?></strong>
           <div class="sig-box"></div>
         </div>
         <div>
-          <strong>Visa & Cachet Agent Guichet :</strong>
+          <strong><?= t('waybill.agentSig', 'Visa & Cachet Agent Guichet :') ?></strong>
           <div class="sig-box"></div>
         </div>
       </div>
     </div>
 
     <div class="footer">
-      <span>Présentez ce bordereau ou le numéro de suivi pour le retrait du colis.</span>
+      <span><?= t('waybill.notice', 'Présentez ce bordereau ou le numéro de suivi pour le retrait du colis.') ?></span>
       <span>Global Voyages Cargo • Douala ↔ Yaoundé Express N3</span>
     </div>
   </div>
 
   <div style="text-align: center; margin-top: 20px;">
     <button onclick="window.print()" style="padding: 10px 24px; background: #0B1E36; color: #ffffff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-      🖨️ Imprimer le Bordereau d'Expédition
+      <?= t('waybill.print', "🖨️ Imprimer le Bordereau d'Expédition") ?>
     </button>
   </div>
 </body>

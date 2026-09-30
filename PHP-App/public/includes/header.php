@@ -23,6 +23,8 @@ $user = Auth::user();
   <!-- Custom Styles -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
   <script>
+    window.CURRENT_LANG = '<?= $currLang ?>';
+    window.I18N = <?= json_encode(Language::getAllForCurrent()) ?>;
     tailwind.config = {
       theme: {
         extend: {
@@ -77,9 +79,18 @@ $user = Auth::user();
       <!-- Right Controls: Language Switcher & Auth Profile -->
       <div class="flex items-center gap-3">
         <!-- Language Switcher -->
+        <?php
+          $frParams = $_GET;
+          $frParams['lang'] = 'fr';
+          $frUrl = '?' . http_build_query($frParams);
+
+          $enParams = $_GET;
+          $enParams['lang'] = 'en';
+          $enUrl = '?' . http_build_query($enParams);
+        ?>
         <div class="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/20 text-xs font-bold font-mono">
-          <a href="?lang=fr" class="px-2 py-1 rounded <?= $currLang === 'fr' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white' ?>">FR</a>
-          <a href="?lang=en" class="px-2 py-1 rounded <?= $currLang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white' ?>">EN</a>
+          <a href="<?= $frUrl ?>" class="px-2 py-1 rounded <?= $currLang === 'fr' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white' ?>">FR</a>
+          <a href="<?= $enUrl ?>" class="px-2 py-1 rounded <?= $currLang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white' ?>">EN</a>
         </div>
 
         <?php if ($user): ?>
@@ -99,7 +110,7 @@ $user = Auth::user();
                 $dashUrl = BASE_URL . '/customer/index.php';
                 if ($user['role'] === 'ADMIN') $dashUrl = BASE_URL . '/admin/index.php';
                 elseif ($user['role'] === 'DRIVER') $dashUrl = BASE_URL . '/driver/index.php';
-                elseif ($user['role'] === 'PARCEL_AGENT') $dashUrl = BASE_URL . '/agent/index.php';
+                elseif ($user['role'] === 'PARCEL_AGENT' || $user['role'] === 'BOOKING_AGENT') $dashUrl = BASE_URL . '/agent/index.php';
               ?>
               <a href="<?= $dashUrl ?>" class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-blue-700">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
