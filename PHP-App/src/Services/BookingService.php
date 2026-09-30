@@ -89,7 +89,10 @@ class BookingService {
 
     public static function getUserBookings(?int $userId = null, ?string $phone = null): array {
         $pdo = Database::getConnection();
-        if ($userId) {
+        if ($userId && $phone) {
+            $stmt = $pdo->prepare("SELECT * FROM bookings WHERE user_id = ? OR passenger_phone LIKE ? ORDER BY id DESC");
+            $stmt->execute([$userId, '%' . substr($phone, -8) . '%']);
+        } elseif ($userId) {
             $stmt = $pdo->prepare("SELECT * FROM bookings WHERE user_id = ? ORDER BY id DESC");
             $stmt->execute([$userId]);
         } elseif ($phone) {

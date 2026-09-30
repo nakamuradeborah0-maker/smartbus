@@ -181,7 +181,7 @@ include __DIR__ . '/includes/header.php';
             <span class="text-lg font-black text-slate-900"><?= number_format($trip['price'], 0, ',', ' ') ?> <?= t('search.price') ?></span>
             <span class="text-[10px] text-slate-400 uppercase font-bold block"><?= t('search.perPassenger') ?></span>
           </div>
-          <button type="button" onclick="openBookingModal(<?= $tripJson ?>, '<?= $depDate ?>')"
+          <button type="button" onclick="handleReserveIndex(<?= (int)$trip['id'] ?>, '<?= $depDate ?>')"
             class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
             <?= t('search.reserve', 'Réserver Siège VIP') ?>
           </button>
@@ -259,6 +259,17 @@ include __DIR__ . '/includes/header.php';
 <script src="<?= BASE_URL ?>/assets/js/map.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/booking.js"></script>
 <script>
+  window.CURRENT_TRIPS = <?= json_encode($trips) ?>;
+
+  function handleReserveIndex(tripId, depDate) {
+    const trip = (window.CURRENT_TRIPS || []).find(x => Number(x.id) === Number(tripId));
+    if (trip) {
+      openBookingModal(trip, depDate);
+    } else {
+      openBookingModal(null, depDate);
+    }
+  }
+
   function switchMainTab(tab) {
     if (tab === 'book') {
       document.getElementById('tab-content-book').classList.remove('hidden');
@@ -316,7 +327,7 @@ include __DIR__ . '/includes/header.php';
       if (!trips || trips.length === 0) {
         const noText = (window.I18N?.['booking.noDepartures'] || 'Aucun départ programmé sur cette ligne pour le %s.').replace('%s', date);
         const tomorrowText = window.I18N?.['booking.seeTomorrow'] || 'Consulter les départs de demain';
-        grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200 space-y-2"><p class="font-bold text-slate-700">' + noText + '</p><button type="button" onclick="setHeroDate('' + '<?= $tomorrow ?>' + '')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">' + tomorrowText + '</button></div>';
+        grid.innerHTML = '<div class="col-span-1 md:col-span-2 p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200 space-y-2"><p class="font-bold text-slate-700">' + noText + '</p><button type="button" onclick="setHeroDate(\'<?= $tomorrow ?>\')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">' + tomorrowText + '</button></div>';
         return;
       }
 
@@ -325,13 +336,12 @@ include __DIR__ . '/includes/header.php';
       const seatsLabel = window.I18N?.['search.seatsLeft'] || 'places VIP disponibles';
       const perPassLabel = window.I18N?.['search.perPassenger'] || 'par voyageur';
       const reserveLabel = window.I18N?.['search.reserve'] || 'Réserver Siège VIP';
-      const currencyLabel = window.I18N?.['search.price'] || 'FCFA';
+      window.CURRENT_TRIPS = trips;
 
       grid.innerHTML = trips.map(t => {
         const parts = (t.departure_scheduled || '').split(' ');
         const depTime = parts[1] ? parts[1].substring(0, 5) : '06:30';
         const depDate = parts[0] || date;
-        const tripEscaped = JSON.stringify(t).replace(/"/g, '&quot;');
 
         return `
           <div class="p-5 rounded-2xl bg-white border border-slate-300 shadow-xs hover:border-blue-500 transition flex flex-col justify-between">
@@ -370,7 +380,7 @@ include __DIR__ . '/includes/header.php';
                 <span class="text-lg font-black text-slate-900">${Number(t.price).toLocaleString()} ${currencyLabel}</span>
                 <span class="text-[10px] text-slate-400 uppercase font-bold block">${perPassLabel}</span>
               </div>
-              <button type="button" onclick="openBookingModal(${tripEscaped}, '${depDate}')"
+              <button type="button" onclick="handleReserveIndex(${t.id}, '${depDate}')"
                 class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                 ${reserveLabel}
               </button>

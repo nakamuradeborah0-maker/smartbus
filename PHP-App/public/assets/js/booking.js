@@ -26,6 +26,14 @@ function openBookingModal(tripData = null, selectedDate = null) {
   const modal = document.getElementById('booking-modal');
   if (!modal) return;
 
+  if (typeof tripData === 'string') {
+    try {
+      tripData = JSON.parse(tripData);
+    } catch (e) {
+      tripData = null;
+    }
+  }
+
   const heroDate = document.getElementById('hero-date')?.value;
   if (selectedDate) {
     currentBookingDate = selectedDate;
@@ -139,13 +147,12 @@ async function loadScheduleDepartures() {
     const confirmedLabel = t('booking.confirmed', 'CONFIRMÉ');
     const departureLabel = t('search.departure', 'Départ :');
     const chooseSeatLabel = t('booking.chooseSeat', 'Choisir Siège ➔');
-    const currencyLabel = t('search.price', 'FCFA');
+    window.SCHEDULE_TRIPS = trips;
 
     container.innerHTML = trips.map(t => {
       const depTime = formatTime(t.departure_scheduled);
-      const tripJson = JSON.stringify(t).replace(/"/g, '&quot;');
       return `
-        <div onclick="selectTripForSeat(${tripJson})" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 bg-white hover:bg-blue-50/50 transition cursor-pointer flex items-center justify-between gap-3 group shadow-xs">
+        <div onclick="selectTripById(${t.id})" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 bg-white hover:bg-blue-50/50 transition cursor-pointer flex items-center justify-between gap-3 group shadow-xs">
           <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-blue-100 group-hover:bg-blue-600 group-hover:text-white text-blue-700 font-mono font-black text-xs flex items-center justify-center shrink-0 transition">
               VIP
@@ -175,6 +182,13 @@ async function loadScheduleDepartures() {
 
   } catch (err) {
     container.innerHTML = '<div class="p-4 text-xs text-red-600 bg-red-50 rounded-xl">Error loading departures / Erreur de chargement des départs.</div>';
+  }
+}
+
+function selectTripById(id) {
+  const trip = (window.SCHEDULE_TRIPS || []).find(x => Number(x.id) === Number(id));
+  if (trip) {
+    selectTripForSeat(trip);
   }
 }
 
@@ -321,7 +335,7 @@ async function submitPaymentForm(event) {
 
     const booking = await bookRes.json();
     if (!bookRes.ok || !booking.booking_reference) {
-      throw new Error(booking.error || 'Erreur d'enregistrement de la réservation.');
+      throw new Error(booking.error || "Erreur d'enregistrement de la réservation.");
     }
 
     currentBookingRef = booking.booking_reference;
@@ -339,7 +353,7 @@ async function submitPaymentForm(event) {
 
     const payment = await payRes.json();
     if (!payRes.ok || !payment.reference) {
-      throw new Error(payment.error || 'Échec d'initiation du paiement CamPay.');
+      throw new Error(payment.error || "Échec d'initiation du paiement CamPay.");
     }
 
     // 3. Move to pending USSD step (TICKET STRICTLY BLOCKED BEFORE APPROVAL)
@@ -395,8 +409,37 @@ async function confirmDemoPayment() {
 function showSuccessTicket() {
   document.getElementById('success-booking-ref').textContent = currentBookingRef;
   document.getElementById('success-seat-info').textContent = t('booking.seatVIP', 'Siège N° %s (VIP)').replace('%s', currentBookingSeat);
-  document.getElementById('download-ticket-btn').onclick = () => {
-    window.location.href = `/customer/ticket.php?ref=${encodeURIComponent(currentBookingRef)}`;
-  };
+  const dlBtn = document.getElementById('download-ticket-btn');
+  if (dlBtn) {
+    dlBtn.onclick = () => {
+      window.open(`/customer/ticket.php?ref=${encodeURIComponent(currentBookingRef)}`, '_blank');
+    };
+  }
   showBookingStep('success');
 }
+
+function resumeBookingPayment(ref, phone, operator, seat, bus) {
+  currentBookingRef = ref;
+  currentBookingSeat = seat || 14;
+  const modal = document.getElementById('booking-modal');
+  if (!modal) {
+    window.location.href = `/customer/ticket.php?ref=${encodeURIComponent(ref)}`;
+    return;
+  }
+
+  const ussd = (operator === 'ORANGE_MONEY' || operator === 'OM') ? '#150*50#' : '*126#';
+  const opName = (operator === 'ORANGE_MONEY' || operator === 'OM') ? 'Orange Money' : 'MTN MoMo';
+
+  const ussdEl = document.getElementById('pending-ussd-code');
+  const badgeEl = document.getElementById('pending-operator-badge');
+  const refEl = document.getElementById('pending-ref-badge');
+
+  if (ussdEl) ussdEl.textContent = ussd;
+  if (badgeEl) badgeEl.textContent = opName;
+  if (refEl) refEl.textContent = ref;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  showBookingStep('pending');
+}
+

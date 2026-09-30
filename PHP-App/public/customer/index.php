@@ -202,11 +202,17 @@ include __DIR__ . '/../includes/header.php';
                     <span><?= t('customer.ticket') ?></span>
                   </a>
                 <?php elseif ($b['payment_status'] === 'PENDING'): ?>
-                  <button type="button" onclick="openBookingModal()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs"><?= t('customer.pay') ?></button>
+                  <button type="button" onclick="resumeBookingPayment('<?= htmlspecialchars($b['booking_reference']) ?>', '<?= htmlspecialchars($b['passenger_phone']) ?>', '<?= htmlspecialchars($b['payment_method'] ?? 'MTN_MOMO') ?>', '<?= $b['seat_number'] ?>', '<?= htmlspecialchars($b['bus_model'] ?? 'Scania VIP') ?>')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition cursor-pointer">
+                    💳 <?= t('customer.pay') ?>
+                  </button>
+                  <a href="<?= BASE_URL ?>/customer/ticket.php?ref=<?= urlencode($b['booking_reference']) ?>" target="_blank"
+                     class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                    <?= t('customer.ticket') ?>
+                  </a>
                   <form method="POST" class="inline" onsubmit="return confirm('<?= Language::isEn() ? 'Cancel this booking?' : 'Annuler cette réservation ?' ?>');">
                     <input type="hidden" name="cancel_booking" value="1">
                     <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                    <button type="submit" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-red-600 text-xs font-bold">✕ <?= t('customer.cancel') ?></button>
+                    <button type="submit" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-red-600 text-xs font-bold cursor-pointer">✕ <?= t('customer.cancel') ?></button>
                   </form>
                 <?php endif; ?>
               </div>
