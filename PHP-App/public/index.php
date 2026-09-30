@@ -191,22 +191,34 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<!-- LIVE FLEET & CARTO MAP -->
+<!-- LIVE FLEET & CARTO MAP (OPTIONAL - SEE ON MAP) -->
 <section id="live-map" class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-white border border-slate-300 shadow-xs">
     <div class="flex items-center gap-2.5">
       <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
-      <h3 class="font-bold text-slate-900 text-sm">
-        <?= Language::isEn() ? 'Intercity Highway N3 • Live 4G Telemetry (Carto HD)' : 'Liaison Interurbaine Axe Lourd N3 • Télémétrie 4G en Direct (Carto HD)' ?>
-      </h3>
+      <div>
+        <h3 class="font-bold text-slate-900 text-sm">
+          <?= Language::isEn() ? 'Intercity Highway N3 • Live 4G Telemetry (Carto HD)' : 'Liaison Interurbaine Axe Lourd N3 • Télémétrie 4G en Direct (Carto HD)' ?>
+        </h3>
+        <p class="text-[11px] text-slate-500 font-mono">Douala (Akwa) ↔ Yaoundé (Mvan) • Suivi des autocars et colis</p>
+      </div>
     </div>
-    <div class="flex items-center gap-4 text-xs font-mono">
-      <span>Vitesse : <strong id="hud-speed" class="text-blue-700">74 km/h</strong></span>
-      <span>Étape : <strong id="hud-stop" class="text-slate-800">Boumnyébel</strong></span>
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-3 text-xs font-mono">
+        <span>Vitesse : <strong id="hud-speed" class="text-blue-700">74 km/h</strong></span>
+        <span>Étape : <strong id="hud-stop" class="text-slate-800">Boumnyébel</strong></span>
+      </div>
+      <button type="button" onclick="toggleHomeMap()" id="btn-toggle-home-map"
+        class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+        <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
+        <span>🗺️ Voir sur la Carte (See on Map)</span>
+      </button>
     </div>
   </div>
 
-  <div id="live-fleet-map" class="w-full h-[460px] rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden z-10"></div>
+  <div id="home-map-container" class="hidden animate-fadeIn">
+    <div id="live-fleet-map" class="w-full h-[460px] rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden z-10"></div>
+  </div>
 </section>
 
 <!-- VIP FLEET SHOWCASE -->
@@ -380,9 +392,28 @@ include __DIR__ . '/includes/header.php';
     openBookingModal(null, date);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initLiveMap('live-fleet-map');
-  });
+  let homeMapInitialized = false;
+
+  function toggleHomeMap() {
+    const container = document.getElementById('home-map-container');
+    const btn = document.getElementById('btn-toggle-home-map');
+    
+    if (container.classList.contains('hidden')) {
+      container.classList.remove('hidden');
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.classList.add('bg-slate-700', 'text-amber-300');
+      
+      if (!homeMapInitialized) {
+        initLiveMap('live-fleet-map');
+        homeMapInitialized = true;
+      }
+    } else {
+      container.classList.add('hidden');
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.classList.remove('bg-slate-700', 'text-amber-300');
+    }
+    if (window.lucide) lucide.createIcons();
+  }
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

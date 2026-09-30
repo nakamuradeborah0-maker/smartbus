@@ -47,7 +47,12 @@ include __DIR__ . '/includes/header.php';
           <span class="text-[10px] text-slate-400 font-bold uppercase block">Numéro de Suivi</span>
           <span class="font-mono text-2xl font-black text-blue-900"><?= htmlspecialchars($parcel['tracking_number']) ?></span>
         </div>
-        <div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openTrackMapModal()"
+            class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
+            <span>🗺️ Voir sur la Carte (See on Map)</span>
+          </button>
           <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
             <?= $parcel['status'] === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' ?>">
             <?= htmlspecialchars($parcel['status']) ?>
@@ -86,5 +91,46 @@ include __DIR__ . '/includes/header.php';
     </div>
   <?php endif; ?>
 </div>
+
+<!-- Modal Interactive Carto HD Map (Optional) -->
+<div id="track-map-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs flex">
+  <div class="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-4xl w-full p-6 space-y-4 animate-fadeIn">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <div>
+        <h3 class="font-black text-slate-900 text-base">🗺️ Localisation en Direct sur la Carte (Carto HD)</h3>
+        <p class="text-xs text-slate-500 font-mono">Corridor N3 Douala ↔ Yaoundé</p>
+      </div>
+      <button type="button" onclick="closeTrackMapModal()" class="text-slate-400 hover:text-slate-800">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    
+    <div id="track-live-map" class="w-full h-[420px] rounded-xl border border-slate-300"></div>
+
+    <div class="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
+      <span class="text-slate-500">📍 Balise GPS 4G active sur le convoi</span>
+      <button type="button" onclick="closeTrackMapModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script src="<?= BASE_URL ?>/assets/js/map.js"></script>
+<script>
+  let trackMapInitialized = false;
+
+  function openTrackMapModal() {
+    document.getElementById('track-map-modal').classList.remove('hidden');
+    if (!trackMapInitialized) {
+      setTimeout(() => {
+        initLiveMap('track-live-map');
+        trackMapInitialized = true;
+      }, 100);
+    }
+  }
+
+  function closeTrackMapModal() {
+    document.getElementById('track-map-modal').classList.add('hidden');
+  }
+</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

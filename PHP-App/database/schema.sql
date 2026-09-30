@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(30),
     role VARCHAR(20) NOT NULL DEFAULT 'CUSTOMER',
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -87,6 +88,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     campay_operator VARCHAR(50),
     campay_ussd_code VARCHAR(50),
     external_reference VARCHAR(100),
+    tracker_id INTEGER REFERENCES iot_trackers(id),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

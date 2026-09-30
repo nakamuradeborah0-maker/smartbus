@@ -84,6 +84,11 @@ include __DIR__ . '/../includes/header.php';
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         <span>GPS En Ligne (Batterie: <?= $trk['battery_level'] ?>%)</span>
       </span>
+      <button type="button" onclick="toggleDriverMap()" id="btn-toggle-driver-map"
+        class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+        <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
+        <span>🗺️ Voir sur la Carte (See on Map)</span>
+      </button>
     </div>
   </div>
 
@@ -94,17 +99,32 @@ include __DIR__ . '/../includes/header.php';
     </div>
   <?php endif; ?>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Left 2 Cols: Trips Deck -->
-    <div class="lg:col-span-2 space-y-4">
-      <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-        <i data-lucide="bus" class="w-4 h-4 text-blue-600"></i>
-        <span>Trajets Douala ↔ Yaoundé (<?= count($driverTrips) ?>)</span>
-      </h2>
+  <!-- OPTIONAL INTERACTIVE CARTO HD MAP CONTAINER (HIDDEN BY DEFAULT) -->
+  <div id="driver-map-container" class="hidden bg-white rounded-2xl border border-blue-300 shadow-md p-6 space-y-4 animate-fadeIn">
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="navigation" class="w-4 h-4 text-emerald-600 animate-pulse"></i>
+        <span>Itinéraire N3 en Direct • Douala ↔ Yaoundé (Carto HD)</span>
+      </h3>
+      <button type="button" onclick="toggleDriverMap()" class="text-xs text-slate-500 hover:text-slate-800 font-bold flex items-center gap-1 cursor-pointer">
+        <i data-lucide="x" class="w-4 h-4"></i>
+        <span>Fermer la Carte</span>
+      </button>
+    </div>
+    <div id="driver-nav-map" class="w-full h-[400px] rounded-xl border border-slate-300 z-10"></div>
+  </div>
 
-      <div class="space-y-4">
-        <?php foreach ($driverTrips as $t): ?>
-          <div class="p-6 rounded-2xl bg-white border border-slate-300 shadow-sm space-y-4">
+  <!-- Trips Deck (Full Width) -->
+  <div class="space-y-4">
+    <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+      <i data-lucide="bus" class="w-4 h-4 text-blue-600"></i>
+      <span>Trajets Douala ↔ Yaoundé Assignés (<?= count($driverTrips) ?>)</span>
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <?php foreach ($driverTrips as $t): ?>
+        <div class="p-6 rounded-2xl bg-white border border-slate-300 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
             <div class="flex items-center justify-between">
               <span class="font-mono text-sm font-bold text-blue-900"><?= htmlspecialchars($t['trip_number']) ?></span>
               <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
@@ -113,7 +133,7 @@ include __DIR__ . '/../includes/header.php';
               </span>
             </div>
 
-            <div class="flex items-center gap-3 text-base font-black text-slate-900">
+            <div class="flex items-center gap-3 text-base font-black text-slate-900 my-2">
               <span><?= htmlspecialchars($t['origin_name']) ?></span>
               <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i>
               <span><?= htmlspecialchars($t['dest_name']) ?></span>
@@ -135,53 +155,44 @@ include __DIR__ . '/../includes/header.php';
             </div>
 
             <?php if (!empty($t['incident_report'])): ?>
-              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs mt-3">
                 <strong>Signalement en cours :</strong> <?= htmlspecialchars($t['incident_report']) ?>
               </div>
             <?php endif; ?>
-
-            <!-- Driver Actions Toolbar -->
-            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100">
-              <form method="POST" class="inline">
-                <input type="hidden" name="trip_id" value="<?= $t['id'] ?>">
-                <?php if ($t['status'] === 'SCHEDULED'): ?>
-                  <button type="submit" name="action" value="depart" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
-                    <span>Démarrer Trajet (Départ)</span>
-                  </button>
-                <?php elseif ($t['status'] === 'IN_TRANSIT'): ?>
-                  <button type="submit" name="action" value="arrive" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                    <span>Confirmer Arrivée en Gare</span>
-                  </button>
-                <?php else: ?>
-                  <span class="text-xs text-slate-400 font-semibold italic">Trajet clôturé avec succès</span>
-                <?php endif; ?>
-              </form>
-
-              <?php if ($t['status'] === 'IN_TRANSIT'): ?>
-                <button type="button" onclick="openGpsModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center gap-1.5 border border-sky-200 cursor-pointer">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                  <span>Pointer Étape GPS</span>
-                </button>
-                <button type="button" onclick="openIncidentModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition flex items-center gap-1.5 border border-amber-200 cursor-pointer">
-                  <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-                  <span>Signaler Ralentissement</span>
-                </button>
-              <?php endif; ?>
-            </div>
           </div>
-        <?php endforeach; ?>
-      </div>
-    </div>
 
-    <!-- Right Col: Live Navigation GPS Route Map -->
-    <div class="space-y-4">
-      <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-        <i data-lucide="navigation" class="w-4 h-4 text-emerald-600"></i>
-        <span>Itinéraire N3 en Direct (Carto HD)</span>
-      </h2>
-      <div id="driver-nav-map" class="w-full h-[480px] rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden z-10"></div>
+          <!-- Driver Actions Toolbar -->
+          <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 mt-2">
+            <form method="POST" class="inline">
+              <input type="hidden" name="trip_id" value="<?= $t['id'] ?>">
+              <?php if ($t['status'] === 'SCHEDULED'): ?>
+                <button type="submit" name="action" value="depart" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Démarrer Trajet</span>
+                </button>
+              <?php elseif ($t['status'] === 'IN_TRANSIT'): ?>
+                <button type="submit" name="action" value="arrive" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                  <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                  <span>Confirmer Arrivée</span>
+                </button>
+              <?php else: ?>
+                <span class="text-xs text-slate-400 font-semibold italic">Trajet clôturé avec succès</span>
+              <?php endif; ?>
+            </form>
+
+            <?php if ($t['status'] === 'IN_TRANSIT'): ?>
+              <button type="button" onclick="openGpsModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center gap-1.5 border border-sky-200 cursor-pointer">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                <span>Pointer Étape GPS</span>
+              </button>
+              <button type="button" onclick="openIncidentModal(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition flex items-center gap-1.5 border border-amber-200 cursor-pointer">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                <span>Signaler Ralentissement</span>
+              </button>
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </div>
@@ -265,9 +276,28 @@ include __DIR__ . '/../includes/header.php';
     document.getElementById('incident-modal').classList.remove('hidden');
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initLiveMap('driver-nav-map');
-  });
+  let driverMapInitialized = false;
+
+  function toggleDriverMap() {
+    const container = document.getElementById('driver-map-container');
+    const btn = document.getElementById('btn-toggle-driver-map');
+    
+    if (container.classList.contains('hidden')) {
+      container.classList.remove('hidden');
+      btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i><span>Masquer la Carte / Hide Map</span>';
+      btn.classList.add('bg-slate-700', 'text-amber-300');
+      
+      if (!driverMapInitialized) {
+        initLiveMap('driver-nav-map');
+        driverMapInitialized = true;
+      }
+    } else {
+      container.classList.add('hidden');
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span>🗺️ Voir sur la Carte (See on Map)</span>';
+      btn.classList.remove('bg-slate-700', 'text-amber-300');
+    }
+    if (window.lucide) lucide.createIcons();
+  }
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

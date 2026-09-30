@@ -4,6 +4,10 @@ const CARTO_API_KEY = 'cb1_43oe_1_75bd64c2f244c194ee1bc360';
 function initLiveMap(containerId = 'live-fleet-map', options = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  if (container._leaflet_id && window[containerId + '_map']) {
+    setTimeout(() => window[containerId + '_map'].invalidateSize(), 200);
+    return window[containerId + '_map'];
+  }
 
   // Base map layers (Carto requires ?key=YOUR_API_KEY)
   const voyagerLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`, {
@@ -106,6 +110,7 @@ function initLiveMap(containerId = 'live-fleet-map', options = {}) {
     } catch (e) {}
   }, 10000);
 
+  window[containerId + '_map'] = map;
   setTimeout(() => map.invalidateSize(), 300);
   return map;
 }
