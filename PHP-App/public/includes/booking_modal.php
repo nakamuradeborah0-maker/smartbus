@@ -28,18 +28,16 @@ $today = date('Y-m-d');
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1"><?= t('search.origin', 'Gare Départ') ?></label>
-              <select id="booking-origin-city" onchange="loadScheduleDepartures()" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
+              <select id="booking-origin-city" onchange="handleModalCityChange('origin')" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
                 <option value="Douala">Douala (Akwa)</option>
                 <option value="Yaoundé">Yaoundé (Mvan)</option>
-                <option value="Bafoussam">Bafoussam</option>
               </select>
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1"><?= t('search.destination', 'Destination') ?></label>
-              <select id="booking-dest-city" onchange="loadScheduleDepartures()" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
+              <select id="booking-dest-city" onchange="handleModalCityChange('dest')" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
                 <option value="Yaoundé">Yaoundé (Mvan)</option>
                 <option value="Douala">Douala (Akwa)</option>
-                <option value="Bafoussam">Bafoussam</option>
               </select>
             </div>
             <div>

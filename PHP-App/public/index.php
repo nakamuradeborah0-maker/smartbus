@@ -56,18 +56,16 @@ include __DIR__ . '/includes/header.php';
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1"><?= t('search.origin', 'Gare Départ') ?></label>
-            <select id="hero-from-city" onchange="handleHeroCityChange()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <select id="hero-from-city" onchange="handleHeroCityChange('origin')" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600">
               <option value="Douala">Douala (Akwa)</option>
               <option value="Yaoundé">Yaoundé (Mvan)</option>
-              <option value="Bafoussam">Bafoussam</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1"><?= t('search.destination', 'Gare Destination') ?></label>
-            <select id="hero-to-city" onchange="handleHeroCityChange()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <select id="hero-to-city" onchange="handleHeroCityChange('dest')" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600">
               <option value="Yaoundé">Yaoundé (Mvan)</option>
               <option value="Douala">Douala (Akwa)</option>
-              <option value="Bafoussam">Bafoussam</option>
             </select>
           </div>
           <div>
@@ -267,12 +265,13 @@ include __DIR__ . '/includes/header.php';
     }
   }
 
-  function handleHeroCityChange() {
+  function handleHeroCityChange(changed = 'origin') {
     const originSelect = document.getElementById('hero-from-city');
     const destSelect = document.getElementById('hero-to-city');
-    if (originSelect.value === destSelect.value) {
-      if (originSelect.value === 'Douala') destSelect.value = 'Yaoundé';
-      else destSelect.value = 'Douala';
+    if (changed === 'origin') {
+      destSelect.value = (originSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
+    } else {
+      originSelect.value = (destSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
     }
     updateHomeDepartures();
   }

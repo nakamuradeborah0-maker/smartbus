@@ -10,13 +10,19 @@ class TripService {
         if ((int)$stmt->fetchColumn() === 0) {
             $dailySchedule = [
                 ['trip_num' => 'GV-1025', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-782-AA (Scania VIP First Class)', 'time' => '06:30:00', 'arr_time' => '10:00:00', 'price' => 5000],
-                ['trip_num' => 'GV-1026', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'CE-341-BA (Mercedes Comfort Executive)', 'time' => '09:00:00', 'arr_time' => '12:30:00', 'price' => 5000],
-                ['trip_num' => 'GV-1028', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-890-BB (Scania VIP Lounge Express)', 'time' => '14:00:00', 'arr_time' => '17:30:00', 'price' => 5000],
-                ['trip_num' => 'GV-1030', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-902-CC (Volvo Highliner Luxury)', 'time' => '17:30:00', 'arr_time' => '21:00:00', 'price' => 5000],
-                ['trip_num' => 'GV-1031', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'LT-782-AA (Scania VIP Express Return)', 'time' => '07:00:00', 'arr_time' => '10:30:00', 'price' => 5000],
-                ['trip_num' => 'GV-1033', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'CE-341-BA (Mercedes Comfort Executive)', 'time' => '13:00:00', 'arr_time' => '16:30:00', 'price' => 5000],
-                ['trip_num' => 'GV-2041', 'route_id' => 3, 'driver_id' => 2, 'bus' => 'OU-112-DA (Marcopolo Paradiso)', 'time' => '08:30:00', 'arr_time' => '13:00:00', 'price' => 6000],
-                ['trip_num' => 'GV-2042', 'route_id' => 3, 'driver_id' => 2, 'bus' => 'OU-112-DA (Marcopolo Paradiso Return)', 'time' => '15:00:00', 'arr_time' => '19:30:00', 'price' => 6000],
+                ['trip_num' => 'GV-1027', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'CE-341-BA (Mercedes Comfort Executive)', 'time' => '09:00:00', 'arr_time' => '12:30:00', 'price' => 5000],
+                ['trip_num' => 'GV-1029', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-890-BB (Scania VIP Lounge Express)', 'time' => '11:30:00', 'arr_time' => '15:00:00', 'price' => 5000],
+                ['trip_num' => 'GV-1031', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-902-CC (Volvo Highliner Luxury)', 'time' => '14:00:00', 'arr_time' => '17:30:00', 'price' => 5000],
+                ['trip_num' => 'GV-1033', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'LT-782-AA (Scania VIP First Class)', 'time' => '16:30:00', 'arr_time' => '20:00:00', 'price' => 5000],
+                ['trip_num' => 'GV-1035', 'route_id' => 1, 'driver_id' => 2, 'bus' => 'CE-341-BA (Mercedes Comfort Executive)', 'time' => '18:30:00', 'arr_time' => '22:00:00', 'price' => 5000],
+
+                // Return: Yaoundé -> Douala
+                ['trip_num' => 'GV-2026', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'OU-112-DA (Marcopolo Paradiso VIP)', 'time' => '06:30:00', 'arr_time' => '10:00:00', 'price' => 5000],
+                ['trip_num' => 'GV-2028', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'LT-554-DD (Scania VIP Express)', 'time' => '09:00:00', 'arr_time' => '12:30:00', 'price' => 5000],
+                ['trip_num' => 'GV-2030', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'OU-112-DA (Marcopolo Paradiso VIP)', 'time' => '11:30:00', 'arr_time' => '15:00:00', 'price' => 5000],
+                ['trip_num' => 'GV-2032', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'LT-554-DD (Scania VIP Express)', 'time' => '14:00:00', 'arr_time' => '17:30:00', 'price' => 5000],
+                ['trip_num' => 'GV-2034', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'OU-112-DA (Marcopolo Paradiso VIP)', 'time' => '16:30:00', 'arr_time' => '20:00:00', 'price' => 5000],
+                ['trip_num' => 'GV-2036', 'route_id' => 2, 'driver_id' => 2, 'bus' => 'LT-554-DD (Scania VIP Express)', 'time' => '18:30:00', 'arr_time' => '22:00:00', 'price' => 5000],
             ];
 
             $ins = $pdo->prepare("INSERT INTO trips (trip_number, route_id, driver_id, bus_number, departure_scheduled, arrival_scheduled, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'SCHEDULED')");

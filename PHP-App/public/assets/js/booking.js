@@ -76,6 +76,17 @@ function setModalDate(daysFromToday) {
   loadScheduleDepartures();
 }
 
+function handleModalCityChange(changed = 'origin') {
+  const originSelect = document.getElementById('booking-origin-city');
+  const destSelect = document.getElementById('booking-dest-city');
+  if (changed === 'origin') {
+    destSelect.value = (originSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
+  } else {
+    originSelect.value = (destSelect.value === 'Douala') ? 'Yaoundé' : 'Douala';
+  }
+  loadScheduleDepartures();
+}
+
 async function loadScheduleDepartures() {
   const container = document.getElementById('schedule-departures-list');
   if (!container) return;

@@ -130,9 +130,14 @@ include __DIR__ . '/../includes/header.php';
                 </div>
                 <p class="text-slate-600 mt-1"><?= htmlspecialchars($p['origin_name']) ?> ➔ <?= htmlspecialchars($p['dest_name']) ?> • Destinataire : <strong><?= htmlspecialchars($p['recipient_name']) ?></strong></p>
               </div>
-              <a href="<?= BASE_URL ?>/track.php?num=<?= urlencode($p['tracking_number']) ?>" class="px-4 py-2 bg-slate-100 hover:bg-blue-50 text-blue-700 font-bold rounded-lg self-start sm:self-auto transition">
-                Suivre sur Carte ➔
-              </a>
+              <div class="flex items-center gap-2 self-start sm:self-auto">
+                <a href="<?= BASE_URL ?>/agent/waybill.php?num=<?= urlencode($p['tracking_number']) ?>" target="_blank" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg transition text-xs">
+                  Bordereau 🖨️
+                </a>
+                <a href="<?= BASE_URL ?>/track.php?num=<?= urlencode($p['tracking_number']) ?>" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition text-xs">
+                  Suivre ➔
+                </a>
+              </div>
             </div>
           <?php endforeach; ?>
         </div>

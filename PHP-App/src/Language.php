@@ -19,7 +19,7 @@ class Language {
             // Hero
             'hero.badge' => 'RÉSEAU INTERURBAIN CAMEROUN • AXE LOURD N3',
             'hero.title' => 'Voyagez & Expédiez en Toute Sérénité',
-            'hero.subtitle' => 'Liaisons quotidiennes VIP directes entre Douala, Yaoundé, Bafoussam et Bamenda. Télémétrie IoT 4G et paiement sécurisé.',
+            'hero.subtitle' => 'Liaisons quotidiennes VIP directes entre Douala et Yaoundé sur l\'Axe Lourd N3. Télémétrie IoT 4G et paiement sécurisé.',
             'hero.tabTrack' => 'Suivi de Colis',
             'hero.tabBook' => 'Acheter un Billet',
             'hero.tabMap' => 'Carte Flotte & Arrêts',
@@ -84,7 +84,7 @@ class Language {
             // Hero
             'hero.badge' => 'CAMEROON INTERCITY NETWORK • HIGHWAY N3',
             'hero.title' => 'Travel & Ship with Complete Peace of Mind',
-            'hero.subtitle' => 'Daily first-class intercity connections between Douala, Yaounde, Bafoussam, and Bamenda. Live 4G IoT telemetry and secure mobile pay.',
+            'hero.subtitle' => 'Daily first-class intercity connections directly between Douala and Yaounde along Highway N3. Live 4G IoT telemetry and secure mobile pay.',
             'hero.tabTrack' => 'Track Parcel',
             'hero.tabBook' => 'Book Bus Ticket',
             'hero.tabMap' => 'Live Fleet & Places Map',

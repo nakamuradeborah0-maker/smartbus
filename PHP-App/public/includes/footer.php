@@ -22,10 +22,10 @@
         <div>
           <h4 class="font-bold text-white text-xs uppercase tracking-wider mb-3">Lignes Principales</h4>
           <ul class="space-y-1.5 text-slate-300 text-[11px]">
-            <li>• Douala (Akwa) ➔ Yaoundé (Mvan) Express</li>
-            <li>• Yaoundé (Mvan) ➔ Douala (Akwa) Express</li>
-            <li>• Douala ➔ Bafoussam (N5)</li>
-            <li>• Bafoussam ➔ Bamenda (N6)</li>
+            <li>• Douala (Akwa) ➔ Yaoundé (Mvan) Express N3</li>
+            <li>• Yaoundé (Mvan) ➔ Douala (Akwa) Express N3</li>
+            <li>• Départs quotidiens toutes les 2h30</li>
+            <li>• Étape gastronomique Boumnyébel</li>
           </ul>
         </div>
 
