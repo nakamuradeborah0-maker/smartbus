@@ -47,10 +47,8 @@ $user = Auth::user();
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo -->
-      <a href="<?= BASE_URL ?>/index.php" class="flex items-center gap-2.5 text-white hover:opacity-90 transition">
-        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-black text-lg text-white shadow-xs">
-          GV
-        </div>
+      <a href="<?= BASE_URL ?>/index.php" class="flex items-center gap-3 text-white hover:opacity-90 transition">
+        <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-10 h-10 rounded-xl object-cover border border-white/20 shadow-xs shrink-0">
         <div>
           <span class="text-base sm:text-lg font-black tracking-tight block leading-tight">
             GLOBAL <span class="text-sky-400">VOYAGES</span>
@@ -69,6 +67,11 @@ $user = Auth::user();
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span><?= t('hero.tabMap', 'Carte Flotte') ?></span>
         </a>
+        <button type="button" onclick="if(window.openBookingModal){openBookingModal();}else{window.location.href='<?= BASE_URL ?>/index.php#departures';}"
+          class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+          <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
+          <span><?= t('nav.book', 'Réserver Billet') ?></span>
+        </button>
       </nav>
 
       <!-- Right Controls: Language Switcher & Auth Profile -->

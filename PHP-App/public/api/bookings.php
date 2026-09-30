@@ -9,6 +9,16 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
     $userId = Auth::id();
     $phone = $_GET['phone'] ?? null;
+    $tripId = $_GET['trip_id'] ?? null;
+    $travelDate = $_GET['travel_date'] ?? null;
+
+    if ($tripId && $travelDate) {
+        $occupied = BookingService::getOccupiedSeats((int)$tripId, $travelDate);
+        $res = array_map(function($s) { return ['seat_number' => $s]; }, $occupied);
+        echo json_encode($res);
+        exit;
+    }
+
     $ref = $_GET['ref'] ?? null;
 
     if ($ref) {

@@ -5,13 +5,18 @@ function initLiveMap(containerId = 'live-fleet-map', options = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  // Base map layers
-  const voyagerLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`, {
+  // Base map layers (Carto requires ?key=YOUR_API_KEY)
+  const voyagerLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`, {
     attribution: '&copy; CARTO &copy; OpenStreetMap',
     maxZoom: 19
   });
 
-  const darkLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`, {
+  const darkLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`, {
+    attribution: '&copy; CARTO &copy; OpenStreetMap',
+    maxZoom: 19
+  });
+
+  const positronLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`, {
     attribution: '&copy; CARTO &copy; OpenStreetMap',
     maxZoom: 19
   });
@@ -37,6 +42,7 @@ function initLiveMap(containerId = 'live-fleet-map', options = {}) {
   const baseMaps = {
     "Voyager (Carto HD)": voyagerLayer,
     "Mode Nuit (Carto)": darkLayer,
+    "Clair (Carto Positron)": positronLayer,
     "Satellite (Esri)": satLayer,
     "Standard (OSM)": osmLayer
   };

@@ -8,7 +8,7 @@ $today = date('Y-m-d');
     <!-- Header -->
     <div class="bg-[#0B1E36] text-white px-6 py-4 flex items-center justify-between border-b-2 border-blue-600">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black">GV</div>
+        <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-10 h-10 rounded-xl object-cover border border-white/20 shadow-xs shrink-0">
         <div>
           <h3 class="text-base font-black tracking-tight text-white"><?= t('booking.title', 'Réservation de Billet VIP') ?></h3>
           <p class="text-[11px] text-sky-200">Global Voyages VIP Intercity Express</p>
@@ -27,7 +27,7 @@ $today = date('Y-m-d');
         <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Gare Départ</label>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1"><?= t('search.origin', 'Gare Départ') ?></label>
               <select id="booking-origin-city" onchange="loadScheduleDepartures()" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
                 <option value="Douala">Douala (Akwa)</option>
                 <option value="Yaoundé">Yaoundé (Mvan)</option>
@@ -35,7 +35,7 @@ $today = date('Y-m-d');
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Destination</label>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1"><?= t('search.destination', 'Destination') ?></label>
               <select id="booking-dest-city" onchange="loadScheduleDepartures()" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-900">
                 <option value="Yaoundé">Yaoundé (Mvan)</option>
                 <option value="Douala">Douala (Akwa)</option>
@@ -43,9 +43,14 @@ $today = date('Y-m-d');
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Date de Voyage</label>
-              <input type="date" id="booking-travel-date" value="<?= $today ?>" onchange="loadScheduleDepartures()"
+              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1"><?= t('search.date', 'Date de Voyage') ?></label>
+              <input type="date" id="booking-travel-date" value="<?= $today ?>" min="<?= $today ?>" onchange="loadScheduleDepartures()"
                 class="w-full p-2.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-900">
+              <div class="flex items-center gap-1.5 mt-1.5">
+                <button type="button" onclick="setModalDate(0)" class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold hover:bg-blue-200"><?= t('search.today', "Aujourd'hui") ?></button>
+                <button type="button" onclick="setModalDate(1)" class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 text-[10px] font-bold hover:bg-slate-300"><?= t('search.tomorrow', 'Demain') ?></button>
+                <button type="button" onclick="setModalDate(2)" class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 text-[10px] font-bold hover:bg-slate-300">+2 j</button>
+              </div>
             </div>
           </div>
         </div>

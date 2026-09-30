@@ -5,18 +5,36 @@ let currentBookingDate = new Date().toISOString().split('T')[0];
 let currentBookingRef = null;
 let paymentPollInterval = null;
 
+function formatTime(dtStr) {
+  if (!dtStr) return '06:30';
+  const parts = dtStr.split(' ');
+  if (parts.length > 1) {
+    return parts[1].substring(0, 5);
+  }
+  return dtStr.substring(11, 16) || '06:30';
+}
+
 function openBookingModal(tripData = null, selectedDate = null) {
   const modal = document.getElementById('booking-modal');
   if (!modal) return;
 
+  const heroDate = document.getElementById('hero-date')?.value;
   if (selectedDate) {
     currentBookingDate = selectedDate;
+  } else if (heroDate) {
+    currentBookingDate = heroDate;
+  } else if (!currentBookingDate) {
+    currentBookingDate = new Date().toISOString().split('T')[0];
   }
-  document.getElementById('booking-travel-date').value = currentBookingDate;
+
+  const modalDateInput = document.getElementById('booking-travel-date');
+  if (modalDateInput) {
+    modalDateInput.value = currentBookingDate;
+    modalDateInput.min = new Date().toISOString().split('T')[0];
+  }
 
   if (tripData) {
-    currentBookingTrip = tripData;
-    showBookingStep('seat');
+    selectTripForSeat(tripData);
   } else {
     showBookingStep('schedule');
     loadScheduleDepartures();
@@ -48,63 +66,129 @@ function showBookingStep(step) {
   if (window.lucide) lucide.createIcons();
 }
 
+function setModalDate(daysFromToday) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromToday);
+  const iso = d.toISOString().split('T')[0];
+  currentBookingDate = iso;
+  const input = document.getElementById('booking-travel-date');
+  if (input) input.value = iso;
+  loadScheduleDepartures();
+}
+
 async function loadScheduleDepartures() {
   const container = document.getElementById('schedule-departures-list');
   if (!container) return;
-  container.innerHTML = '<div class="p-6 text-center text-xs text-slate-500">Chargement des départs réels...</div>';
+  container.innerHTML = '<div class="p-8 text-center text-xs text-slate-500"><i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto mb-2 text-blue-600"></i>Recherche des départs en temps réel...</div>';
+  if (window.lucide) lucide.createIcons();
 
   try {
-    const origin = document.getElementById('booking-origin-city').value;
-    const dest = document.getElementById('booking-dest-city').value;
-    const date = document.getElementById('booking-travel-date').value;
+    const originSelect = document.getElementById('booking-origin-city');
+    const destSelect = document.getElementById('booking-dest-city');
+    const dateInput = document.getElementById('booking-travel-date');
+
+    let origin = originSelect?.value || 'Douala';
+    let dest = destSelect?.value || 'Yaoundé';
+    let date = dateInput?.value || currentBookingDate;
+
+    // Auto fix if same origin and dest
+    if (origin === dest) {
+      if (origin === 'Douala') dest = 'Yaoundé';
+      else dest = 'Douala';
+      if (destSelect) destSelect.value = dest;
+    }
+
+    currentBookingDate = date;
 
     const res = await fetch(`/api/trips.php?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&date=${date}`);
     const trips = await res.json();
 
     if (!trips || trips.length === 0) {
-      container.innerHTML = '<div class="p-6 text-center text-xs text-slate-400 border border-slate-200 rounded-xl">Aucun départ prévu sur cette liaison à cette date.</div>';
+      container.innerHTML = `
+        <div class="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <p class="text-xs font-bold text-slate-700">Aucun départ programmé sur cette ligne pour le ${date}.</p>
+          <button type="button" onclick="setModalDate(1)" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">Voir les départs de demain</button>
+        </div>
+      `;
       return;
     }
 
-    container.innerHTML = trips.map(t => `
-      <div onclick="selectTripForSeat(${JSON.stringify(t).replace(/"/g, '&quot;')})" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition cursor-pointer flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 font-mono font-bold text-xs flex items-center justify-center shrink-0">VIP</div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-xs font-bold text-slate-900">${t.trip_number}</span>
-              <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">CONFIRMÉ</span>
+    container.innerHTML = trips.map(t => {
+      const depTime = formatTime(t.departure_scheduled);
+      const tripJson = JSON.stringify(t).replace(/"/g, '&quot;');
+      return `
+        <div onclick="selectTripForSeat(${tripJson})" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 bg-white hover:bg-blue-50/50 transition cursor-pointer flex items-center justify-between gap-3 group shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-100 group-hover:bg-blue-600 group-hover:text-white text-blue-700 font-mono font-black text-xs flex items-center justify-center shrink-0 transition">
+              VIP
             </div>
-            <p class="text-xs font-semibold text-slate-700">${t.bus_number}</p>
-            <p class="text-[11px] text-slate-500">Départ: <strong>${new Date(t.departure_scheduled).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</strong> • ${t.origin_city} ➔ ${t.destination_city}</p>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs font-black text-slate-900">${t.trip_number}</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">CONFIRMÉ</span>
+              </div>
+              <p class="text-xs font-bold text-slate-800 mt-0.5">${t.bus_number}</p>
+              <p class="text-[11px] text-slate-500">
+                Départ : <strong class="text-blue-700 font-bold">${depTime}</strong> • ${t.origin_city} ➔ ${t.destination_city}
+              </p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-black text-slate-900 block">${Number(t.price).toLocaleString()} FCFA</span>
+            <button type="button" class="mt-1 px-3 py-1 bg-blue-700 group-hover:bg-blue-800 text-white font-bold text-xs rounded-lg shadow-xs transition">
+              Choisir Siège ➔
+            </button>
           </div>
         </div>
-        <div class="text-right">
-          <span class="text-base font-black text-slate-900 block">${t.price.toLocaleString()} FCFA</span>
-          <button type="button" class="mt-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition">Choisir Siège</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+
+    if (window.lucide) lucide.createIcons();
+
   } catch (err) {
-    container.innerHTML = '<div class="p-4 text-xs text-red-600">Erreur de chargement des départs.</div>';
+    container.innerHTML = '<div class="p-4 text-xs text-red-600 bg-red-50 rounded-xl">Erreur de chargement des départs. Veuillez réessayer.</div>';
   }
 }
 
-function selectTripForSeat(trip) {
+async function selectTripForSeat(trip) {
   currentBookingTrip = trip;
+  const depTime = formatTime(trip.departure_scheduled);
   document.getElementById('seat-trip-info').textContent = `${trip.trip_number} • ${trip.bus_number}`;
-  document.getElementById('seat-date-info').textContent = `${currentBookingDate} • ${new Date(trip.departure_scheduled).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
-  renderSeatLayout();
+  document.getElementById('seat-date-info').textContent = `${currentBookingDate} • ${depTime}`;
+  
+  // Render layout and show step
+  await renderSeatLayout();
   showBookingStep('seat');
 }
 
-function renderSeatLayout() {
+async function renderSeatLayout() {
   const container = document.getElementById('seat-layout-grid');
   if (!container) return;
 
-  const occupied = [2, 3, 7, 11, 15, 19, 23, 27, 30]; // defaults
-  let html = '';
+  // Fetch real occupied seats from server
+  let occupied = [2, 3, 7, 11, 15, 19, 23, 27, 30];
+  try {
+    const res = await fetch(`/api/bookings.php?trip_id=${currentBookingTrip?.id || 1}&travel_date=${currentBookingDate}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const booked = data.map(b => Number(b.seat_number));
+        occupied = Array.from(new Set([...occupied, ...booked]));
+      }
+    }
+  } catch (e) {}
 
+  // If current seat is occupied, auto switch to first free
+  if (occupied.includes(currentBookingSeat)) {
+    for (let i = 1; i <= 32; i++) {
+      if (!occupied.includes(i)) {
+        currentBookingSeat = i;
+        break;
+      }
+    }
+  }
+
+  let html = '';
   for (let row = 0; row < 8; row++) {
     const s1 = row * 4 + 1;
     const s2 = row * 4 + 2;
@@ -116,8 +200,9 @@ function renderSeatLayout() {
       const isSel = currentBookingSeat === num;
       return `
         <button type="button" ${isOcc ? 'disabled' : ''} onclick="chooseSeat(${num})"
+          title="${isOcc ? 'Siège Occupé' : 'Siège ' + num + ' Libre'}"
           class="w-9 h-9 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center seat-btn
-          ${isOcc ? 'occupied' : (isSel ? 'selected' : 'bg-white hover:bg-blue-50 text-slate-800 border border-slate-300')}">
+          ${isOcc ? 'bg-slate-300 text-slate-500 cursor-not-allowed border border-slate-300' : (isSel ? 'bg-blue-700 text-white shadow-sm ring-2 ring-blue-400 font-black' : 'bg-white hover:bg-blue-50 text-slate-800 border border-slate-300')}">
           ${num}
         </button>
       `;
@@ -126,7 +211,7 @@ function renderSeatLayout() {
     html += `
       <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-2">${btn(s1)}${btn(s2)}</div>
-        <div class="text-[9px] text-slate-400 font-mono">| |</div>
+        <div class="text-[9px] text-slate-400 font-mono tracking-widest font-bold">ALLÉE</div>
         <div class="flex items-center gap-2">${btn(s3)}${btn(s4)}</div>
       </div>
     `;
@@ -137,7 +222,17 @@ function renderSeatLayout() {
 
 function chooseSeat(seatNum) {
   currentBookingSeat = seatNum;
-  renderSeatLayout();
+  document.getElementById('selected-seat-display').textContent = `Siège N° ${currentBookingSeat} (VIP)`;
+  // Update UI selection classes without full re-render
+  document.querySelectorAll('.seat-btn').forEach(btn => {
+    if (!btn.disabled) {
+      if (btn.textContent.trim() === String(seatNum)) {
+        btn.className = 'w-9 h-9 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center seat-btn bg-blue-700 text-white shadow-sm ring-2 ring-blue-400 font-black';
+      } else {
+        btn.className = 'w-9 h-9 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center seat-btn bg-white hover:bg-blue-50 text-slate-800 border border-slate-300';
+      }
+    }
+  });
 }
 
 async function submitPaymentForm(event) {
@@ -156,6 +251,8 @@ async function submitPaymentForm(event) {
   const operator = document.querySelector('input[name="operator"]:checked')?.value || 'MTN';
 
   try {
+    const depTime = formatTime(currentBookingTrip?.departure_scheduled);
+
     // 1. Create booking in DB
     const bookRes = await fetch('/api/bookings.php', {
       method: 'POST',
@@ -168,10 +265,10 @@ async function submitPaymentForm(event) {
         passenger_id_number: cni,
         passenger_email: email,
         passenger_phone: phone,
-        origin: currentBookingTrip?.origin_name || 'Douala (Gare Centrale Akwa)',
-        destination: currentBookingTrip?.destination_name || 'Yaoundé (Terminal Mvan)',
+        origin: currentBookingTrip?.origin_name || (currentBookingTrip?.origin_city + ' (Gare Centrale)'),
+        destination: currentBookingTrip?.destination_name || (currentBookingTrip?.destination_city + ' (Terminal)'),
         travel_date: currentBookingDate,
-        departure_time: currentBookingTrip?.departure_scheduled ? new Date(currentBookingTrip.departure_scheduled).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '06:30',
+        departure_time: depTime,
         seat_number: currentBookingSeat,
         amount: currentBookingTrip?.price || 5000,
         payment_method: operator === 'OM' ? 'ORANGE_MONEY' : 'MTN_MOMO'
@@ -201,14 +298,14 @@ async function submitPaymentForm(event) {
       throw new Error(payment.error || 'Échec d\'initiation du paiement CamPay.');
     }
 
-    // 3. Move to pending USSD step (TICKET NOT DOWNLOADABLE YET)
+    // 3. Move to pending USSD step (TICKET STRICTLY BLOCKED BEFORE APPROVAL)
     document.getElementById('pending-ussd-code').textContent = payment.ussd_code || (operator === 'OM' ? '#150*50#' : '*126#');
     document.getElementById('pending-operator-badge').textContent = payment.operator || operator;
     document.getElementById('pending-ref-badge').textContent = currentBookingRef;
 
     showBookingStep('pending');
 
-    // 4. Start polling CamPay status
+    // 4. Start polling CamPay status every 3.5s
     paymentPollInterval = setInterval(() => checkCamPayStatus(payment.reference), 3500);
 
   } catch (err) {

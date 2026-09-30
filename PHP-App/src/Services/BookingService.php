@@ -170,7 +170,10 @@ class BookingService {
 <body>
   <div class="ticket-card">
     <div class="header">
-      <div class="logo">GLOBAL <span>VOYAGES</span> VIP</div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="/assets/images/global_voyages_logo.jpg" alt="GV Logo" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
+        <div class="logo">GLOBAL <span>VOYAGES</span> VIP</div>
+      </div>
       <div class="badge"><?= $badgeText ?></div>
     </div>
     <div class="body">

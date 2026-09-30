@@ -9,8 +9,8 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
         <!-- Col 1 -->
         <div class="space-y-3">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center font-black text-sm text-white">GV</div>
+          <div class="flex items-center gap-2.5">
+            <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-8 h-8 rounded-lg object-cover border border-white/20">
             <span class="font-black text-base tracking-tight">GLOBAL <span class="text-sky-400">VOYAGES</span></span>
           </div>
           <p class="text-slate-400 text-[11px] leading-relaxed">

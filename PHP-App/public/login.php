@@ -41,9 +41,7 @@ include __DIR__ . '/includes/header.php';
   <div class="bg-white rounded-2xl border border-slate-300 shadow-xl overflow-hidden">
     <!-- Header -->
     <div class="bg-[#0B1E36] text-white p-6 border-b-2 border-blue-600 text-center">
-      <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center font-black text-xl text-white mx-auto mb-2 shadow-xs">
-        GV
-      </div>
+      <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-16 h-16 rounded-2xl mx-auto mb-3 shadow-md border-2 border-white/20 object-cover">
       <h2 class="text-xl font-black tracking-tight text-white"><?= t('nav.login', 'Connexion Sécurisée') ?></h2>
       <p class="text-xs text-slate-300 mt-1">Accédez à votre espace Global Voyages</p>
     </div>

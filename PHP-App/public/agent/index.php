@@ -50,10 +50,13 @@ include __DIR__ . '/../includes/header.php';
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fadeIn">
   <!-- Agent Header -->
   <div class="bg-[#0B1E36] text-white p-6 sm:p-8 rounded-2xl border-b-4 border-blue-600 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div>
-      <span class="px-2.5 py-0.5 rounded bg-indigo-500 text-white font-black text-[10px] uppercase tracking-wider">Guichet & Messagerie Colis</span>
-      <h1 class="text-2xl font-black tracking-tight text-white mt-1"><?= htmlspecialchars($user['name']) ?></h1>
-      <p class="text-xs text-slate-300 font-mono">Enregistrement, Pesée, Traçabilité & Assignation IoT</p>
+    <div class="flex items-center gap-4">
+      <img src="<?= BASE_URL ?>/assets/images/global_voyages_logo.jpg" alt="Global Voyages" class="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 shadow-sm shrink-0">
+      <div>
+        <span class="px-2.5 py-0.5 rounded bg-indigo-500 text-white font-black text-[10px] uppercase tracking-wider">Guichet & Messagerie Colis</span>
+        <h1 class="text-2xl font-black tracking-tight text-white mt-1"><?= htmlspecialchars($user['name']) ?></h1>
+        <p class="text-xs text-slate-300 font-mono">Enregistrement, Pesée, Traçabilité & Assignation IoT</p>
+      </div>
     </div>
     <div>
       <button type="button" onclick="document.getElementById('register-modal').classList.remove('hidden')"
