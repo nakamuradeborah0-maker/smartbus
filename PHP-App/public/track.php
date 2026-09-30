@@ -51,7 +51,7 @@ include __DIR__ . '/includes/header.php';
           <button type="button" onclick="openTrackMapModal()"
             class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
             <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-            <span><?= t('track.seeMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
+            <span><?= t('track.seeMap', 'Voir sur la Carte (See on Map)') ?></span>
           </button>
           <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
             <?= $parcel['status'] === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' ?>">
@@ -108,7 +108,7 @@ include __DIR__ . '/includes/header.php';
     <div id="track-live-map" class="w-full h-[420px] rounded-xl border border-slate-300"></div>
 
     <div class="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
-      <span class="text-slate-500">📍 <?= t('track.activeTracker', 'Balise GPS 4G active sur le convoi') ?></span>
+      <span class="text-slate-500 inline-flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i> <?= t('track.activeTracker', 'Balise GPS 4G active sur le convoi') ?></span>
       <button type="button" onclick="closeTrackMapModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl"><?= t('map.close', 'Fermer') ?></button>
     </div>
   </div>

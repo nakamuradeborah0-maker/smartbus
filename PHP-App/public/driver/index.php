@@ -87,7 +87,7 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="toggleDriverMap()" id="btn-toggle-driver-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
+        <span><?= t('map.seeOnMap', 'Voir sur la Carte (See on Map)') ?></span>
       </button>
     </div>
   </div>
@@ -293,7 +293,7 @@ include __DIR__ . '/../includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', 'Voir sur la Carte (See on Map)') ?></span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

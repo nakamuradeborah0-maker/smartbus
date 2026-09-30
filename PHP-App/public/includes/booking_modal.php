@@ -73,8 +73,8 @@ $today = date('Y-m-d');
         <!-- Coach Layout -->
         <div class="max-w-md mx-auto p-5 bg-slate-100 rounded-2xl border-2 border-slate-300 shadow-inner">
           <div class="flex items-center justify-between pb-3 mb-3 border-b-2 border-slate-300 text-xs font-bold text-slate-500">
-            <span><?= t('booking.busFront', '🚗 Avant du Bus / Chauffeur') ?></span>
-            <span><?= t('booking.vipDoor', '🚪 Porte VIP') ?></span>
+            <span class="inline-flex items-center gap-1.5"><i data-lucide="navigation" class="w-3.5 h-3.5 text-blue-600"></i><?= t('booking.busFront', 'Avant du Bus / Chauffeur') ?></span>
+            <span class="inline-flex items-center gap-1.5"><i data-lucide="log-in" class="w-3.5 h-3.5 text-slate-500"></i><?= t('booking.vipDoor', 'Porte VIP') ?></span>
           </div>
           <div id="seat-layout-grid" class="space-y-2"></div>
         </div>
@@ -94,8 +94,9 @@ $today = date('Y-m-d');
           <button type="button" onclick="showBookingStep('schedule')" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
             <?= t('booking.back', 'Retour') ?>
           </button>
-          <button type="button" onclick="showBookingStep('payment')" class="px-6 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-md transition cursor-pointer">
-            <?= t('booking.continueToPay', 'Continuer vers Paiement ➔') ?>
+          <button type="button" onclick="showBookingStep('payment')" class="px-6 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-md transition cursor-pointer inline-flex items-center gap-1.5">
+            <span><?= t('booking.continueToPay', 'Continuer vers Paiement') ?></span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </button>
         </div>
       </div>
@@ -181,8 +182,9 @@ $today = date('Y-m-d');
           </div>
         </div>
 
-        <div class="p-3 bg-slate-100 border border-slate-300 rounded-xl text-xs text-slate-500">
-          <?= t('booking.ticketBlockedHelp', "⏳ Le billet électronique ne peut être téléchargé qu'après validation du débit par l'opérateur.") ?>
+        <div class="p-3 bg-slate-100 border border-slate-300 rounded-xl text-xs text-slate-500 flex items-center gap-2">
+          <i data-lucide="clock" class="w-4 h-4 text-slate-500 shrink-0"></i>
+          <span><?= t('booking.ticketBlockedHelp', "Le billet électronique ne peut être téléchargé qu'après validation du débit par l'opérateur.") ?></span>
         </div>
 
         <!-- Live Automated Mobile Payment Detection Banner -->
@@ -212,7 +214,7 @@ $today = date('Y-m-d');
         <!-- Confirmed Card -->
         <div class="p-4 bg-emerald-50 border-2 border-emerald-300 rounded-2xl text-left space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider"><?= t('booking.paidTicket', '✓ Titre de Transport Payé') ?></span>
+            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> <?= t('booking.paidTicket', 'Titre de Transport Payé') ?></span>
             <span id="success-booking-ref" class="font-mono font-bold text-xs text-emerald-950">BK-2026</span>
           </div>
           <p id="success-seat-info" class="text-sm font-black text-slate-900"><?= sprintf(t('booking.seatVIP', 'Siège N° %s (VIP)'), '14') ?></p>

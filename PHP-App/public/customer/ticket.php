@@ -40,7 +40,7 @@ if ($booking['payment_status'] !== 'PAID') {
 <body class="bg-slate-100 text-slate-900 font-sans min-h-screen flex items-center justify-center p-4">
   <div class="max-w-md w-full bg-white rounded-3xl border border-slate-300 shadow-2xl p-6 sm:p-8 space-y-6 text-center">
     <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto border-2 border-amber-300">
-      <span class="text-2xl">⏳</span>
+      <svg class="w-8 h-8 text-amber-600 animate-pulse" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
     </div>
 
     <div>
@@ -64,7 +64,7 @@ if ($booking['payment_status'] !== 'PAID') {
       </div>
       <div class="flex justify-between border-b border-slate-200 pb-2">
         <span class="text-slate-500"><?= $isEn ? 'Seat & Date:' : 'Siège & Date :' ?></span>
-        <strong class="text-blue-700">💺 <?= htmlspecialchars($booking['seat_label'] ?? $booking['seat_number']) ?> • <?= $booking['travel_date'] ?></strong>
+        <strong class="text-blue-700 inline-flex items-center gap-1.5"><svg class="w-4 h-4 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"></path><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"></path><path d="M5 18v2"></path><path d="M19 18v2"></path></svg><?= htmlspecialchars($booking['seat_label'] ?? $booking['seat_number']) ?> • <?= $booking['travel_date'] ?></strong>
       </div>
       <div class="flex justify-between pt-1">
         <span class="text-slate-500"><?= $isEn ? 'Amount Due:' : 'Montant à Payer :' ?></span>
@@ -95,7 +95,7 @@ if ($booking['payment_status'] !== 'PAID') {
 
     <div class="space-y-2 pt-1">
       <button type="button" onclick="checkPaymentStatusNow()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-300 transition cursor-pointer flex items-center justify-center gap-2">
-        <span>🔄</span>
+        <svg class="w-4 h-4 text-slate-600 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
         <span><?= $isEn ? 'Refresh Payment Status' : 'Vérifier le Statut du Paiement' ?></span>
       </button>
       <a href="<?= BASE_URL ?>/customer/index.php" class="block py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition">
@@ -116,7 +116,7 @@ if ($booking['payment_status'] !== 'PAID') {
         const box = document.getElementById('detection-status-box');
         if (box) {
           box.className = 'p-3.5 rounded-xl bg-emerald-100 border border-emerald-300 text-emerald-900 flex items-center justify-center gap-2 text-xs font-bold';
-          box.innerHTML = '<span>✓</span> <span><?= $isEn ? "Payment confirmed! Loading boarding pass..." : "Paiement confirmé ! Chargement du billet..." ?></span>';
+          box.innerHTML = '<svg class="w-4 h-4 text-emerald-700 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg> <span><?= $isEn ? 'Payment confirmed! Loading boarding pass...' : 'Paiement confirmé ! Chargement du billet...' ?></span>';
         }
         setTimeout(() => {
           window.location.reload();

@@ -172,14 +172,14 @@ include __DIR__ . '/../includes/header.php';
               </p>
 
               <div class="flex flex-wrap items-center gap-2 mb-3">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs">
-                  <span>💺</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs">
+                  <i data-lucide="armchair" class="w-3.5 h-3.5"></i>
                   <span><?= htmlspecialchars($b['seat_label'] ?? sprintf(t('booking.seatVIP', 'Siège N° %s (VIP)'), $b['seat_number'])) ?></span>
                 </span>
 
                 <?php if (!empty($b['tracker_code'])): ?>
-                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-purple-50 border border-purple-200 text-purple-700 font-bold text-xs font-mono">
-                    <span>🏷️</span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 border border-purple-200 text-purple-700 font-bold text-xs font-mono">
+                    <i data-lucide="tag" class="w-3.5 h-3.5"></i>
                     <span>IoT: <?= htmlspecialchars($b['tracker_code']) ?></span>
                   </span>
                 <?php endif; ?>
@@ -191,8 +191,9 @@ include __DIR__ . '/../includes/header.php';
               
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="openCustomerMapModal()" title="<?= t('customer.seeMap') ?>"
-                  class="p-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition text-xs font-bold">
-                  🗺️ <?= Language::isEn() ? 'Map' : 'Carte' ?>
+                  class="p-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition text-xs font-bold inline-flex items-center gap-1">
+                  <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                  <span><?= Language::isEn() ? 'Map' : 'Carte' ?></span>
                 </button>
 
                 <?php if ($b['payment_status'] === 'PAID'): ?>
@@ -202,17 +203,22 @@ include __DIR__ . '/../includes/header.php';
                     <span><?= t('customer.ticket') ?></span>
                   </a>
                 <?php elseif ($b['payment_status'] === 'PENDING'): ?>
-                  <button type="button" onclick="resumeBookingPayment('<?= htmlspecialchars($b['booking_reference']) ?>', '<?= htmlspecialchars($b['passenger_phone']) ?>', '<?= htmlspecialchars($b['payment_method'] ?? 'MTN_MOMO') ?>', '<?= $b['seat_number'] ?>', '<?= htmlspecialchars($b['bus_model'] ?? 'Scania VIP') ?>')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition cursor-pointer">
-                    💳 <?= t('customer.pay') ?>
+                  <button type="button" onclick="resumeBookingPayment('<?= htmlspecialchars($b['booking_reference']) ?>', '<?= htmlspecialchars($b['passenger_phone']) ?>', '<?= htmlspecialchars($b['payment_method'] ?? 'MTN_MOMO') ?>', '<?= $b['seat_number'] ?>', '<?= htmlspecialchars($b['bus_model'] ?? 'Scania VIP') ?>')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition cursor-pointer inline-flex items-center gap-1">
+                    <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+                    <span><?= t('customer.pay') ?></span>
                   </button>
                   <a href="<?= BASE_URL ?>/customer/ticket.php?ref=<?= urlencode($b['booking_reference']) ?>" target="_blank"
-                     class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
-                    <?= t('customer.ticket') ?>
+                     class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1">
+                    <i data-lucide="printer" class="w-3 h-3"></i>
+                    <span><?= t('customer.ticket') ?></span>
                   </a>
                   <form method="POST" class="inline" onsubmit="return confirm('<?= Language::isEn() ? 'Cancel this booking?' : 'Annuler cette réservation ?' ?>');">
                     <input type="hidden" name="cancel_booking" value="1">
                     <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                    <button type="submit" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-red-600 text-xs font-bold cursor-pointer">✕ <?= t('customer.cancel') ?></button>
+                    <button type="submit" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-red-600 text-xs font-bold cursor-pointer inline-flex items-center gap-0.5">
+                      <i data-lucide="x" class="w-3 h-3"></i>
+                      <span><?= t('customer.cancel') ?></span>
+                    </button>
                   </form>
                 <?php endif; ?>
               </div>
@@ -386,7 +392,7 @@ include __DIR__ . '/../includes/header.php';
     <div id="customer-live-map" class="w-full h-[420px] rounded-xl border border-slate-300"></div>
 
     <div class="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
-      <span class="text-slate-500">📍 <?= Language::isEn() ? 'Active 4G GPS trackers along checkpoints' : 'Balises GPS 4G actives aux points de contrôle' ?></span>
+      <span class="text-slate-500 inline-flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i> <?= Language::isEn() ? 'Active 4G GPS trackers along checkpoints' : 'Balises GPS 4G actives aux points de contrôle' ?></span>
       <button type="button" onclick="closeCustomerMapModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl"><?= t('customer.close') ?></button>
     </div>
   </div>

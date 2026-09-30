@@ -20,7 +20,7 @@ foreach ($statements as $stmt) {
         }
     }
 }
-echo "✓ Schema verified.\n";
+echo "[OK] Schema verified.\n";
 
 // Clear non-Douala/Yaoundé data
 $pdo->exec("DELETE FROM bookings WHERE origin NOT LIKE '%Douala%' AND origin NOT LIKE '%Yaoundé%'");
@@ -39,7 +39,7 @@ $stmt = $pdo->prepare("INSERT INTO stations (id, station_code, name, city, addre
 foreach ($stations as $s) {
     $stmt->execute($s);
 }
-echo "✓ Set exactly 2 stations: Douala (Akwa) and Yaoundé (Mvan).\n";
+echo "[OK] Set exactly 2 stations: Douala (Akwa) and Yaoundé (Mvan).\n";
 
 // 3. Ensure only 2 Routes exist
 $pdo->exec("DELETE FROM routes");
@@ -51,7 +51,7 @@ $stmt = $pdo->prepare("INSERT INTO routes (id, route_code, name, origin_station_
 foreach ($routes as $r) {
     $stmt->execute($r);
 }
-echo "✓ Set exactly 2 routes: Douala ➔ Yaoundé and Yaoundé ➔ Douala.\n";
+echo "[OK] Set exactly 2 routes: Douala ➔ Yaoundé and Yaoundé ➔ Douala.\n";
 
 // 4. Ensure Users
 $users = [
@@ -65,7 +65,7 @@ $stmt = $pdo->prepare("INSERT INTO users (id, name, username, email, password, p
 foreach ($users as $u) {
     $stmt->execute($u);
 }
-echo "✓ Verified all users (debora / Demodebora, etc.).\n";
+echo "[OK] Verified all users (debora / Demodebora, etc.).\n";
 
 // 5. Ensure IoT Trackers
 $pdo->exec("DELETE FROM iot_trackers");
@@ -79,7 +79,7 @@ $stmt = $pdo->prepare("INSERT INTO iot_trackers (id, tracker_code, device_model,
 foreach ($trackers as $t) {
     $stmt->execute($t);
 }
-echo "✓ Seeded 4 IoT Trackers.\n";
+echo "[OK] Seeded 4 IoT Trackers.\n";
 
 // 6. Seed Clean Daily Trips for Today and Tomorrow between Douala and Yaoundé ONLY
 $pdo->exec("DELETE FROM trips");
@@ -112,7 +112,7 @@ foreach ($dates as $d) {
         $insTrip->execute($tr);
     }
 }
-echo "✓ Seeded Douala <-> Yaoundé VIP trips for today and tomorrow.\n";
+echo "[OK] Seeded Douala <-> Yaoundé VIP trips for today and tomorrow.\n";
 
 // 7. Seed Sample Bookings
 $pdo->exec("DELETE FROM bookings");
@@ -136,7 +136,7 @@ $insB->execute([
     'Douala (Gare Centrale Akwa)', 'Yaoundé (Terminal Mvan)', $today, '06:30', 15, 'Siège N° 15 (Couloir VIP)', 5000,
     'ORANGE_MONEY', 'PAID', 'b8839cb0-1111-4104-bd90-9aff213b1111', 'ORANGE', '#150*50#', 'GV-INIT-002'
 ]);
-echo "✓ Seeded sample paid bookings.\n";
+echo "[OK] Seeded sample paid bookings.\n";
 
 // 8. Seed Sample Parcel
 $pdo->exec("DELETE FROM parcels");
@@ -158,5 +158,5 @@ $insH->execute([1, 1, 'REÇU_EN_GARE', "Dépôt du colis au guichet Gare Central
 $insH->execute([1, 1, 'CHARGÉ_EN_SOUTE', "Chargé en soute sécurisée dans le car Scania VIP #LT-782-AA"]);
 $insH->execute([1, 1, 'EN_TRANSIT', "Départ du convoi en direction de Yaoundé Mvan sur l'Axe Lourd N3"]);
 
-echo "✓ Seeded sample parcel PAR-2026-00125 with checkpoint history.\n";
+echo "[OK] Seeded sample parcel PAR-2026-00125 with checkpoint history.\n";
 echo "=== Migration Complete ===\n";

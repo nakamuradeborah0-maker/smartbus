@@ -146,7 +146,7 @@ async function loadScheduleDepartures() {
 
     const confirmedLabel = t('booking.confirmed', 'CONFIRMÉ');
     const departureLabel = t('search.departure', 'Départ :');
-    const chooseSeatLabel = t('booking.chooseSeat', 'Choisir Siège ➔');
+    const chooseSeatLabel = t('booking.chooseSeat', 'Choisir Siège');
     window.SCHEDULE_TRIPS = trips;
 
     container.innerHTML = trips.map(t => {
@@ -170,8 +170,9 @@ async function loadScheduleDepartures() {
           </div>
           <div class="text-right shrink-0">
             <span class="text-base font-black text-slate-900 block">${Number(t.price).toLocaleString()} ${currencyLabel}</span>
-            <button type="button" class="mt-1 px-3 py-1 bg-blue-700 group-hover:bg-blue-800 text-white font-bold text-xs rounded-lg shadow-xs transition">
-              ${chooseSeatLabel}
+            <button type="button" class="mt-1 px-3 py-1 bg-blue-700 group-hover:bg-blue-800 text-white font-bold text-xs rounded-lg shadow-xs transition inline-flex items-center gap-1">
+              <span>${chooseSeatLabel}</span>
+              <svg class="w-3 h-3 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
           </div>
         </div>

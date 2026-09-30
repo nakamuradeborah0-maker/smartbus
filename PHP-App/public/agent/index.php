@@ -120,7 +120,7 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="toggleAgentMap()" id="btn-toggle-agent-map"
         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-        <span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>
+        <span><?= t('map.seeOnMap', 'Voir sur la Carte (See on Map)') ?></span>
       </button>
 
       <button type="button" onclick="openRegisterModal()"
@@ -159,12 +159,12 @@ include __DIR__ . '/../includes/header.php';
       <button type="button" onclick="switchAgentTab('parcels')" id="agent-tab-parcels"
         class="pb-3 border-b-2 <?= $defaultTab === 'parcels' ? 'border-blue-700 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' ?> flex items-center gap-2 cursor-pointer">
         <i data-lucide="package" class="w-4 h-4"></i>
-        <span><?= t('agent.tabParcels', '📦 Espace Agent de Colis') ?> (<?= count($parcels) ?>)</span>
+        <span><?= t('agent.tabParcels', 'Espace Agent de Colis') ?> (<?= count($parcels) ?>)</span>
       </button>
       <button type="button" onclick="switchAgentTab('bookings')" id="agent-tab-bookings"
         class="pb-3 border-b-2 <?= $defaultTab === 'bookings' ? 'border-blue-700 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' ?> flex items-center gap-2 cursor-pointer">
         <i data-lucide="ticket" class="w-4 h-4"></i>
-        <span><?= t('agent.tabBookings', '🎫 Espace Agent de Réservation') ?> (<?= count($bookings) ?>)</span>
+        <span><?= t('agent.tabBookings', 'Espace Agent de Réservation') ?> (<?= count($bookings) ?>)</span>
       </button>
     </div>
 
@@ -218,18 +218,21 @@ include __DIR__ . '/../includes/header.php';
                 <td class="p-3 text-right space-x-1">
                   <!-- Checkpoint Status Update -->
                   <button type="button" onclick="openStatusModal(<?= $p['id'] ?>, '<?= htmlspecialchars($p['tracking_number']) ?>', '<?= htmlspecialchars($p['status']) ?>')"
-                    class="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition text-[11px] cursor-pointer">
-                    <?= t('agent.btnStatus', 'Statut ⚙️') ?>
+                    class="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition text-[11px] cursor-pointer inline-flex items-center gap-1">
+                    <i data-lucide="settings" class="w-3 h-3"></i>
+                    <span><?= t('agent.btnStatus', 'Statut') ?></span>
                   </button>
                   <!-- View History -->
                   <button type="button" onclick="openHistoryModal(<?= $p['id'] ?>, '<?= htmlspecialchars($p['tracking_number']) ?>')"
-                    class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer">
-                    <?= t('agent.btnHistory', 'Historique 📜') ?> (<?= $p['history_count'] ?>)
+                    class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer inline-flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3"></i>
+                    <span><?= t('agent.btnHistory', 'Historique') ?> (<?= $p['history_count'] ?>)</span>
                   </button>
                   <!-- Printable Waybill -->
                   <a href="<?= BASE_URL ?>/agent/waybill.php?num=<?= urlencode($p['tracking_number']) ?>" target="_blank"
-                     class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition text-[11px]">
-                    <?= t('agent.btnWaybill', 'Bordereau 🖨️') ?>
+                     class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition text-[11px] inline-flex items-center gap-1">
+                    <i data-lucide="printer" class="w-3 h-3"></i>
+                    <span><?= t('agent.btnWaybill', 'Bordereau') ?></span>
                   </a>
                 </td>
               </tr>
@@ -271,12 +274,14 @@ include __DIR__ . '/../includes/header.php';
                   <span class="text-slate-400 font-mono"><?= htmlspecialchars($b['passenger_phone']) ?></span>
                 </td>
                 <td class="p-3"><?= htmlspecialchars($b['origin']) ?> ➔ <?= htmlspecialchars($b['destination']) ?></td>
-                <td class="p-3 font-bold text-blue-700">💺 <?= htmlspecialchars($b['seat_label']) ?></td>
+                <td class="p-3 font-bold text-blue-700">
+                  <span class="inline-flex items-center gap-1.5"><i data-lucide="armchair" class="w-3.5 h-3.5"></i> <?= htmlspecialchars($b['seat_label']) ?></span>
+                </td>
                 <td class="p-3"><?= $b['travel_date'] ?> • <?= $b['departure_time'] ?></td>
                 <td class="p-3">
                   <?php if (!empty($b['tracker_code'])): ?>
-                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold text-[10px]">
-                      🏷️ <?= htmlspecialchars($b['tracker_code']) ?>
+                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold text-[10px] inline-flex items-center gap-1">
+                      <i data-lucide="tag" class="w-3 h-3"></i> <?= htmlspecialchars($b['tracker_code']) ?>
                     </span>
                   <?php else: ?>
                     <span class="text-slate-400 italic text-[11px]"><?= t('agent.unassigned', 'Non assigné') ?></span>
@@ -291,8 +296,9 @@ include __DIR__ . '/../includes/header.php';
                 <td class="p-3 text-right space-x-1">
                   <!-- Assign IoT Tracker to Luggage / Profile Modal Trigger -->
                   <button type="button" onclick="openAssignTrackerModal(<?= $b['id'] ?>, '<?= htmlspecialchars($b['booking_reference']) ?>', '<?= htmlspecialchars($b['passenger_name']) ?>')"
-                    class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer">
-                    <?= t('agent.btnLinkTracker', 'Lier Traceur IoT 🏷️') ?>
+                    class="px-2.5 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition text-[11px] cursor-pointer inline-flex items-center gap-1">
+                    <i data-lucide="tag" class="w-3 h-3"></i>
+                    <span><?= t('agent.btnLinkTracker', 'Lier Traceur IoT') ?></span>
                   </button>
 
                   <!-- Validate Payment if Pending -->
@@ -306,8 +312,9 @@ include __DIR__ . '/../includes/header.php';
                     </form>
                   <?php else: ?>
                     <a href="<?= BASE_URL ?>/customer/ticket.php?ref=<?= urlencode($b['booking_reference']) ?>" target="_blank"
-                       class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px]">
-                      <?= t('agent.btnTicket', 'Billet 🖨️') ?>
+                       class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] inline-flex items-center gap-1">
+                      <i data-lucide="printer" class="w-3 h-3"></i>
+                      <span><?= t('agent.btnTicket', 'Billet') ?></span>
                     </a>
                   <?php endif; ?>
                 </td>
@@ -550,7 +557,7 @@ include __DIR__ . '/../includes/header.php';
       }
     } else {
       container.classList.add('hidden');
-      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', '🗺️ Voir sur la Carte (See on Map)') ?></span>';
+      btn.innerHTML = '<i data-lucide="map" class="w-4 h-4 text-sky-400"></i><span><?= t('map.seeOnMap', 'Voir sur la Carte (See on Map)') ?></span>';
       btn.classList.remove('bg-slate-700', 'text-amber-300');
     }
     if (window.lucide) lucide.createIcons();

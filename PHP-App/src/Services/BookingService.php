@@ -154,7 +154,7 @@ class BookingService {
 
         $docTitle = ($isEn ? 'Boarding Pass' : 'Billet de Transport') . ' - ' . $ref;
         $htmlLang = $isEn ? 'en' : 'fr';
-        $badgeText = '✓ ' . ($isEn ? 'CONFIRMED & VALIDATED TICKET' : 'TITRE CONFIRMÉ & VALIDÉ');
+        $badgeText = ($isEn ? 'CONFIRMED & VALIDATED TICKET' : 'TITRE CONFIRMÉ & VALIDÉ');
         $depLabel = $isEn ? 'Departure Station' : 'Gare de Départ';
         $arrLabel = $isEn ? 'Arrival Station' : 'Gare de Destination';
         $nameLabel = $isEn ? 'Full Passenger Name' : 'Nom du Voyageur / Passager';
@@ -165,7 +165,7 @@ class BookingService {
         $fareLabel = $isEn ? 'Fare Paid (CamPay)' : 'Tarif Acquitté (CamPay)';
         $fareVal = $amount . ' ' . ($isEn ? 'XAF (PAID)' : 'FCFA (PAYÉ)');
         $codeLabel = $isEn ? 'Gate Boarding Control Code' : 'Code de Contrôle Quai';
-        $valText = '✓ ' . ($isEn ? 'Validated CamPay MoMo' : 'Validé CamPay MoMo') . ' (' . $phone . ')';
+        $valText = ($isEn ? 'Validated CamPay MoMo' : 'Validé CamPay MoMo') . ' (' . $phone . ')';
         $notice = $isEn ? 'Please present this electronic boarding pass with your ID at the terminal.' : 'Présentez ce billet électronique à l\'embarquement avec votre pièce d\'identité.';
 
         ob_start();
@@ -205,7 +205,7 @@ class BookingService {
         <img src="/assets/images/global_voyages_logo.jpg" alt="GV Logo" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
         <div class="logo">GLOBAL <span>VOYAGES</span> VIP</div>
       </div>
-      <div class="badge"><?= $badgeText ?></div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg><?= $badgeText ?></div>
     </div>
     <div class="body">
       <div class="route-banner">
@@ -213,7 +213,7 @@ class BookingService {
           <p><?= $depLabel ?></p>
           <h3><?= $origin ?></h3>
         </div>
-        <div class="arrow">➔</div>
+        <div class="arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
         <div class="station" style="text-align: right;">
           <p><?= $arrLabel ?></p>
           <h3><?= $destination ?></h3>
@@ -253,8 +253,9 @@ class BookingService {
           <div class="barcode">*<?= $ref ?>-<?= $seatNum ?>*</div>
         </div>
         <div style="text-align: right;">
-          <span style="display: inline-block; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 11px; font-weight: bold;">
-            <?= $valText ?>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 11px; font-weight: bold;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span><?= $valText ?></span>
           </span>
         </div>
       </div>
